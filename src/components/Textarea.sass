@@ -1,0 +1,75 @@
+.Textarea
+	--rows: 1
+	--min-height: 0
+	--content-height: 0px
+	--max-auto-size: 15em
+	position: relative
+	display: inline-block
+	max-width: 100%
+	min-height: var(--input-height)
+	height: max(calc((var(--rows) * 1.5em) + 1em), min(var(--min-height), 50vh), min(var(--content-height), var(--max-auto-size)))
+	background: var(--darken)
+	border-radius: var(--border-radius)
+	border: 1px solid var(--variant-z300)
+	$tran: 300ms linear
+	transition: color $tran, background $tran
+
+	&.-transparent
+		background: transparent
+		border: 0
+
+	> textarea
+		display: block
+		+size(100%)
+		padding: .6em
+		resize: none
+		font-family: var(--font-code)
+		tab-size: 2
+		color: var(--variant-z900)
+		background: transparent
+		border: 0
+		// To round the outline
+		border-radius: 1px
+
+		&::placeholder
+			color: var(--muted)
+
+		&:is(.-transparent > *)
+			color: var(--variant-z700)
+
+		&:not(.-focus-indicator > *)
+			outline: 0
+
+		&[disabled]
+			filter: grayscale(50%)
+			opacity: .5
+			+disabledStripes()
+
+	> .resize-handle
+		--size: 10px
+		+absolute(_ _ calc(var(--size) / -2) 0)
+		width: 100%
+		height: var(--size)
+		cursor: ns-resize
+
+		&:hover:after
+			display: block
+			content: ''
+			+size(100% 4px)
+			+absolute(calc(50% - 2px) _ _ 0)
+			background: var(--variant-z400)
+			border-radius: 2px
+
+		&:is(:focus ~ *):after
+			background: var(--variant-z600)
+
+// Used to calculate height of the content
+.MockTextarea
+	display: block
+	+fixed(200vh _ _ 0)
+	height: 0
+	padding: .6em
+	font-family: var(--font-code)
+	tab-size: 2
+	border: 0
+	overflow: hidden

@@ -1,0 +1,55 @@
+.StagingModal
+	flex: 0 1 auto
+	display: flex
+	flex-direction: column
+	gap: var(--spacing)
+	padding: var(--spacing)
+	max-height: 100%
+	min-height: 0
+
+	> header
+		flex: 0 0 auto
+		display: flex
+		justify-content: space-between
+		gap: var(--spacing)
+
+		> h1
+			flex: 1 1 0
+			padding-top: .1em
+			font-size: 1.2em
+			line-height: 1.2
+			font-weight: bold
+
+		> .Button
+			flex: 0 0 auto
+
+	> .Progress
+		flex: 0 0 auto
+		+size(100% var(--input-height))
+
+	> .logs
+		flex: 1 1 auto
+		display: flex
+		flex-direction: column
+		gap: var(--spacing-half)
+		min-height: 0
+
+		> .controls
+			display: flex
+			align-items: center
+			justify-content: space-between
+
+			> .counter
+				display: flex
+				align-items: center
+				gap: var(--spacing)
+
+				> .type
+					display: flex
+					align-items: center
+					gap: var(--spacing-half)
+					color: var(--variant-z800)
+
+		> .Logs
+			flex: 1 1 auto
+			min-height: 30vh

@@ -1,0 +1,106 @@
+{
+	"name": "drovp",
+	"productName": "Drovp",
+	"description": "Desktop app for any drag & drop operations.",
+	"private": true,
+	"version": "0.6.0",
+	"electronVersion": "15.5.6",
+	"binariesVersion": "2",
+	"date": "2022-12-15T11:00Z",
+	"author": "Drovp",
+	"homepage": "https://drovp.app",
+	"bugs": "https://github.com/drovp/drovp/issues",
+	"discussions": "https://github.com/drovp/drovp/discussions",
+	"repository": "github:drovp/drovp",
+	"licenses": [
+		{
+			"name": "Electron",
+			"license": "MIT",
+			"link": "https://www.electronjs.org"
+		},
+		{
+			"name": "Preact",
+			"license": "MIT",
+			"link": "https://github.com/preactjs/preact"
+		},
+		{
+			"name": "statin",
+			"license": "MIT",
+			"link": "https://github.com/tomasklaen/statin"
+		},
+		{
+			"name": "poutr",
+			"license": "MIT",
+			"link": "https://github.com/tomasklaen/poutr"
+		},
+		{
+			"name": "Marked",
+			"license": "MIT",
+			"link": "https://github.com/markedjs/marked"
+		},
+		{
+			"name": "DOMPurify",
+			"license": "Apache-2.0/MPL-2.0",
+			"link": "https://github.com/cure53/DOMPurify"
+		},
+		{
+			"name": "semver-compare",
+			"license": "MIT",
+			"link": "https://github.com/substack/semver-compare"
+		},
+		{
+			"name": "lz-string",
+			"license": "MIT",
+			"link": "https://github.com/pieroxy/lz-string"
+		},
+		{
+			"name": "7-Zip",
+			"platform": "win32,darwin,linux",
+			"license": "GNU LGPL",
+			"link": "https://www.7-zip.org"
+		}
+	],
+	"main": "main.js",
+	"scripts": {
+		"build": "gulp build",
+		"test": "tsc -p . --noEmit",
+		"start": "gulp",
+		"package": "gulp package"
+	},
+	"devDependencies": {
+		"@types/dompurify": "^2.4.0",
+		"@types/lz-string": "^1.3.34",
+		"@types/marked": "^4.0.7",
+		"@types/semver-compare": "^1.0.1",
+		"colorjs.io": "^0.4.2",
+		"cssnano": "^5.1.14",
+		"del": "^6.1.1",
+		"electron": "^15.5.6",
+		"electron-builder": "^23.6.0",
+		"esbuild": "^0.15.16",
+		"gulp": "^4.0.2",
+		"gulp-dart-sass": "^1.0.2",
+		"gulp-json-editor": "^2.5.6",
+		"gulp-postcss": "^9.0.1",
+		"gulp-sass-glob": "^1.1.0",
+		"minimist": "^1.2.7",
+		"postcss-declarations": "^1.0.0",
+		"postcss-preset-env": "^7.8.3",
+		"postcss-prune-var": "^1.0.4",
+		"tslib": "^2.4.1",
+		"type-fest": "^3.3.0",
+		"typescript": "^4.9.3"
+	},
+	"dependencies": {
+		"@drovp/types": "github:drovp/types",
+		"dompurify": "^2.4.1",
+		"element-scroller": "^1.0.1",
+		"lz-string": "^1.4.4",
+		"marked": "^4.2.3",
+		"poutr": "^1.0.0",
+		"preact": "^10.11.3",
+		"semver-compare": "^1.0.0",
+		"statin": "^2.0.0",
+		"statin-preact": "^1.1.1"
+	}
+}

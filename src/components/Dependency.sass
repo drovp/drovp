@@ -1,0 +1,17 @@
+.Dependency
+	flex: 1
+	display: flex
+	flex-flow: column nowrap
+	gap: var(--spacing)
+
+	> *
+		margin: 0 var(--spacing)
+
+	> :is(.DependencyPayload, .DependencyDetails)
+		flex: 1 1 0
+		margin: 0
+		padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)
+
+.DependencyPayload
+	> .Logs
+		height: 100%

@@ -1,0 +1,354 @@
+.Options
+	> *
+		max-width: var(--max-article-width)
+		margin: 0 auto
+
+	> .collection-group-actions
+		display: flex
+		align-items: center
+		gap: 3em
+		height: var(--input-height)
+
+		&:is(.OptionDivider + *)
+			margin-top: calc(var(--input-height) / -2)
+
+		> .Button
+			flex: 0 0 auto
+
+		> hr
+			flex: 10
+			height: 1px
+			margin: 0
+			border: 0
+			border-top: 1px dashed var(--grey-o300)
+
+	> .add-collection-item
+		display: flex
+		width: 100%
+		height: 3em
+		margin-bottom: var(--spacing-double)
+
+		&:is(.collection-group-actions + *, .OptionDivider + *)
+			margin-top: var(--spacing)
+
+	> :is(.OptionCategory + .OptionDivider, .OptionDivider + .OptionDivider)
+		margin-top: var(--spacing)
+
+.Option
+	position: relative
+	display: flex
+	flex-wrap: wrap
+	align-items: flex-start
+	gap: .4em 1em
+	padding: var(--spacing) 0
+
+	&:not(:first-child, .OptionDivider + *)
+		border-top: 1px solid var(--grey-o100)
+
+	&.-collection-item
+		border-top: 0
+		padding: var(--spacing-half) 0
+
+	> .title
+		flex: 0 1 auto
+		grid-area: title
+		order: 0
+		width: 33%
+		min-width: 9em
+		font-weight: bold
+		word-break: break-word
+		text-align: left
+		min-height: var(--input-height)
+		line-height: var(--input-height)
+		+ellipsis()
+
+		&:is(.-changed > *)
+			color: var(--success-z600)
+
+			&:is([data-theme=dark] *)
+				color: var(--success-z800)
+
+		@media (--narrow)
+			width: 50%
+
+	> .title ~ *
+		order: 1
+
+	> .hint
+		display: flex
+		align-items: center
+		grid-area: hint
+		min-width: 3em
+		gap: .3em
+		flex: 0 0 auto
+		order: 2
+		height: var(--input-height)
+		color: var(--muted)
+
+		+selectable()
+
+		@each $variant in $variants
+			&.-#{$variant}
+				color: var(--#{$variant}-500)
+
+	> .description
+		grid-area: description
+		order: 4
+		width: 100%
+		color: var(--muted)
+
+	// Boolean
+	&.-boolean
+		> .title
+			flex: initial
+		&::before
+			display: none
+
+		> .Checkbox
+			flex: 0 0 auto
+
+	// Number
+	&.-number
+		> .Slider
+			max-width: 36%
+			flex: 1 0 0
+
+		> .Input
+			width: 8em
+
+		> .Slider + .Input
+			width: 4em
+
+		@media (--narrow)
+			> .Slider
+				max-width: 100%
+				order: 2
+				flex: 1 0 100%
+			> .Slider ~ .Input,
+			> .Slider ~ .hint
+				order: 0
+
+	// String
+	&.-path,
+	&.-string
+		> .StringControl.-string,
+		> .Input
+			flex: 1 0 0
+
+		> .StringControl.-text
+			flex: 1 0 100%
+
+		> .StringControl.-text + .hint
+			order: 0
+
+		@media (--narrow)
+			> .hint
+				order: 0
+			> .StringControl.-string,
+			> .Input
+				flex: 1 0 100%
+
+	// Select
+	&.-select
+		> .Select
+			flex: 0 1 auto
+		> .Select.-multi
+			flex: 0 1 max-content
+		> .Dropdown
+			max-width: 15rem
+
+		@media (--narrow)
+			> .hint
+				order: 0
+			> .Select
+				flex: 1 0 100%
+			> .Dropdown
+				max-width: 100%
+
+	// List
+	&.-list
+		display: grid
+		grid: "title control" auto "hint control" 1fr "description description" auto / auto 1fr
+
+		&.-of-text
+			grid: "title hint" auto "control control" 1fr "description description" auto / auto 1fr
+
+		> .hint
+			height: auto
+
+		> .ListControl
+			grid-area: control
+
+		@media (--narrow)
+			grid: "title hint" auto "control control" auto "description description" auto / auto 1fr
+			> .hint
+				height: var(--input-height)
+
+.OptionDescription
+	position: relative
+
+	> .description
+		--text-content-spacing: .4em
+		line-height: 1.3
+
+		&:is(.-confined > *)
+			max-height: 3.8em
+			overflow: hidden
+			+fadeBottom(2em)
+
+	> .toggle
+		display: block
+		position: relative
+		z-index: 2
+		background: transparent
+		height: var(--input-height)
+		margin: calc(var(--input-height) * -0.3) 0 calc(var(--input-height) * -0.3)
+		padding: 0 .2em 0 0
+		font-weight: bold
+		color: var(--grey-z700)
+
+		&:hover
+			color: var(--grey-z1000)
+
+		&:is(.-enabled *)
+			margin-top: 0
+
+		> b
+			font-family: var(--font-code)
+
+.OptionDivider
+	margin-top: var(--spacing)
+	margin-bottom: var(--spacing)
+
+	> .content
+		--bg: var(--grey-z300)
+		position: relative
+		padding: var(--spacing)
+		color: var(--grey-z900)
+		background: var(--bg)
+		border-radius: var(--border-radius)
+		contain: content
+
+		> h1
+			font-weight: bold
+			text-transform: uppercase
+			font-size: 1.3em
+
+		> .description
+			margin: 0
+			color: var(--grey-z800)
+			+selectable()
+
+			&:is(h1 + *)
+				margin-top: var(--spacing-half)
+
+			&.-toggleable
+				margin-bottom: var(--spacing)
+
+.OptionError
+	padding: var(--spacing-half)
+	background: var(--danger-o300)
+	border-radius: var(--border-radius)
+
+	> h1
+		font-size: 1.1em
+		font-weight: bold
+
+	> .Pre
+		margin-top: var(--spacing-half)
+
+.OptionCategory
+	& + *
+		border-top: 0 !important
+
+	.Nav
+		--height: calc(var(--input-height) * 1.15)
+
+.StringControl
+	position: relative
+	display: inline-block
+	max-width: 100%
+	border-radius: var(--border-radius)
+
+	> .Input,
+	> .Textarea
+		width: 100%
+
+	> .notes
+		+absolute(_ _ calc(100% + 5px) 0)
+		margin: 0
+		font-size: .94em
+		min-width: 12em
+		max-width: 60vw
+		list-style: none
+		padding: 0
+		z-index: 2
+
+		&::after
+			content: ''
+			+absolute(_ _ -10px 5px)
+			+size(10px)
+			border: 5px solid transparent
+			border-top-color: var(--grey-z300)
+
+		> li
+			color: #fff
+			background: var(--grey-z300)
+			padding: .4em .6em
+			border-radius: var(--border-radius)
+
+			> .Spinner
+				display: inline-block
+				vertical-align: middle
+				+size(1em)
+				margin-right: .2em
+
+		> li + li
+			margin-top: 1px
+
+	&.-error > .notes
+		> li
+			background: var(--danger)
+
+		&::after
+			border-top-color: var(--danger)
+
+.ListControl
+	display: flex
+	flex-direction: column
+	gap: .5rem
+
+	> ul
+		display: flex
+		flex-direction: column
+		gap: .5em
+		margin: 0
+		padding: 0
+
+	> ul > li
+		margin: 0
+		padding: 0
+		display: flex
+		gap: 2px
+
+		> *
+			flex: 1 1 auto
+			width: auto
+
+		> .Button
+			flex: 0 0 auto
+
+	> .controls
+		display: flex
+		justify-content: space-between
+
+	&.-number
+		> ul > li
+			> .Input
+				flex: 0 1 10em
+
+			> .Input
+				max-width: 60%
+
+			> .Slider + .Input
+				flex: 0 0 4em

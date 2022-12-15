@@ -1,0 +1,43 @@
+.Toast
+	+fixed(8rem 50% _ _)
+	z-index: var(--z-modal)
+	+size(0)
+	display: flex
+	align-items: flex-start
+	justify-content: center
+
+	@media (--narrow)
+		height: 4rem
+
+	> .toast
+		position: relative
+		display: flex
+		align-items: center
+		gap: var(--spacing-half)
+		width: max-content
+		max-width: 60vw
+		padding: 5px 5px 5px var(--spacing)
+		color: var(--variant-z900)
+		background: var(--variant-z100)
+		border-radius: var(--border-radius)
+		box-shadow: 0px 0.9px 1.1px rgba(0, 0, 0, 0.052), 0px 2.5px 3.1px rgba(0, 0, 0, 0.075), 0px 6px 7.5px rgba(0, 0, 0, 0.098), 0px 20px 25px rgba(0, 0, 0, 0.15)
+
+		> .progress
+			+absolute(_ _ 2px 2px)
+			height: 2px
+			width: calc(var(--progress, 0%) - 4px)
+			background: var(--variant-z700)
+			border-radius: calc(var(--border-radius) - 1px)
+
+			&:is(:hover > *)
+				opacity: .5
+
+		> .message
+			width: max-content
+
+		> .actions
+			display: flex
+
+			> .Button
+				padding: var(--spacing) var(--spacing-third)
+				font-weight: bold

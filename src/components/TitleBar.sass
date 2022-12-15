@@ -1,0 +1,36 @@
+.TitleBar
+	display: flex
+	align-items: center
+	gap: 2px
+	font-size: 1em
+	max-width: 100%
+
+	&[title]
+		cursor: help
+
+	> span
+		padding: var(--spacing-half)
+		color: var(--variant-z900)
+		background-color: var(--variant-o200)
+
+		&:first-child
+			border-top-left-radius: var(--border-radius)
+			border-bottom-left-radius: var(--border-radius)
+
+		&:last-child
+			border-top-right-radius: var(--border-radius)
+			border-bottom-right-radius: var(--border-radius)
+
+		&.title
+			flex: 1 0 auto
+			min-width: max-content
+			display: flex
+			align-items: center
+			justify-content: space-between
+			text-transform: uppercase
+
+		&.value
+			flex: 0 1 auto
+			min-width: 0
+			font-family: var(--font-code)
+			+ellipsis()

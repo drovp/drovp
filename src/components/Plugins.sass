@@ -1,0 +1,29 @@
+.Plugins
+	flex: 1 1 0
+	display: flex
+	flex-direction: column
+	gap: var(--spacing)
+	min-height: 0
+	margin: var(--spacing) 0
+
+	> .controls
+		flex: 0 0 auto
+		display: flex
+		align-items: stretch
+		gap: 1px
+		padding: 1px
+		margin: 0 var(--spacing)
+
+		&:is([data-theme=light] *)
+			padding: 0
+
+		> .spacer
+			flex: 1 1 0
+			background: var(--grey-z200)
+			border-radius: var(--border-radius)
+			opacity: .4
+
+	> .content
+		flex: 1 1 0
+		min-height: 0
+		padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)

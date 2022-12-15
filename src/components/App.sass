@@ -1,0 +1,17 @@
+.App
+	display: flex
+	justify-content: space-between
+	flex-flow: column nowrap
+	-webkit-app-region: drag
+
+	+size(100%)
+
+	> *
+		flex: 1 1 0
+
+	> .QueueBar
+		height: calc(var(--input-height) * 1.3)
+		flex: 0 0 auto
+
+	> .NodeGuard
+		min-height: 0

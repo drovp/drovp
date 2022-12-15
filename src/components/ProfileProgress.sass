@@ -1,0 +1,33 @@
+.ProfileProgress
+	display: flex
+	flex-direction: column
+	font-family: var(--font-code)
+	height: calc(var(--input-height) * 2 + var(--spacing-quarter))
+	gap: var(--spacing-quarter)
+	color: var(--grey-z700)
+
+	.Progress
+		height: auto
+
+	> .BatchProgress
+		flex: 10 1 0
+		height: auto
+		min-height: 0
+
+	> .pending
+		flex: 9 1 0
+		display: flex
+		min-height: 0
+		gap: var(--spacing-quarter)
+
+		&:is(.-compact > *)
+			flex: 5 1 0
+
+		> .Progress
+			flex: 1 0 10%
+			height: 100%
+
+	&.-idle
+		> .pending > .Progress
+			font-style: italic
+			color: var(--grey-z700)

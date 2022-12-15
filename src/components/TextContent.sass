@@ -1,0 +1,113 @@
+.TextContent
+	--text-content-spacing: .8em
+	+selectable()
+
+	:is(p, ul, ol, pre, h1, h2, h3, h4, h5, h6, blockquote)
+		&:not(:first-child)
+			margin-top: var(--text-content-spacing)
+		&:not(:last-child)
+			margin-bottom: var(--text-content-spacing)
+
+	:is(h1, h2, h3, h4, h5, h6)
+		margin: 0
+		font-size: 1em
+		font-weight: bold
+
+		&:not(:first-child)
+			margin-top: calc(var(--text-content-spacing) * 1.5)
+
+	h1
+		font-size: 1.6em
+	h2
+		font-size: 1.4em
+	h3
+		font-size: 1.2em
+	h4
+		font-size: 1.1em
+	h6
+		font-weight: normal
+
+	a
+		cursor: pointer
+
+	pre
+		padding: .5em .8em
+		background: var(--darken)
+		border-radius: var(--border-radius)
+
+		code
+			color: inherit
+			background: transparent
+
+	code
+		padding: .1em .2em
+		color: var(--fg)
+		background: var(--lighten-300)
+		border-radius: var(--border-radius)
+
+	kbd
+		padding: .04em .2em
+		border-radius: var(--border-radius)
+		color: var(--grey-z800)
+		background: var(--lighten)
+		box-shadow: inset 0 1px 0 var(--lighten), 0 2px 0 1px var(--darken-700)
+
+	hr
+		margin: var(--spacing-half) 0
+		border: 0
+		border-top: 1px solid var(--grey-z200)
+
+	blockquote
+		padding-left: var(--spacing)
+		border-left: 2px solid var(--grey-o300)
+
+	:is(ul, ol)
+		margin: 0
+		padding-left: 2em
+
+		li
+			margin: 0
+			padding: 0
+
+			blockquote:first-child
+				margin-left: calc(-1em - 2px)
+				&:first-child
+					margin-top: var(--spacing-half)
+	ul li
+		list-style: disc outside
+
+	ol li
+		list-style: decimal outside
+
+	dl
+		dt
+			font-weight: bold
+		dd
+			margin-left: var(--spacing)
+		dt + dd
+			margin-top: var(--spacing-third)
+		dd + dt
+			margin-top: var(--spacing)
+
+	img
+		max-width: 100%
+		max-height: 100vh
+
+	.-muted
+		color: var(--muted)
+
+	table
+		border-collapse: collapse
+
+		thead
+			border-bottom: 1px solid transparent
+
+		tr:nth-child(odd)
+			background: var(--grey-o100)
+			background-clip: padding-box
+
+		:is(td, th)
+			padding: var(--spacing-third) var(--spacing-half)
+
+			&:not(:last-child)
+				border-right: 1px solid var(--muted-300)

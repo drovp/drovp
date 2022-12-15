@@ -1,0 +1,208 @@
+*
+	margin: 0
+	padding: 0
+	line-height: calc(0.25rem + 1em + 0.25rem)
+
+*, ::before, ::after
+	box-sizing: border-box
+
+*:where(:not(fieldset, progress, meter))
+	border-width: 0
+	border-style: solid
+	background-origin: border-box
+
+html
+	height: 100%
+	-webkit-text-size-adjust: none
+	font-family: var(--font-text)
+	font-size: var(--font-size)
+	tab-size: 2
+
+	// Disable browser scrolling when it pleases
+	overflow-anchor: none
+
+	// Native feel
+	cursor: default
+	user-select: none
+	-webkit-user-drag: none
+
+	// Color scheme
+	color-scheme: dark light
+
+	// Overrides
+	&[data-theme=light]
+		color-scheme: light
+
+	&[data-theme=dark]
+		color-scheme: dark
+
+body
+	height: 100%
+	// Improve text rendering
+	-webkit-font-smoothing: antialiased
+	// https://marco.org/2012/11/15/text-rendering-optimize-legibility
+	text-rendering: optimizeSpeed
+
+// Smooth scrolling for users that don't prefer reduced motion
+@media (prefers-reduced-motion: no-preference)
+	html:focus-within
+		scroll-behavior: smooth
+
+// Reset user-select and cursor for interactive elements
+code:not(a *), textarea, input
+	user-select: auto
+	cursor: auto
+
+// Prevent user dragging
+:where(a, img)
+	-webkit-user-drag: none
+
+:where(img, svg, video, canvas, audio, iframe, embed, object)
+	display: block
+
+:where(img, svg, video)
+	block-size: auto
+	max-inline-size: 100%
+
+:where(svg)
+	stroke: none
+	fill: currentColor
+	// Right clicks, clicks, and hovers on svgs cause tons of issues, and they are never needed
+	pointer-events: none
+
+:where(svg):where(:not([width]))
+	inline-size: 5rem
+
+:where(input, button, textarea, select),
+:where(input[type="file"])::-webkit-file-upload-button
+	color: inherit
+	font: inherit
+	font-size: inherit
+	letter-spacing: inherit
+	word-spacing: inherit
+
+::-webkit-input-placeholder
+	color: var(--muted)
+	font-style: italic
+
+// Add the correct text decoration
+:where(abbr)[title]
+	text-decoration: underline
+	text-decoration: underline dotted
+
+// Correct the inheritance and scaling of font size
+// Correct the odd `em` font sizing
+:where(code, kbd, samp)
+	font-family: var(--font-code)
+	font-size: 1em
+	font-weight: normal
+
+:where(pre, code)
+	word-wrap: break-word
+	overflow-wrap: break-word
+	white-space: pre-wrap
+	overflow: hidden
+
+:where(pre > code)
+	display: block
+
+// Correct the cursor style of increment and decrement buttons
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button
+	height: auto
+
+// Correct the odd appearance in Chrome an Safari
+[type="search"]
+	-webkit-appearance: textfield
+
+// Remove the inner padding and cancel buttons
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-decoration
+	-webkit-appearance: none
+
+// Remove date input text clipping due to excessive indicator margins
+[type="date"]::-webkit-calendar-picker-indicator
+	margin: 0
+
+/* Change textarea resize to vertical only and block only if the browser supports that */
+:where(textarea)
+	resize: vertical
+
+@supports (resize: block)
+	:where(textarea)
+		resize: block
+
+:where(p, h1, h2, h3, h4, h5, h6)
+	overflow-wrap: break-word
+
+:where(h1, h2, h3, h4, h5, h6)
+	font-size: 1em
+	font-weight: normal
+
+:where(ul, ol)
+	list-style: none
+
+a:not([class])
+	color: var(--info-z700)
+	text-decoration: underline
+	text-decoration-skip-ink: auto
+
+	&:hover
+		color: var(--info-z900)
+
+	&:active
+		color: var(--info-z300)
+
+// Prevent `sub` and `sup` elements from affecting the line height
+:where(sub, sup)
+	font-size: 75%
+	line-height: 0
+	position: relative
+	vertical-align: baseline
+
+:where(sub)
+	bottom: -0.25em
+
+:where(sup)
+	top: -0.5em
+
+// Focus outline
+:focus-visible
+	outline: 1px dashed var(--variant)
+	outline-offset: 3px
+
+// Make sure users can't select button text
+:where(button, button[type], input[type="button"], input[type="submit"], input[type="reset"]),
+:where(input[type="file"])::-webkit-file-upload-button,
+:where(input[type="file"])::file-selector-button
+	-webkit-tap-highlight-color: transparent
+	-webkit-touch-callout: none
+	user-select: none
+	text-align: center
+
+// Disabled cursor for disabled buttons
+:where(button, button[type], input[type="button"], input[type="submit"], input[type="reset"])[disabled]
+	cursor: not-allowed
+
+// Custom scrollbars
+*
+	&::-webkit-scrollbar
+		width: var(--scrollbar-size)
+		height: var(--scrollbar-size)
+	&::-webkit-scrollbar-track
+		background: transparent
+	&::-webkit-scrollbar-thumb
+		background: var(--grey-z300)
+	&:hover::-webkit-scrollbar-thumb
+		background: var(--grey)
+	&::-webkit-scrollbar-thumb:hover,
+	&::-webkit-scrollbar-thumb:active
+		background: var(--fg)
+
+// Fix scrollbar background in select boxes
+select::-webkit-scrollbar-track
+	background: var(--bg)
+
+// Theme base
+[data-theme]
+	background: var(--bg)

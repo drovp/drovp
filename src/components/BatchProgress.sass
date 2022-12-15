@@ -1,0 +1,13 @@
+.BatchProgress
+	> .bar.bar
+		background: transparent
+
+		> canvas
+			z-index: 1
+			+absolute(0 _ _ 0)
+			+size(100%)
+			border-radius: var(--border-radius)
+
+		> div
+			position: relative
+			z-index: 2

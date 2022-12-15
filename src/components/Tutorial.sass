@@ -1,0 +1,23 @@
+.Tutorial
+	padding: 2em
+	padding-rigth: subScrollbar(var(--spacing-third))
+	color: var(--muted)
+
+	> *
+		max-width: 40rem !important
+		margin-left: auto !important
+		margin-right: auto !important
+
+	> :is(h1, h2)
+		display: flex
+		align-items: center
+		gap: .4em
+		color: var(--fg)
+
+		> .Icon
+			+size(1.6em)
+
+	> h1
+		justify-content: center
+		text-align: center
+		text-transform: uppercase

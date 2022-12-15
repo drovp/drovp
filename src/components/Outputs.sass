@@ -1,0 +1,72 @@
+.Outputs
+	--z-index: calc(var(--z-queue-bar) - 10)
+	--dragger-height: 5px
+	position: relative
+	z-index: var(--z-index)
+	height: calc(var(--height, 0.3) * 100%)
+	display: flex
+	flex-direction: column
+
+	&:not(.-dragged)
+		transition: all 300ms $out-expo
+
+	> .dragger
+		--bg-color: var(--grey-z200)
+		display: none
+		+absolute(_ 0 0 0)
+		z-index: calc(var(--z-index) - 1)
+		display: flex
+		align-items: flex-end
+		justify-content: center
+		height: var(--dragger-height)
+		cursor: ns-resize
+		background: var(--bg-color)
+
+		> span
+			font-size: 12px
+			line-height: 1.5
+			padding: 0 4px
+			border-radius: var(--border-radius)
+			background: var(--bg-color)
+			box-shadow: 0 -1px 1px var(--shadow)
+
+	> .content
+		flex: 1
+		position: relative
+		z-index: calc(var(--z-index))
+		display: flex
+		flex-direction: column
+		background: var(--bg)
+
+		> .controls
+			--input-height: 2.2em
+			flex: 0 0 auto
+			position: relative
+			display: flex
+			align-items: center
+			justify-content: space-between
+			margin: 0 var(--spacing-quarter)
+			border-radius: var(--border-radius)
+			background: var(--lighten-300)
+			box-shadow: 0 0 0 1px var(--darken), inset 0 1px 0 0 var(--highlight)
+			-webkit-app-region: no-drag
+
+			> .dragger
+				+absolute(-4px _ _ 0)
+				+size(100% calc(100% + 4px))
+				cursor: ns-resize
+
+			> .Select
+				--gap: 0
+
+				.name
+					+ellipsis()
+
+		> .Items
+			position: relative
+			flex: 1 1 0
+			margin: var(--spacing-quarter) 0
+			padding: 0 subScrollbar(var(--spacing-quarter)) 0 var(--spacing-quarter)
+
+			> .Item + .Item
+				margin-top: 2px

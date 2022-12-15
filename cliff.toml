@@ -1,0 +1,27 @@
+[changelog]
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}\
+    ### {{ group | upper_first }}
+    {% for commit in commits %}
+        {%- if commit.scope -%}
+        {% else %}
+            - {% if commit.breaking %}[**BREAKING**] {% endif -%}{{ commit.message | upper_first }}.\
+            {% if commit.body %}{% for line in commit.body | split(pat="\n") %}\n{{ "    > " ~ line }}{% endfor %}{% endif %}\
+        {% endif %}\
+    {% endfor %}\
+    {% for commit in commits | filter(attribute="scope") | sort(attribute="scope") %}
+        - {% if commit.breaking %}[**BREAKING**] {% endif -%}\
+        **{{ commit.scope | upper }}**: {{ commit.message | upper_first }}.\
+        {% if commit.body %}{% for line in commit.body | split(pat="\n") %}\n{{ "    > " ~ line }}{% endfor %}{% endif %}\
+    {% endfor %}\n
+{% endfor %}
+"""
+
+[git]
+commit_parsers = [
+    { message = "^feat", group = "Features"},
+    { message = "^perf", group = "Performance"},
+    { message = "^fix", group = "Fixes"},
+]
+filter_commits = true
+tag_pattern = "[v0-9]*"

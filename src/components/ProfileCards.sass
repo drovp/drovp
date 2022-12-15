@@ -1,0 +1,168 @@
+.ProfileCard
+	--profile-padding: var(--spacing-half)
+	gap: var(--spacing-half)
+	height: 9rem
+	background: var(--bg)
+
+	[data-uimode=compact] &
+		height: 8rem
+
+	> header
+		height: auto
+
+	&.-hoverable:hover
+		transition-duration: 0s
+		background-color: var(--lighten-100)
+
+	> .progress
+		flex: 2
+
+	> .meta
+		margin: 0 var(--profile-padding)
+		display: flex
+		align-items: center
+		justify-content: space-between
+		color: var(--muted)
+		font-style: italic
+		line-height: 0.8
+
+		> span
+			display: flex
+			grid-gap: 0.2em
+			flex: 0 1 auto
+			min-width: 0
+
+			> .value
+				flex: 0 0 auto
+
+			> .title
+				flex: 0 1 auto
+				+ellipsis()
+
+		> .completed.-active
+			color: var(--success-z700)
+
+		> .errors.-active
+			color: var(--danger-z700)
+
+.ProfileCards
+	--gap: var(--spacing-quarter)
+	position: relative
+	padding-right: subScrollbar(var(--spacing-half))
+
+	> .ProfileCard
+		position: absolute
+		z-index: 1
+
+	> .hResizeHandle
+		position: absolute
+		z-index: 2
+		display: flex
+		align-items: center
+		justify-content: center
+		width: 10px
+		opacity: 0
+		cursor: ew-resize
+		transition: opacity 30ms linear
+		border-radius: 4px
+		border: 2px solid var(--grey-z300)
+
+		&.-left
+			margin-left: 1px
+			border-right-width: 0
+			border-top-right-radius: 0
+			border-bottom-right-radius: 0
+
+		&.-right
+			margin-left: -11px
+			border-left-width: 0
+			border-top-left-radius: 0
+			border-bottom-left-radius: 0
+
+		&:is(:hover, .-active)
+			opacity: 1
+			transition-duration: 100ms
+
+	> .rowButton
+		position: absolute
+		z-index: 3
+		display: flex
+		align-items: center
+		justify-content: center
+		left: 0
+		width: 100%
+		height: 20px
+		margin-top: -10px
+		background: transparent
+		opacity: 0
+		transition: opacity 30ms linear
+
+		&:hover
+			opacity: 1
+			transition-duration: 100ms
+
+		&:before
+			content: ''
+			+absolute(calc(50% - 1px) _ _ 0)
+			z-index: 1
+			+size(100% 0)
+			border-top: 2px dashed var(--border-color)
+
+		&.-add
+			--color: var(--grey-z900)
+			--border-color: var(--grey)
+			cursor: cell
+
+		&.-remove
+			--color: var(--danger-z900)
+			--border-color: var(--danger)
+
+		> .Icon
+			position: relative
+			z-index: 2
+			+size(1.8em)
+			color: var(--color)
+			padding: 0.1em
+			background: var(--bg)
+			border: 2px dashed var(--border-color)
+			border-radius: var(--border-radius)
+			box-shadow: 0 0 1px 3px var(--bg)
+
+	> .createButton
+		position: absolute
+		z-index: 1
+		display: flex
+		align-items: center
+		justify-content: center
+		background: transparent
+
+		&::before
+			content: ''
+			display: block
+			+absolute(var(--spacing-half) _ _ var(--spacing-half))
+			+size(calc(100% - var(--spacing)))
+			border: 2px dashed var(--muted-300)
+			border-radius: 4px
+			opacity: .2
+			transition: opacity 66ms linear
+
+		> .Icon
+			+size(3em)
+			color: var(--fg)
+			opacity: .2
+			transition: opacity 66ms linear
+
+		&:hover::before,
+		&:hover > .Icon
+			opacity: 1
+
+	> .dropPlaceholder
+		position: absolute
+		z-index: 3
+
+	> .dropIndicator
+		position: absolute
+		z-index: 2
+		background: var(--grey-z50)
+		border: 2px dashed var(--grey-z900)
+		border-radius: 4px

@@ -1,0 +1,66 @@
+.Registry
+	display: flex
+	flex-flow: column nowrap
+	align-items: stretch
+	margin: var(--spacing) 0
+
+	> .search-bar
+		display: flex
+		width: 60%
+		max-width: 25em
+		height: var(--input-height)
+		font-size: 1.1em
+		margin: 0 auto var(--spacing)
+		background: var(--darken)
+		border: 1px solid var(--grey-z300)
+		border-radius: var(--border-radius)
+		+fadein()
+
+		> button
+			+size(var(--input-height))
+			line-height: 1
+			opacity: .6
+			background: transparent
+
+			&:hover
+				opacity: 1
+			&:active
+				opacity: 1
+				color: var(--darken)
+
+			> .Icon
+				+size(60%)
+
+		> input
+			flex: 1 1 0
+			min-width: 0
+			background: transparent
+			border: 0
+			padding: 0 .5em
+			border-radius: 1px
+
+			&::placeholder
+				color: var(--muted)
+
+	> .results
+		flex: 1 1 0
+		min-height: 0
+		display: flex
+		flex-flow: column nowrap
+		gap: var(--spacing)
+		padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)
+
+		&.-loading
+			justify-content: center
+
+		> .Vacant
+			+fadein()
+
+		> .Spinner
+			+size(5rem)
+			margin: 3rem auto
+
+	> .Pagination
+		margin: calc(var(--spacing) / 2) 0 calc(var(--spacing) * -.5)
+		font-size: 1.2em
+		+fadein()

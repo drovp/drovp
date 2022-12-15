@@ -1,0 +1,53 @@
+.Pagination
+	display: flex
+	justify-content: center
+	gap: calc(var(--input-height) / 5)
+
+	> *
+		height: var(--input-height)
+
+	button
+		width: var(--input-height)
+		line-height: 1
+		color: var(--muted)
+		border-radius: var(--border-radius)
+		background: transparent
+
+		&:hover
+			color: var(--fg)
+			background: var(--lighten)
+
+		&.-hidden
+			opacity: 0
+			pointer-events: none
+
+		> .Icon
+			+size(calc(var(--input-height) * 0.8))
+
+	$numberContainerWidth: 3em
+
+	.current
+		width: $numberContainerWidth
+		background: transparent
+		border: 0
+		font-weight: bold
+		border-radius: var(--border-radius)
+		text-align: right
+
+		&:hover,
+		&:focus
+			background: var(--darken)
+
+	.divider
+		display: flex
+		align-items: center
+		font-size: 1em
+
+	.total
+		display: flex
+		align-items: center
+		width: $numberContainerWidth
+
+	&.-disabled
+		opacity: .3
+		pointer-events: none

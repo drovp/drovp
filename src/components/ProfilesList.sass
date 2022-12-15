@@ -1,0 +1,79 @@
+.ProfilesList
+	display: flex
+	flex-flow: column
+	align-items: stretch
+
+	> article
+		--height: calc(var(--input-height) * 1.5)
+		display: flex
+		align-items: stretch
+		gap: var(--spacing-quarter)
+		height: var(--height)
+
+		> button
+			position: relative
+			flex: 1 1 0
+			display: flex
+			align-items: center
+			justify-content: center
+			gap: 1em
+			padding: 0 var(--spacing-half)
+			min-width: var(--height)
+			color: var(--accent-z700)
+			text-align: left
+			background: transparent
+			border-radius: var(--border-radius)
+
+			&[disabled]
+				color: var(--muted)
+				opacity: .5
+				+disabledStripes()
+
+			&:not([disabled]):hover
+				color: var(--variant-fg)
+				background-color: var(--accent-500)
+
+		&:nth-child(odd) > button
+			background-color: var(--lighten-100)
+
+		> .goto
+			// dragenter dragleave trigger on child nodes, with no easy way how
+			// to filter them, so I use this to not have to deal with it in JS ...
+			> *
+				pointer-events: none
+				position: relative
+				z-index: 2
+
+			&.-dragged-over
+				outline: 1px dashed var(--accent-500)
+				outline-offset: -1px
+
+			> .title
+				flex: 1 1 0
+				display: flex
+				align-items: center
+				gap: .4em
+				overflow: hidden
+				white-space: nowrap
+
+			> .progress
+				position: relative
+				width: 30%
+				height: 50%
+				border-radius: var(--border-radius)
+				background: var(--darken)
+				overflow: hidden
+
+				&::after
+					content: ''
+					+absolute(0 _ 0 0)
+					width: 100%
+					width: calc(var(--progress, 0) * 100%)
+					background: var(--accent-600)
+
+		> .delete
+			flex: 0 1 auto
+
+			&:not([disabled]):hover
+				color: var(--variant-fg)
+				background-color: var(--danger-500)

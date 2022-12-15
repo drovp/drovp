@@ -1,0 +1,25 @@
+.Color
+	display: inline-flex
+	align-items: center
+	gap: var(--spacing-half)
+
+	> .picker
+		position: relative
+		flex: 0 0 auto
+		+size(var(--input-height))
+		border-radius: var(--border-radius)
+		background: repeating-conic-gradient(transparent 0% 25%, #444 0% 50%) 0% 0% / 100% 100%, #333
+		background-clip: padding-box
+		border: 1px solid var(--grey-z1000)
+
+		> .color
+			+absolute(0 _ _ 0)
+			+size(100%)
+			border-radius: calc(var(--border-radius) - 1px)
+
+		> input
+			+absolute(0 _ _ 0)
+			display: block
+			+size(100%)
+			border: 0
+			opacity: 0

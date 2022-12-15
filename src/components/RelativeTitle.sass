@@ -1,0 +1,20 @@
+.RelativeTitle
+	display: inline-flex
+	align-items: center
+	min-width: 0
+	max-width: 100%
+	overflow: hidden
+	font-family: var(--font-code)
+
+	> .relative
+		flex: 0 1000000 auto
+		opacity: .5
+		+ellipsis()
+
+	> .fixed
+		flex: 0 1 auto
+		white-space: nowrap
+		+ellipsis()
+
+	> :is(.relative, .fixed) + :is(.relative, .fixed)
+		margin-left: var(--spacing-half)

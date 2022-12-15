@@ -1,0 +1,108 @@
+.CommonHeader
+	--color: var(--fg)
+	--state-bg: var(--grey-o100)
+	display: flex
+	align-items: stretch
+	justify-content: space-between
+	flex-wrap: wrap
+	color: var(--color, inherit)
+	gap: var(--spacing)
+	max-width: 100%
+
+	&.-success
+		--color: var(--success-z700)
+		--state-bg: var(--success-o100)
+
+	&.-info
+		--color: var(--info-z700)
+		--state-bg: var(--info-o100)
+
+	&.-danger
+		--color: var(--danger-z700)
+		--state-bg: var(--danger-o100)
+
+	> .state
+		display: flex
+		align-items: center
+		justify-content: center
+		flex: 0 0 auto
+		min-width: 6px
+		padding: 0 var(--spacing-half)
+		margin-right: calc(var(--spacing-half) * -1)
+		border-radius: 2px
+		color: var(--color)
+		background: var(--state-bg)
+
+		> .Icon
+			+size(var(--input-height))
+
+	> .back
+		aspect-ratio: 1/1
+		padding: 0
+		color: var(--fg)
+		margin-right: calc(var(--spacing-half) * -1)
+		background: var(--muted-100)
+		border-radius: var(--border-radius)
+
+		&:hover
+			color: var(--bg)
+			background-color: var(--fg)
+
+		&:active
+			filter: brightness(.5)
+
+		> .Icon
+			+size(1.6em)
+
+	> .title
+		flex: 1000 1 auto
+		min-width: 0
+		max-width: 100%
+
+		> h1
+			min-width: 0
+			max-width: 100%
+			font-size: 1.4em
+			line-height: 1.3
+			font-weight: bold
+			+ellipsis()
+
+		> h2
+			min-width: 0
+			max-width: 100%
+			text-transform: uppercase
+			font-size: max(10px, 0.9em)
+			line-height: 1.2
+			opacity: .6
+			+ellipsis()
+
+	:is(button, .Button)
+		align-self: stretch
+		display: flex
+		flex-direction: column
+		align-items: center
+		justify-content: center
+		min-width: min-content
+		height: auto
+		min-height: calc(var(--input-height) * 1.3)
+		padding: 0 var(--spacing-half)
+		text-align: left
+		border-radius: var(--border-radius)
+		transition: backgroun 100ms linear
+		text-align: center
+		font-size: 1.1em
+		transition: all 33ms linear
+
+		> .Icon
+			+size(1.6em)
+
+	> .actions
+		flex: 1 0 auto
+		display: flex
+		gap: var(--spacing-quarter)
+		min-width: min-content
+
+		> .Button
+			flex: 1 1 auto
+			flex-direction: row
+			flex-wrap: wrap

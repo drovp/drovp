@@ -1,0 +1,46 @@
+.Alert
+	display: flex
+	flex-wrap: wrap
+	align-items: center
+	gap: var(--spacing-half)
+	min-height: calc(var(--input-height) * 1.2)
+	padding: var(--spacing-half)
+	padding-left: var(--spacing-half)
+	color: var(--fg)
+	background: var(--variant-o100)
+	border-radius: var(--border-radius)
+
+	> .Icon
+		color: var(--variant-z600)
+		flex: 0 0 auto
+		+size(1.6em)
+
+	> header
+		flex: 1 0 10em
+		max-width: 100%
+		text-align: left
+		+selectable()
+
+		> *
+			margin: 0
+			padding: 0
+
+			& + *
+				margin-top: var(--spacing-quarter)
+
+		> :is(h1, h2, h3, h4, h5, h6)
+			font-size: 1em
+			font-weight: bold
+
+	> .Actions
+		flex: 0 1 auto
+		min-width: min-content
+		align-self: stretch
+		display: flex
+		align-items: stretch
+		gap: var(--spacing-quarter)
+		margin-left: auto
+
+		> .Button
+			height: auto
+			min-height: var(--input-height)

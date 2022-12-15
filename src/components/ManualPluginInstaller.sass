@@ -1,0 +1,48 @@
+.ManualPluginInstaller
+	display: flex
+	flex-direction: column
+	gap: var(--spacing)
+	padding: var(--spacing) 0
+	max-width: 50rem
+	margin: 0 auto
+
+	> *
+		margin: 0 var(--spacing)
+
+	> .input,
+	> .install
+		width: auto
+		max-width: none
+		font-size: 1.2em
+
+	> .install
+		height: 2.2em
+
+	> .content
+		flex: 1 1 0
+		display: flex
+		flex-direction: column
+		gap: var(--spacing)
+		min-height: 0
+		min-height: 0
+		max-height: 100%
+		margin: 0
+		padding: 0 var(--spacing)
+
+		> .installedPlugins > .TitleBar
+			margin-bottom: var(--spacing-quarter)
+
+		> .tutorial
+			dl
+				dt
+					font-weight: normal
+
+					&:not(:first-child)
+						margin-top: var(--spacing-double)
+
+					> code
+						display: block
+						padding: var(--spacing-half) var(--spacing)
+
+				dt + dd
+					margin-top: var(--spacing)

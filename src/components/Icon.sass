@@ -1,0 +1,27 @@
+.Icon
+	--size: 1.5em
+	flex: 0 0 auto
+	display: inline-flex
+	align-items: center
+	justify-content: center
+	+size(var(--size))
+	vertical-align: middle
+
+	> svg
+		+size(100%)
+		fill: currentColor
+		pointer-events: none
+
+	&.-n-npm
+		margin: -.5em 0
+
+	&.-n-logo
+		color: var(--brand)
+
+	@each $variant in $variants
+		&.-variant-#{$variant}
+			color: var(--#{$variant}-z700)
+
+.Help
+	cursor: help
+	opacity: .5

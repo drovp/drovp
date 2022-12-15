@@ -1,0 +1,29 @@
+.Spinner
+	--size: 1.2em
+	display: inline-flex
+	flex-shrink: 0
+	align-items: center
+	justify-content: center
+	+size(var(--size))
+	+min-size(var(--size))
+
+	&::after
+		content: ''
+		// Size is designed to cover 20 out of 24px, same as icon bleed
+		+size(83.333%)
+		display: block
+		animation: Spinner-rotate 500ms infinite linear
+		color: var(--variant-z700)
+		border: max(calc(var(--size) / 14), 1px) solid currentColor
+		border-right-color: transparent
+		border-left-color: transparent
+		border-radius: 50%
+
+	&:is(.-paused, html[data-freeze-animations=true] *)::after
+		animation: none
+
+@keyframes Spinner-rotate
+	0%
+		transform: rotate(0deg)
+	100%
+		transform: rotate(360deg)

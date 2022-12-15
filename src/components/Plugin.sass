@@ -1,0 +1,209 @@
+.PluginHeader
+	display: flex
+	align-items: stretch
+	gap: calc(var(--spacing) / 2)
+	max-width: 100%
+
+	> .info
+		flex: 1 1 0
+		min-width: 0
+
+		> h1
+			display: flex
+			flex-wrap: wrap
+			align-items: center
+			gap: .4em
+			margin-bottom: var(--spacing-half)
+			font-size: 1.3rem
+			font-weight: bold
+			font-family: var(--font-code)
+
+			> .PluginDisplayName
+				flex: 0 1 auto
+				min-width: 0
+
+			> .meta
+				flex: 1 0 auto
+				display: flex
+				align-items: center
+				gap: var(--spacing-half)
+
+				> .version
+					display: flex
+					align-items: center
+					color: var(--muted)
+					margin-right: auto
+					font-family: var(--font-text)
+					font-size: .8em
+					vertical-align: middle
+
+					> .update-available
+						display: flex
+						align-items: center
+						font-size: .9em
+						color: var(--success)
+						cursor: help
+
+						> .Icon
+							margin: 0 .1em
+
+				> .dependents
+					display: flex
+					align-items: center
+					gap: var(--spacing-half)
+					font-size: 1rem
+					color: var(--muted)
+
+					> span
+						display: flex
+						align-items: center
+						gap: var(--spacing-sixth)
+
+						&[title]
+							cursor: help
+
+		> h2
+			margin-top: var(--spacing-half)
+			font-size: 1rem
+			font-style: italic
+			color: var(--muted)
+
+		> .links
+			display: flex
+			margin-top: var(--spacing-half)
+			flex-wrap: wrap
+			gap: .5em
+			font-size: .9em
+
+			> .link
+				display: flex
+				align-items: center
+				max-width: 15em
+				padding: var(--spacing-sixth) var(--spacing-quarter)
+				font-family: var(--font-code)
+				color: var(--fg)
+				background: var(--darken)
+				border-radius: var(--border-radius)
+				transition: all 33ms linear
+				text-decoration: none
+				+ellipsis()
+
+				&:hover
+					color: var(--grey-z100)
+					background: var(--grey-z700)
+
+				> .Icon
+					margin-right: .3em
+					line-height: 1
+					+size(1.2em)
+
+				&.npm
+					> .Icon
+						color: var(--npm)
+						+size(1.6em)
+
+					&:hover
+						color: #fff
+						background: var(--npm)
+						> .Icon
+							color: #fff
+
+	> .actions
+		width: 8rem
+		display: flex
+		flex-direction: column
+		align-items: stretch
+		gap: var(--spacing-quarter)
+		opacity: var(--actions-opacity)
+
+		> .PluginInstallButton
+			height: calc(var(--input-height) * 1.2)
+
+		> *:last-child
+			flex: 1
+
+		> .issues
+			display: flex
+			align-items: center
+			grid-gap: .2em
+			color: var(--danger-500)
+			border: 1px dashed var(--danger-o300)
+			border-radius: var(--border-radius)
+			overflow: hidden
+
+			> *
+				flex: 0 0 auto
+
+			&::before,
+			&::after
+				content: ''
+				flex: 1
+
+		> .dependency-provider-sign
+			display: flex
+			align-items: center
+			justify-content: center
+			color: var(--muted)
+			text-align: center
+			line-height: 1.2
+			border: 2px dashed var(--muted-100)
+			border-radius: var(--border-radius)
+
+.Plugin
+	position: relative
+	display: flex
+	flex-flow: column nowrap
+	margin: var(--spacing) 0
+	gap: var(--spacing)
+
+	> *
+		margin: 0 var(--spacing)
+
+	> .navigation
+		display: flex
+		justify-content: space-between
+
+	> .content
+		flex: 1 1 0
+		margin: 0
+		padding: 0 subScrollbar(var(--spacing)) var(--spacing) var(--spacing)
+
+		> :is(.Vacant, .Markdown)
+			+fadein()
+
+		> .Markdown
+			margin: var(--spacing-half)
+
+		> .Spinner
+			+size(3em)
+			margin: var(--spacing-double) auto var(--spacing)
+
+.PluginExtensions
+	display: flex
+	flex-direction: column
+	gap: var(--spacing-quarter)
+
+	> :first-child
+		margin-top: 0
+
+.PluginDependents
+	display: flex
+	flex-direction: column
+	gap: var(--spacing-quarter)
+
+	> .PluginCards
+		gap: var(--spacing-quarter)
+
+.PluginDependentsModalContent
+	padding: 0 var(--spacing)
+	margin-bottom: var(--spacing)
+
+.DependencyMeta
+	display: flex
+	gap: .5em
+	font-weight: bold
+	text-transform: uppercase
+
+	> .Icon,
+	> .Spinner
+		+size(1.6em)

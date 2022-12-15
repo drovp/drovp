@@ -1,0 +1,123 @@
+.OperationCard
+	--height: 3.3em
+	position: relative
+	display: grid
+	grid-template: ".actions" 1fr "title actions" 1.3em "meta actions" 1.3em ".actions" 1fr / 1fr auto
+	gap: 0 4px
+	width: 100%
+	height: var(--height)
+	padding-left: var(--spacing-half)
+	color: var(--variant-z900)
+	background: var(--variant-o200)
+	border-radius: var(--border-radius)
+	transition: background 33ms linear
+	text-shadow: 1px 1px 0 var(--bottom)
+	outline-offset: -4px
+
+	&:hover
+		background: var(--variant-o300)
+
+		> header > .actions
+			display: flex
+
+	> *
+		position: relative
+		z-index: 2
+
+	> .progress
+		+absolute(0 _ _ 0)
+		z-index: 1
+		height: 100%
+		background: var(--info-o400)
+		border-radius: var(--border-radius)
+
+		&.-indeterminate
+			background-image: linear-gradient(-45deg, #ffffff08 25%, #00000008 25%, #00000008 50%, #ffffff08 50%, #ffffff08 75%, #00000008 75%, #00000008)
+			background-size: 40px 40px
+			animation: Progress-move 600ms linear infinite
+
+			&:is(html[data-freeze-animations=true] *)
+				animation: none
+
+	> header
+		grid-area: title
+		min-width: 0
+		display: flex
+		align-items: center
+		gap: var(--spacing-half)
+
+		> .OperationTitle
+			flex: 1 1 auto
+			font-weight: bold
+
+		> .stage
+			display: block
+			flex: 0 1 auto
+			min-width: 0
+			font-size: calc(var(--font-size) - 1px)
+			font-family: var(--font-code)
+			font-style: italic
+			+ellipsis()
+
+		> .state
+			font-family: var(--font-code)
+			font-style: italic
+
+		> .percent
+			font-family: var(--font-code)
+			font-weight: bold
+
+	> .actions
+		grid-area: actions
+		flex: 0 0 auto
+		display: flex
+		height: var(--height)
+		width: max-content
+
+		> .Button
+			position: relative
+			outline-offset: -4px
+			height: var(--height)
+			aspect-ratio: 1/1
+			opacity: .5
+
+			> .Icon
+				+size(1.8em)
+
+			&:hover
+				opacity: 1
+
+	> .meta
+		grid-area: meta
+		min-width: 0
+		display: flex
+		align-items: center
+		gap: var(--spacing-half)
+
+		> *
+			flex: 0 0 auto
+
+		> .spacer
+			flex: 1 1 0
+
+		> .profile
+			max-width: 30%
+			border-right: 1px solid var(--variant-o300)
+			padding-right: var(--spacing-half)
+
+			> .title
+				flex: 0 1 auto
+				+ellipsis()
+				min-width: 0
+
+		> .iconValue
+			display: flex
+			align-items: center
+			gap: .2em
+			font-family: var(--font-code)
+			font-weight: bold
+			opacity: .8
+
+		.Icon
+			font-size: 0.9em
+			opacity: .8

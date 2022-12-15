@@ -1,0 +1,330 @@
+.ProfileRoute
+	display: flex
+	flex-direction: column
+
+	> .ProfileWrapper
+		flex: 1 1 0
+
+	> .Outputs
+		flex: 0 0 auto
+		margin: auto 0 0
+
+.ProfileWrapper
+	--profile-padding: var(--spacing)
+	--drop-indicator-margin: 0
+	--border-size: 2px
+	--profile-padding-adjusted: calc(var(--profile-padding) - var(--border-size))
+	padding: var(--profile-padding-adjusted) 0
+	position: relative
+	display: flex
+	flex-direction: column
+	gap: var(--spacing)
+	border: var(--border-size) dashed transparent
+	border-radius: 4px
+	background-clip: border-box
+	transition: background 34ms linear, border-color 34ms linear
+
+	&.-dragged
+		opacity: .5
+
+	&.-drop-well
+		&.-dragged-over
+			border-color: var(--grey-z900)
+			background: var(--grey-z50)
+
+	&:is(.-has-issues, .-is-loading, .-is-staging)
+		+disabledStripes($fg: #00000006, $bg: #ffffff03)
+
+	&.-is-staging
+		color: var(--muted)
+
+	&.-has-issues > header
+		color: var(--danger-z600)
+
+	&.-is-loading > header
+		color: var(--muted)
+
+	> .open
+		+absolute(0)
+		z-index: 10
+		+size(100%)
+		background: transparent
+		border-radius: var(--border-radius)
+
+	> header
+		display: flex
+		gap: var(--spacing)
+		margin: 0 var(--profile-padding-adjusted)
+		height: var(--input-height)
+		align-items: center
+
+		> :is(.title, .placeholder)
+			flex: 1 1 0
+			text-align: left
+			font-size: 1.2em
+			font-weight: bold
+			border: 0
+			background: transparent
+			+ellipsis()
+
+			&:is(input)
+				font-size: 1.2em
+				height: var(--input-height)
+				padding: 0
+				// To round the outline
+				border-radius: 1px
+				outline-offset: 1px
+
+				&:focus
+					background: var(--darken)
+
+			&::placeholder
+				font-weight: normal
+
+		> .placeholder
+			font-weight: normal
+			font-style: italic
+			font-family: var(--font-code)
+
+			> code
+				+ellipsis()
+
+		> .adding
+			display: flex
+			flex: 0 0 auto
+			align-items: center
+			gap: var(--spacing-quarter)
+			color: var(--muted)
+			font-style: italic
+			font-family: var(--font-code)
+			max-width: min(50%, 5em)
+			min-width: 0
+
+			> .Spinner
+				--size: 1.2em
+
+			> .count
+				flex: 0 1 auto
+				min-width: 0
+				+ellipsis()
+
+		> .controls
+			display: flex
+			align-items: center
+			gap: var(--spacing-half)
+
+	> .progress
+		margin: 0 var(--profile-padding-adjusted)
+		height: calc(var(--input-height) * 2 + var(--spacing-quarter))
+
+		> *
+			height: 100%
+
+		> :is(.issues, .loading-dependencies)
+			display: flex
+			flex-direction: column
+			align-items: center
+			justify-content: center
+			padding: 0 var(--spacing)
+			font-style: italic
+			border-radius: var(--border-radius)
+
+			> .message
+				font-size: .95em
+				margin-top: -.3em
+
+			&.-danger
+				color: var(--danger-z600)
+
+			&.loading-dependencies
+				background: var(--muted-100)
+				opacity: .6
+
+			&.issues
+				font-size: 1.1em
+				background: var(--darken)
+
+	> .ProfileDetails
+		padding: 0 subScrollbar(var(--profile-padding-adjusted)) 0 var(--profile-padding-adjusted)
+
+.Profile
+	--drop-indicator-margin: var(--spacing-half)
+
+	> *
+		margin: 0 var(--profile-padding-adjusted)
+
+	> .progress
+		margin-top: calc(var(--spacing-half) * -1)
+
+	> :is(.ProfileOptions, .ProfileExport, .ProfileDetails, .ProfileInstructions)
+		flex: 1 1 0
+		min-height: 0
+		margin: 0
+		padding: 0 subScrollbar(var(--profile-padding-adjusted)) 0 var(--profile-padding-adjusted)
+
+	> .ProfileOptions
+		margin-top: -.4em
+
+		> .CommonProfileOptions
+			margin: 0 0 var(--spacing)
+
+		> .Options
+			border-top: 1px solid var(--grey-o200)
+
+.ProfileOptions
+	> .TitleBar
+		margin-bottom: var(--spacing-half)
+
+		> .Button
+			align-self: stretch
+			height: auto
+			margin: calc(var(--spacing-half) * -1)
+			margin-left: var(--spacing)
+
+	> .TitleBar + .Options
+		margin: var(--spacing) var(--spacing-half)
+
+.CommonProfileOptions
+	> .options
+		display: flex
+		align-items: stretch
+		gap: var(--spacing-half)
+
+		> .option
+			position: relative
+			flex: 0 0 auto
+
+			&.maxThreads
+				flex: 1 0 auto
+				max-width: 22em
+
+			> h1
+				+absolute(0 _ _ var(--spacing-quarter))
+				z-index: 2
+				display: flex
+				align-items: center
+				gap: .3em
+				margin: 0
+				font-style: italic
+				color: var(--grey-z800)
+				line-height: 1.2
+				text-shadow: 0 1px 0 var(--bg), -1px 1px 0 var(--bg), 1px 1px 0 var(--bg)
+				pointer-events: none
+
+				> .count
+					display: inline-block
+					padding: 0 .3em .1em
+					border-radius: var(--border-radius)
+					color: var(--grey-z0)
+					background: var(--grey-z600)
+					text-shadow: none
+					pointer-events: all
+					max-width: 12em
+					+ellipsis()
+
+			> .row
+				--height: calc(var(--input-height) + var(--spacing-half))
+				position: relative
+				display: flex
+				align-items: center
+				justify-content: space-between
+				gap: .2em
+				margin-top: 1em
+				height: var(--height)
+
+				> .helpToggle
+					height: 100%
+
+					> .Icon
+						flex: 0 0 auto
+						+size(1.2em)
+
+			&.maxThreads
+				.controls
+					flex: 1 0 0
+					display: flex
+					align-items: center
+					gap: var(--spacing-half)
+					height: 100%
+
+					> .Slider
+						flex: 1 1 0
+						min-width: 0
+						width: auto
+
+					> .Input
+						+size(2.5em 100%)
+
+			&.modifiers
+				margin-right: auto
+
+				.Button
+					height: 100%
+
+					> .count
+						min-width: 2.2em
+						text-align: center
+						font-weight: bold
+
+			&.utils
+				.Button
+					+size(var(--height))
+
+	> .expando
+		margin-top: var(--spacing-half)
+		padding: var(--spacing)
+		color: var(--muted)
+		background: var(--darken)
+		border-radius: var(--border-radius)
+
+		hr
+			border: 0
+			border-top: 1px solid var(--muted-100)
+
+		.modifierDescriptions
+			padding: 0
+
+			li
+				list-style: none
+
+.ProfileInstructions
+	> .Instructions
+		margin-bottom: var(--spacing)
+
+.ProfileExport
+	display: flex
+	flex-direction: column
+	gap: var(--spacing)
+
+	> *
+		flex: 0 0 auto
+
+	> .entry
+		display: flex
+		flex-wrap: wrap
+		align-items: center
+		gap: var(--spacing-half) var(--spacing)
+
+		> label
+			min-width: 33%
+			font-weight: bold
+
+		> span, p
+			color: var(--muted)
+
+		> p
+			line-height: 1.3
+
+		> .preview
+			width: 100%
+			padding: var(--spacing-half) var(--spacing-half) var(--spacing-quarter)
+			border-radius: var(--border-radius)
+			background: var(--darken)
+
+			> .value
+				+size(100% 3.5em)
+				word-break: break-all
+				color: var(--muted)
+				font-family: var(--font-code)
+				overflow: hidden
+				mask-image: linear-gradient(to top, transparent, black 60%)

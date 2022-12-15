@@ -1,0 +1,140 @@
+.AppNav
+	--link-bg: var(--bg-darker)
+	flex: none
+	display: flex
+	position: relative
+	background: var(--link-bg)
+	box-shadow: inset 0 -1px 0 var(--darken)
+	padding: 0 2px
+
+	> button
+		flex: 1 1 auto
+		position: relative
+		display: flex
+		height: 4rem
+		min-width: 0
+		padding: 0 .5em
+		margin-top: 2px
+		flex-direction: column
+		justify-content: center
+		gap: .1em .4em
+		align-items: center
+		font-weight: 500
+		color: var(--muted)
+		border: 0
+		cursor: default
+		text-transform: uppercase
+		border-radius: 3px
+		border-bottom-left-radius: 0
+		border-bottom-right-radius: 0
+		background: linear-gradient(to top, var(--bg) 60%, transparent 90%) 0 -100% / 100% 200% repeat-x
+		transition: all 33ms linear
+
+		@media (--narrow)
+			height: 2.8rem
+
+		&.-to-events
+			margin-left: var(--spacing-half)
+
+		&:is(.-to-settings, .-to-about-junction)
+			max-width: 4rem
+
+			> .title
+				display: none
+
+		&:hover
+			color: var(--fg)
+
+		// Discrete border between buttons
+		&:not(:first-child, .-active, .-active + *)::after
+			content: ''
+			+absolute(50% _ _ 0)
+			width: 1px
+			height: 40%
+			background: var(--muted-100)
+			transform: translateY(-50%)
+
+		&.-active::before,
+		&.-active::after
+			content: ''
+			position: absolute
+			bottom: 0
+			+size(6px)
+			background: var(--bg)
+
+		&.-active::before
+			right: 100%
+			clip-path: path('M 0 6 C 3 6 6 3 6 0 L 7 7')
+
+		&.-active::after
+			left: 100%
+			clip-path: path('M 6 6 C 3 6 0 3 0 0 L -1 7')
+
+		&:focus-visible
+			outline-offset: -0.3rem
+
+		&.-active
+			color: var(--fg)
+			opacity: 1
+			box-shadow: 0 1px 0 0 var(--bg)
+			background-position: 0% 0%
+
+		&.-exact
+			--link-bg: var(--bg)
+			background-position: 0% 100%
+
+		> .icon,
+		> .title
+			position: relative
+			z-index: 2
+
+		> .icon
+			flex: 0 0 auto
+			display: inline-block
+			+size(1.7em)
+
+			> .Icon
+				+size(100%)
+
+			> .count
+				+absolute(_ _ 45% 55%)
+				font-size: .8em
+				padding: .1em .3em
+				line-height: 1
+				box-shadow: 0 0 0 3px var(--link-bg)
+				z-index: 2
+				transition: all 33ms linear
+
+			> .indicator
+				+absolute(_ _ 65% 70%)
+				box-shadow: 0 0 0 3px var(--link-bg)
+				z-index: 2
+				transition: all 33ms linear
+				+size(.5rem)
+				border-radius: 50%
+
+				@each $variant in $variants
+					&.-#{$variant}
+						background: var(--#{$variant}-z700)
+
+		> .title
+			flex: 0 1 auto
+			+ellipsis()
+			font-size: .8em
+			font-weight: bold
+
+			@media (--narrow)
+				display: none
+
+		[data-uimode="compact"] &
+			height: 2.8rem
+			flex-direction: row
+			text-align: center
+			white-space: nowrap
+
+			> .Icon
+				margin-right: .5em
+
+			> .count
+				position: static
+				margin-left: .5em

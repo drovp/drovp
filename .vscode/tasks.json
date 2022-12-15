@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Check",
+			"command": "npm run check",
+			"type": "shell",
+			"presentation": {
+				"reveal": "always",
+				"group": "splitterminal",
+				"panel": "dedicated",
+				"clear": true
+			},
+			"problemMatcher": "$tsc",
+			"windows": {
+				"options": {
+					"shell": {
+						"executable": "cmd.exe",
+						"args": ["/d", "/c"]
+					}
+				}
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}

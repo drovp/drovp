@@ -1,0 +1,108 @@
+.Select
+	--padding: var(--spacing-half)
+	--gap: 2px
+	display: inline-flex
+	gap: var(--gap)
+	border-radius: var(--border-radius)
+	min-width: 0
+
+	&:not(.-multi, .-transparent)
+		background: var(--darken)
+		box-shadow: inset 0 0 0 1px var(--variant-z300)
+
+	&:is(.-multi)
+		background: transparent
+		--padding: var(--spacing-quarter)
+		gap: 4px
+		flex-wrap: wrap
+
+	> button
+		--text: var(--variant-z700)
+		--tag-color: var(--bg)
+		position: relative
+		display: inline-flex
+		flex: 1 1 auto
+		justify-content: center
+		align-items: center
+		gap: .2em
+		min-width: 3em
+		color: var(--text)
+		height: var(--input-height)
+		padding: 0 var(--padding)
+		background: transparent
+		border-radius: var(--border-radius)
+		transition: all 66ms linear
+		overflow: hidden
+
+		&:not(.-multi *, .-transparent *, :first-child, .-selected, .-selected + *, :hover, :hover + *)::before
+			content: ''
+			+absolute(30% _ _ 0)
+			+size(1px 40%)
+			background: var(--grey-o500)
+
+		&:is(:disabled, .-disabled > *)
+			filter: grayscale(50%)
+			opacity: .5
+			transition-duration: 0s
+
+			&:after
+				content: ''
+				display: block
+				+absolute(0 _ _ 0)
+				+size(100%)
+				+disabledStripes()
+
+		&:not(:disabled, .-selected):hover
+			--text: var(--variant-z800)
+			background: var(--variant-o300)
+
+		&:not(.-multi > *).-selected
+			--text: var(--variant-z100)
+			--tag-color: var(--variant-z700)
+			background: var(--variant-z800)
+
+		&:is(.-multi > *)
+			--tag-color: var(--bg)
+			flex: 0 0 auto
+			background: var(--variant-o200)
+
+			&:is(.-transparent > *):not(.-selected, .-selected > *)
+				background: transparent
+
+			&.-selected
+				--text: var(--variant-z100)
+				--tag-color: var(--variant)
+				background: var(--variant-z800)
+
+			> .check
+				+size(var(--input-height))
+				margin: 0 .1rem 0 calc(var(--padding) * -1)
+				color: transparent
+				background: var(--darken-100)
+				pointer-events: none
+				transition: all 66ms linear
+
+				> .Icon
+					+size(80%)
+
+				&:not(.-transparent > * > *)
+					border-right: 1px solid var(--bg)
+
+				&:is(.-transparent > * > *)
+					border-radius: var(--border-radius)
+					background: var(--variant-o300)
+
+				&:is(.-selected > *)
+					color: var(--variant-z100)
+					border-color: var(--variant-z600)
+
+		.Tag
+			transition: all 66ms linear
+			--color: var(--tag-color)
+			--background: var(--text)
+
+			&:first-child
+				margin-left: calc(var(--padding) * -0.6)
+
+			&:last-child
+				margin-right: calc(var(--padding) * -0.4)

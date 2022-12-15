@@ -1,0 +1,17 @@
+.PluginInstallButton
+	display: flex
+	min-width: 0
+	align-items: stretch
+	justify-content: space-between
+	gap: calc(var(--spacing) / 4)
+	height: var(--input-height)
+	border-radius: var(--border-radius)
+
+	> :first-child
+		flex: 1 1 0
+
+	> .Button,
+	> .Progress
+		min-width: 0
+		height: 100%
+		white-space: nowrap

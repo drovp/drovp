@@ -1,0 +1,35 @@
+.PluginCard
+	display: flex
+	flex-direction: column
+	align-items: stretch
+	text-align: left
+	padding: var(--spacing-half)
+	background: var(--lighten-100)
+	border-radius: var(--border-radius)
+	transition: all 33ms linear
+
+	&:hover
+		background: var(--lighten-500)
+
+	&:is(.-missing, .-has-issues)
+		color: var(--danger-z700)
+		box-shadow: inset 0 0 0 2px var(--danger)
+
+	&.-installed
+		color: var(--info-z700)
+		box-shadow: inset 0 0 0 2px var(--info)
+
+	&.-update-available
+		color: var(--success-z700)
+		box-shadow: inset 0 0 0 2px var(--success)
+
+	> .PluginHeader
+		margin-left: var(--spacing-quarter)
+		flex: 1
+
+.PluginCards
+	+autogrid()
+	gap: calc(var(--spacing) / 2)
+
+	> .PluginCard
+		min-width: 0

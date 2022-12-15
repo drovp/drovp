@@ -1,0 +1,95 @@
+.UITests
+	display: flex
+	flex-direction: column
+	gap: var(--spacing-half)
+
+	> .Nav
+		flex: 0 0 auto
+		margin: 0 var(--spacing)
+
+	> .section
+		padding: var(--spacing)
+		padding-right: subScrollbar(var(--spacing))
+
+.UITestsSection
+	padding: 0 var(--spacing) var(--spacing)
+
+	> h1
+		display: flex
+		gap: .2em
+		align-items: center
+		margin: 0 0 1em
+		font-size: 1.1em
+		font-weight: bold
+		text-transform: uppercase
+
+		> .Button
+			padding: 0 .2em
+			text-transform: initial
+			height: auto
+			font-size: 1rem
+
+	> h2
+		margin: .5em 0 0 0
+		font-family: var(--font-code)
+		color: var(--grey)
+
+	> div
+		display: flex
+		flex-wrap: wrap
+		gap: var(--spacing)
+
+	.groupWrap
+		display: flex
+		gap: 1em
+		width: 100%
+
+.ColorTheme
+	> h1
+		margin: 0
+		font-size: 1.2em
+		text-transform: uppercase
+
+	> .Palette
+		margin-top: var(--spacing)
+
+.Palette
+	display: flex
+	flex-direction: column
+	align-items: center
+	background: var(--bg)
+	color: var(--fg)
+
+	> .colors
+		display: flex
+		gap: .5rem
+		padding: .5rem
+
+		> div
+			flex: 0 0 auto
+			display: flex
+			align-items: center
+			justify-content: center
+			padding: 0 .5em
+			overflow: hidden
+			color: #fff
+			+size(calc(var(--input-height) * 1.2))
+			border-radius: var(--border-radius)
+
+			&.divider
+				width: 0em
+				margin: 0 -.3em
+
+			&.-space-around
+				margin: 0 .5em
+
+.UITestIcons
+	display: flex
+	flex-flow: row wrap
+	align-items: center
+	justify-content: center
+	gap: var(--spacing-three-quarters)
+
+	> .Icon
+		--size: 48px
+		background: linear-gradient(to bottom, #8882 8.333%, transparent 8.333%, transparent 91.667%, #8882 91.667%), linear-gradient(to right, #8882 8.333%, transparent 8.333%, transparent 91.667%, #8882 91.667%)

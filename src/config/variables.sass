@@ -1,0 +1,74 @@
+@use 'sass:math'
+
+// Media queries
+@custom-media --narrow (width < 460px)
+
+=variantProxy($name, $min: 100, $max: 900, $step: 50)
+	$steps: math.div($max - $min, $step)
+
+	--variant: var(--#{$name})
+
+	@for $i from 0 through $steps
+		$level: $min + ($i * $step)
+		--variant-#{$level}: var(--#{$name}-#{$level})
+		--variant-z#{$level}: var(--#{$name}-z#{$level})
+
+	@for $i from 1 through 5
+		--variant-o#{$i * 100}: var(--#{$name}-o#{$i * 100})
+
+:root
+	--font-text: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif
+	--font-code: Hasklig, Consolas, Monaco, monospace
+	--font-size: 14px
+
+	// UI sizing
+	--input-height: 2em
+	--spacing: 1.2rem
+	--spacing-double: calc(var(--spacing) * 2)
+	--spacing-half: calc(var(--spacing) / 2)
+	--spacing-third: calc(var(--spacing) / 3)
+	--spacing-quarter: calc(var(--spacing) / 4)
+	--spacing-sixth: calc(var(--spacing) / 6)
+	--spacing-three-quarters: calc(var(--spacing) * 0.75)
+	--controlbar-height: calc(var(--spacing) * 2.4)
+	--border-radius: 3px
+	--scrollbar-size: 6px
+	--max-article-width: 50em
+
+	&[data-uimode=compact]
+		--input-height: 1.8em
+		--spacing: 1rem
+
+	--background: var(--bg)
+	--brand: #69c1ff
+	--npm: #cb3837
+
+	--z-effect: 1000
+	--z-menu: 500
+	--z-modal: 400
+	--z-staging-bar: 300
+	--z-notification: 200
+	--z-queue-bar: 100
+
+// Light theme
+[data-theme='light'],
+[data-theme='dark'] .-inverted-color-scheme
+	@declarations lightTheme
+
+// Dark theme
+[data-theme='dark'],
+[data-theme='light'] .-inverted-color-scheme
+	@declarations darkTheme
+
+// Variants & their proxies
+$variants: accent, success, info, warning, danger
+
+:root
+	color: var(--fg)
+
+:root, .-primary
+	+variantProxy('grey')
+
+@each $variant in $variants
+	.-#{$variant}
+		+variantProxy($variant)

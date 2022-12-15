@@ -1,0 +1,46 @@
+.ProcessorCard
+	display: grid
+	grid-template-columns: 1fr auto auto auto
+	grid-template-rows: minmax(var(--spacing-half), 1fr) auto auto minmax(var(--spacing-half), 1fr)
+	grid-template-areas: ". . . actions" "header meta1 meta2 actions" "description description description actions" ". . . actions"
+	gap: 0 5%
+	height: auto
+	min-height: calc(var(--input-height) * 2.4)
+
+	> header
+		grid-area: header
+
+		> h2
+			font-style: italic
+
+	> .meta
+		display: flex
+		align-items: center
+		gap: .2em
+		font-size: 1.1em
+		font-weight: bold
+		line-height: 1.2
+		color: var(--variant-z700)
+
+		&[title], [title]
+			cursor: help
+		&.issues
+			grid-area: meta1
+		&.profiles
+			grid-area: meta2
+
+	> p
+		grid-area: description
+		margin: 0 0 0 var(--spacing)
+		font-style: italic
+		line-height: 1.2
+		opacity: .5
+
+	> .actions
+		grid-area: actions
+
+		> button
+			padding: 0 var(--spacing)
+
+			> .Icon
+				+size(2em)

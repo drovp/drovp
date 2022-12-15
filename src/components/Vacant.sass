@@ -1,0 +1,36 @@
+.Vacant
+	display: flex
+	flex-direction: column
+	gap: var(--spacing)
+	padding: calc(var(--spacing) * 2)
+	color: var(--variant-z700)
+	word-break: break-word
+
+	> :is(.Icon, .Spinner)
+		display: block
+		+size(3em)
+		margin: 0 auto
+
+	> h1
+		font-size: 1.6rem
+		font-style: italic
+		text-align: center
+
+	> .content
+		font-style: italic
+		max-width: 40rem
+		margin: var(--spacing) auto
+
+	> .details
+		--padding: var(--spacing-half)
+		background: var(--darken-300)
+		border-radius: var(--border-radius)
+
+	> .Actions
+		display: flex
+		justify-content: center
+		gap: calc(var(--spacing) / 2)
+
+		> .Button
+			--input-height: auto
+			padding: var(--spacing-half)

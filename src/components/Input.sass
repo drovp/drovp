@@ -1,0 +1,85 @@
+.Input
+	position: relative
+	display: inline-flex
+	align-items: center
+	+size(20em var(--input-height))
+	max-width: 100%
+	color: var(--variant-z900)
+	vertical-align: middle
+
+	> input
+		position: relative
+		z-index: 2
+		flex: 1 1 0
+		min-width: 0
+		display: block
+		+size(100%)
+		padding: .6em
+		font-family: var(--font-code)
+		background: transparent
+		border: 0
+		// To round the outline
+		border-radius: 1px
+
+		$tran: 300ms $out-expo
+		transition: color $tran, background $tran, transform $tran
+
+		&::placeholder
+			color: var(--muted-300)
+
+		&[type="number"]::-webkit-inner-spin-button
+			-webkit-appearance: none
+
+		&[type="date"]::-webkit-calendar-picker-indicator
+			opacity: 0
+
+	&.-transparent
+		color: var(--variant-z700)
+
+		> .bg
+			display: none
+
+	&.-disabled
+		filter: grayscale(50%)
+		opacity: .5
+
+		&:after
+			content: ''
+			display: block
+			z-index: 3
+			+absolute(0 _ _ 0)
+			+size(100%)
+			border-radius: var(--border-radius)
+			+disabledStripes()
+
+	> .bg
+		z-index: 1
+		+absolute(0 _ _ 0)
+		+size(100%)
+		background: var(--darken)
+		border-radius: var(--border-radius)
+		border: 1px solid var(--variant-z300)
+
+		&:is(input:focus ~ *)
+			border-color: var(--variant-z600)
+
+	> button
+		position: relative
+		z-index: 2
+		flex: 0 0 auto
+		height: 85%
+		aspect-ratio: 1
+		display: flex
+		align-items: center
+		justify-content: center
+		background: transparent
+		color: var(--variant-o500)
+
+		&:last-of-type
+			margin-right: var(--spacing-quarter)
+
+		> .Icon
+			--size: 80%
+
+		&:hover
+			color: var(--variant-z700)

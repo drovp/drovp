@@ -1,0 +1,23 @@
+.OptionsTweaker
+	display: flex
+	flex-direction: column
+	min-height: 0
+	max-height: 100%
+
+	> .Nav
+		flex: 0 0 auto
+		margin: var(--spacing) var(--spacing) 0
+
+	> :is(.ProfileInstructions, .TweakerOptions)
+		max-height: 100%
+
+	> .ProfileInstructions
+		padding: var(--spacing)
+		padding-right: subScrollbar(var(--spacing))
+
+	> .TweakerOptions
+		padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)
+
+	> .TweakerInputs
+		margin: var(--spacing) 0
+		padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)

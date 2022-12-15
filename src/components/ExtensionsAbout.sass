@@ -1,0 +1,29 @@
+.ExtensionDetails
+	display: flex
+	align-items: flex-start
+	align-content: flex-start
+	flex-wrap: wrap
+	gap: var(--spacing-quarter)
+
+	> *
+		flex: 1 1 25rem
+		display: flex
+		flex-direction: column
+		gap: var(--spacing-quarter)
+		max-width: 100%
+
+	> .description
+		margin: 0
+		padding: var(--spacing)
+		background: var(--grey-z150)
+
+	> .plugin
+		> .PluginCard
+			flex: 1 0 auto
+
+	> .processor
+		> .ProcessorCard
+			flex: 1 0 auto
+
+	> .dependencies
+		width: 100%

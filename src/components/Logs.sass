@@ -1,0 +1,27 @@
+.Logs
+	display: flex
+	align-items: stretch
+	min-height: 0
+	color: var(--variant-z900)
+	background: var(--darken)
+	border-radius: var(--border-radius)
+	+selectable()
+
+	> .logs
+		flex: 1 1 0
+
+		> pre
+			flex: 1 1 0
+			display: block
+			margin: 0
+			padding: var(--spacing-half)
+			overflow: auto
+
+			em.empty
+				color: var(--muted)
+				width: max-content
+				display: block
+				margin: 0 auto
+
+		> .children
+			margin: var(--spacing-half)

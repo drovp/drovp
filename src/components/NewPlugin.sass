@@ -1,0 +1,50 @@
+.NewPlugin
+	flex: 1 0 0
+	display: flex
+	flex-direction: column
+	align-items: center
+	flex-wrap: nowrap
+	gap: calc(var(--spacing) / 2)
+	min-height: 0
+	width: 100%
+	margin: 0 auto
+	padding: var(--spacing)
+	padding-right: subScrollbar(var(--spacing))
+
+	> .Nav
+		margin: 0 var(--spacing)
+
+	> header
+		margin-bottom: var(--spacing)
+
+		> h1
+			font-size: 1.5em
+			font-weight: bold
+			margin-bottom: var(--spacing-half)
+
+
+	> .Options
+		width: 100%
+		margin-bottom: var(--spacing)
+
+	> .errors,
+	> .actions
+		width: 100%
+		max-width: var(--max-article-width)
+
+	> .errors
+		display: flex
+		flex-direction: column
+		gap: calc(var(--spacing) / 2)
+		+fadein()
+
+	> .actions
+		flex: 0 0 auto
+		display: block
+		height: calc(var(--input-height) * 1.5)
+		+fadein()
+
+		> .create
+			+size(100%)
+			font-size: 1.2em
+			text-transform: uppercase

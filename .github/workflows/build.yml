@@ -1,0 +1,118 @@
+name: Build/release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-mac:
+    name: Build (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - run: npm ci
+      - run: node_modules/.bin/gulp package
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: mac
+          path: |
+            out/*.dmg
+            out/*-contents-mac-*.7z
+
+  build-windows:
+    name: Build (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - run: npm ci
+      - run: node_modules/.bin/gulp package
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: windows
+          path: |
+            out/*.exe
+            out/*.zip
+
+  build-linux:
+    name: Build (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - run: npm ci
+      - run: node_modules/.bin/gulp package
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: node_modules/.bin/gulp binaries
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: linux
+          path: |
+            out/*.AppImage
+            out/*.7z
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-mac, build-windows]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: windows
+          path: assets
+
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: mac
+          path: assets
+
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: linux
+          path: assets
+
+      - name: Generate a changelog
+        id: git-cliff
+        uses: orhun/git-cliff-action@v1
+        with:
+          config: cliff.toml
+          args: --verbose --latest
+
+      - run: cat ${{ steps.git-cliff.outputs.changelog }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: ${{ steps.git-cliff.outputs.changelog }}
+          draft: true
+          files: assets/*

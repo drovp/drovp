@@ -1,0 +1,45 @@
+.Changelog
+	> .Spinner
+		display: block
+		margin: 10vh auto
+		+size(4rem)
+
+	> article
+		margin-bottom: var(--spacing-double)
+
+		> header
+			display: flex
+			gap: var(--spacing-half)
+			align-items: center
+			padding-bottom: var(--spacing-half)
+			margin-bottom: var(--spacing-half)
+			background: var(--muted-50)
+			padding: var(--spacing-half)
+			border-radius: 3px
+
+			&:is(.-current > *)
+				background: var(--success-o100)
+				color: var(--success-z700)
+
+			> hgroup
+				flex: 1 1 auto
+				display: flex
+				flex-wrap: wrap
+				gap: 0 var(--spacing-half)
+				align-items: center
+
+				> h1
+					flex: 1 1 auto
+					font-weight: bold
+					font-size: 1.6em
+					line-height: 1.2
+
+				> h2
+					opacity: .5
+
+			> .Icon
+				+size(1.8em)
+				margin-left: auto
+
+		> .body
+			padding: var(--spacing-half)

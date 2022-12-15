@@ -1,0 +1,138 @@
+.Button
+	--tag-color: var(--variant)
+	--tag-background: var(--variant-fg)
+	flex: 0 0 auto
+	position: relative
+	appearance: none
+	display: inline-flex
+	align-items: center
+	justify-content: center
+	align-content: center
+	gap: .3em
+	height: var(--input-height)
+	width: auto
+	padding: var(--spacing-quarter)
+	vertical-align: middle
+	color: var(--variant-fg)
+	font-weight: bold
+	text-decoration: none
+	background-color: var(--variant-z400)
+	border: 1px solid transparent
+	border-radius: var(--border-radius)
+	transition: color 33ms linear, background-color 33ms linear, border-color 33ms linear
+
+	// Base color
+	&.-muted:not(:hover)
+		--variant: var(--grey)
+		--variant-z100: var(--grey-z100)
+		--variant-z400: var(--grey-z400)
+		--variant-z600: var(--grey-z600)
+		--variant-z700: var(--grey-z700)
+		--variant-z900: var(--grey-z900)
+		--variant-o200: var(--grey-o200)
+
+	&:not(.-disabled):is(:hover, .-active),
+	&.-selected.-selected
+		color: var(--variant-fg)
+		background-color: var(--variant)
+
+	&:not(.-disabled):active
+		filter: brightness(.8)
+
+	&.-large
+		height: calc(var(--input-height) * 1.2)
+		padding-left: var(--spacing-half)
+		padding-right: var(--spacing-half)
+
+	&.-disabled
+		filter: grayscale(50%)
+		opacity: .5
+		+disabledStripes()
+
+	&.-multiline
+		height: auto
+		flex-wrap: wrap
+
+	&.-semitransparent
+		color: var(--variant-z700)
+		background-color: var(--variant-o200)
+		--tag-color: var(--bg)
+		--tag-background: var(--variant-z700)
+
+		&:not(.-disabled):hover
+			color: var(--variant-fg)
+			background-color: var(--variant)
+			--tag-color: var(--variant)
+			--tag-background: var(--variant-fg)
+
+	&.-transparent
+		color: var(--variant-z700)
+		background-color: transparent
+		--tag-color: var(--bg)
+		--tag-background: var(--variant-z700)
+
+		&:not(.-disabled):hover
+			color: var(--variant-fg)
+			background-color: var(--variant)
+			--tag-color: var(--variant)
+			--tag-background: var(--variant-fg)
+
+	&.-outline
+		color: var(--variant-z700)
+		background-color: transparent
+		border-color: var(--variant)
+		--tag-color: var(--bg)
+		--tag-background: var(--variant-z700)
+
+		&:not(.-disabled):hover
+			color: var(--variant-fg)
+			--tag-color: var(--variant)
+			--tag-background: var(--variant-fg)
+
+		&.-semitransparent
+			border-color: var(--background-semi)
+
+	&.-dashed
+		border-style: dashed
+
+	&.-underline
+		color: var(--variant-z700)
+		background: transparent
+		border: 0
+		padding-left: 0
+		padding-right: 0
+		--tag-color: var(--bg)
+		--tag-background: var(--variant-z700)
+
+		&.-disabled
+			+disabledMask()
+
+		&:not(.-disabled):hover
+			color: var(--variant-z900)
+			background: transparent !important
+			--tag-background: var(--variant-z900)
+
+			&::after
+				content: ''
+				+absolute(100% _ _ 0)
+				+size(100% 2px)
+				border-radius: 999em
+				background: var(--variant-z700)
+
+	&.-loading > *:not(.loader)
+		visibility: hidden
+
+	> .loader
+		+absolute(50% _ _ 50%)
+		transform: translate(-50%, -50%)
+
+	> .txt
+		flex: 0 1 auto
+		min-width: 0
+
+		&:not(.-multiline > *)
+			+ellipsis()
+
+	.Tag
+		--color: var(--tag-color)
+		--background: var(--tag-background)

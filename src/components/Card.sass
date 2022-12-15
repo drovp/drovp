@@ -1,0 +1,101 @@
+.Card
+	--height: calc(var(--input-height) * 2)
+	position: relative
+	display: flex
+	align-items: center
+	justify-content: space-between
+	gap: 5%
+	height: var(--height)
+	color: var(--variant-z900)
+	background: var(--variant-o100)
+	border-radius: var(--border-radius)
+	text-align: left
+
+	&:is(button):hover
+		background: var(--variant-o300)
+
+	> header
+		flex: 0 1 30%
+		min-width: 0
+		display: flex
+		flex-direction: column
+		margin-left: var(--spacing)
+		white-space: nowrap
+		overflow: hidden
+		text-align: left
+
+		> h1
+			width: 100%
+			font-size: 1.2em
+			font-weight: bold
+			font-family: var(--font-code)
+			+ellipsis()
+
+		> h2
+			width: 100%
+			font-size: .8em
+			font-weight: bold
+			text-transform: uppercase
+			opacity: .5
+			+ellipsis()
+
+		> p
+			margin: var(--spacing-quarter) 0 0
+
+	> .meta
+		flex: 0 20 auto
+		align-self: stretch
+		display: flex
+		align-items: center
+		justify-content: center
+		flex-wrap: wrap
+		gap: .2em
+
+	> .actions
+		flex: 0 0 auto
+		position: relative
+		z-index: 2
+		margin-left: 0
+		align-self: stretch
+		display: flex
+		align-items: stretch
+		gap: 2px
+
+		> button
+			height: auto
+			padding-left: .5em
+			padding-right: .5em
+
+.VersionCard
+	min-height: 4rem
+
+	> .meta
+		justify-content: flex-start
+
+		> .versions
+			display: grid
+			grid-template-columns: auto 1fr
+			grid-auto-rows: auto
+			gap: 0 .5em
+			font-family: var(--font-code)
+
+			.Spinner
+				+size(1.3em)
+
+			> .name
+				text-align: right
+
+			> .version
+				font-weight: bold
+
+	> .actions > .Button
+		display: flex
+		flex-direction: column
+		align-items: center
+		justify-content: center
+		gap: 0
+		font-weight: normal
+
+.CardsGrid
+	+autogrid(25em)
+	gap: var(--spacing-quarter)

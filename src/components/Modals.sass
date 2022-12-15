@@ -1,0 +1,113 @@
+.Modal
+	--close-button-size: 1.2em
+	+fixed(0 _ _ 0)
+	+size(100vw 100vh)
+	display: flex
+	flex-direction: column
+	align-items: center
+	background: var(--curtain)
+	backdrop-filter: blur(2px)
+	overscroll-behavior: contain
+	z-index: var(--z-modal)
+
+	&::before,
+	&::after
+		display: block
+		content: ''
+	&::before
+		height: 2.5vh
+	&::after
+		flex: 1 0 2.5vh
+
+	> .box
+		position: relative
+		width: 40rem
+		min-height: 10em
+		+max-size(90vw calc(97.5vh - var(--input-height) - var(--spacing)))
+		text-align: left
+		animation: Modal-reveal 300ms $out-quart
+		color: var(--fg)
+		display: flex
+		flex-direction: column
+		justify-content: space-between
+		background: var(--bg)
+		border-radius: var(--border-radius)
+		border: 1px solid var(--variant-z300)
+		box-shadow: 0 5px 15px 5px var(--shadow)
+		will-change: transform, opacity
+
+		&:is([data-theme=light] *)
+			border-color: var(--variant-z600)
+
+		> .title
+			padding: var(--spacing-double)
+			color: var(--variant-z800)
+			font-size: 1.1em
+			line-height: 1.2
+			font-weight: bold
+			+selectable()
+
+			&:is(.-has-any-content > * > *)
+				padding-bottom: var(--spacing)
+
+			&:is(.-has-message > * > *)
+				padding-bottom: 0
+
+		> .content
+			min-height: 0
+			max-height: 100%
+
+			> .message
+				padding: var(--spacing-double)
+				+selectable()
+
+				&:is(.-has-title > * > * > *)
+					padding-top: var(--spacing)
+
+				&:not(:only-child)
+					padding-bottom: var(--spacing)
+
+			> .details
+				flex: 0 1 auto
+				margin: 1px
+				margin-right: 0
+				padding: var(--spacing) var(--spacing-double)
+				background: var(--darken)
+				border-radius: var(--border-radius)
+				max-height: none
+
+		> .actions
+			display: flex
+			padding: var(--spacing) var(--spacing)
+			background: var(--darken-700)
+			// background: linear-gradient(to bottom, var(--darken), transparent 10px), var(--darken)
+			// border-top: 1px solid var(--lighten)
+			background-clip: padding-box
+
+			&:is(.title + *)
+				margin-top: calc(var(--spacing) * -1)
+
+			> .Actions
+				flex: 0 0 auto
+				display: flex
+				justify-content: flex-end
+				gap: var(--spacing-half)
+
+				&.main
+					margin-left: auto
+
+				> .Button
+					min-width: 5em
+
+.CloseAllModals
+	+fixed(_ _ var(--spacing-half) 50%)
+	z-index: calc(var(--z-modal) + 10)
+	transform: translateX(-50%)
+
+@keyframes Modal-reveal
+	from
+		transform: translateY(-20px)
+		opacity: 0
+	to
+		transform: translateY(0px)
+		opacity: 1

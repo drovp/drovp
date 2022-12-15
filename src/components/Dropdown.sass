@@ -1,0 +1,29 @@
+.Dropdown
+	position: relative
+	display: inline-block
+	height: var(--input-height)
+	max-width: 100%
+	color: var(--variant-z900)
+	background: var(--darken)
+	padding: 0 .3em
+	font-family: var(--font-code)
+	border: 1px solid var(--variant-z300)
+	border-radius: var(--border-radius)
+
+	&:focus
+		border-color: var(--variant-z600)
+
+	&[multiple]
+		padding: 0
+		height: calc(var(--input-height) * 5)
+
+	&[disabled]
+		filter: grayscale(50%)
+		+disabledStripes()
+		opacity: .5
+
+	option
+		padding: .3em .8em
+		&:not([multiple] > *)
+			color: var(--fg)
+			background: var(--bg)

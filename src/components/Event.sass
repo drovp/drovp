@@ -1,0 +1,92 @@
+.Event
+	--background: var(--grey-z200)
+	--background-hover: var(--grey-z300)
+	position: relative
+	display: flex
+	align-items: center
+	justify-content: space-between
+	width: 100%
+	color: var(--variant-z900)
+	height: 3.5rem
+	background: transparent
+
+	// Background - so that it doesn't "clip out" of .stripe below
+	&:before
+		content: ''
+		+absolute(0 _ _ 2px)
+		+size(calc(100% - 2px) 100%)
+		background: var(--variant-o300)
+		border-radius: 0 var(--border-radius) var(--border-radius) 0
+
+	&:hover:before
+		background: var(--variant-z300)
+
+	&.-compact
+		height: 3.2rem
+
+		> header > .message
+			font-size: .95em
+			margin-top: -.2rem
+
+		> .Actions
+			display: none
+
+		&:hover > .Actions
+			display: flex
+
+	> *
+		position: relative
+
+	> .stripe
+		display: flex
+		align-items: center
+		justify-content: center
+		padding: 0 2px
+		height: 100%
+		color: var(--variant-z200)
+		background: var(--variant-z800)
+		border-radius: var(--border-radius)
+
+		> .Icon
+			+size(2em)
+			margin: 0 var(--spacing-quarter)
+
+	header
+		flex: 1 1 0
+		max-width: 100%
+		min-width: 0
+		display: flex
+		flex-flow: column
+		align-items: stretch
+		justify-content: center
+
+		> .title,
+		> .message
+			min-width: 0
+			max-width: 100%
+			margin: 0 var(--spacing) 0 var(--spacing-three-quarters)
+			text-align: left
+			+ellipsis()
+
+		> .title
+			font-weight: bold
+
+		> .message
+			margin-top: -0.2em
+			font-style: italic
+			opacity: .66
+
+	&.-new
+		animation: Event-slide-in 100ms linear
+
+	> .delete
+		height: 100%
+		aspect-ratio: 4/5
+
+@keyframes Event-slide-in
+	0%
+		transform: translateX(50px)
+		opacity: 0
+	100%
+		transform: translateX(0px)
+		opacity: 1

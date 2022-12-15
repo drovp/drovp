@@ -1,0 +1,77 @@
+.ProfileNew
+	flex: 0 1 auto
+	display: flex
+	flex-direction: column
+	min-height: 0
+	padding: var(--spacing) 0
+	gap: var(--spacing)
+
+	> .category
+		flex: 0 0 auto
+		margin: 0 var(--spacing)
+
+	> .content
+		flex: 0 1 auto
+		min-height: 0
+		padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)
+
+		> button
+			padding: var(--spacing-three-quarters)
+			color: var(--grey-z900)
+			background: var(--grey-z200)
+			border-radius: var(--border-radius)
+			width: 100%
+			text-align: left
+			transition: all 33ms linear
+
+			& + *
+				margin-top: 4px
+
+			&:hover
+				background: var(--grey-z300)
+
+			> header
+				display: flex
+				align-items: center
+				justify-content: space-between
+				gap: var(--spacing)
+				line-height: 1.2
+
+				> h1
+					font-size: 1.2em
+					margin: 0
+					font-family: var(--font-code)
+					font-weight: bold
+
+			> section
+				margin-top: var(--spacing-quarter)
+				display: flex
+				align-items: center
+				justify-content: space-between
+
+				> p
+					font-size: 1em
+					font-style: italic
+					margin: 0
+					opacity: .6
+
+				> .Icon
+					flex: 0 0 auto
+					+size(1.5em)
+					opacity: .5
+
+					&:is(:hover > * > *)
+						opacity: 1
+
+	> .actions
+		flex: 0 0 auto
+		display: flex
+		justify-content: flex-end
+		gap: var(--spacing)
+		padding: 0 var(--spacing)
+
+		> .Button
+			flex: 0 1 0
+
+		> .cancel
+			margin-right: auto

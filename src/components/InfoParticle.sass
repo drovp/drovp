@@ -1,0 +1,16 @@
+.InfoParticle
+	+absolute(0 _ _ 0)
+	z-index: var(--z-effect)
+	transform: translate(-50% -50%)
+	padding: .5em .8em
+	width: max-content
+	max-width: 30vw
+	color: var(--bg)
+	background: var(--fg)
+	border-radius: var(--border-radius)
+	pointer-events: none
+
+	@each $variant in $variants
+		&.-#{$variant}
+			color: var(--#{$variant}-z200)
+			background: var(--#{$variant}-z950)

@@ -1,0 +1,291 @@
+.ProfileImport
+	display: flex
+	flex-direction: column
+	align-items: stretch
+	gap: var(--spacing)
+	min-height: 0
+	max-height: 100%
+
+	.-relative
+		display: inline-block !important
+		flex: 0 1 auto
+		max-width: 100%
+		min-width: 0
+		+ellipsis()
+
+.PIActions
+	display: flex
+	justify-content: flex-end
+	gap: var(--spacing)
+	padding: 0 var(--spacing) var(--spacing)
+
+	> .Button
+		flex: 0 1 0
+
+	> .cancel
+		margin-right: auto
+
+.PIWarningScreen
+	> .copy
+		display: flex
+		flex-direction: column
+		justify-content: center
+		gap: var(--spacing)
+		padding: var(--spacing-double)
+		color: var(--warning-z700)
+
+		> h1
+			margin: 0 auto
+			color: var(--warning)
+			font-size: 2em
+			font-weight: bold
+			text-transform: uppercase
+
+		> label
+			display: flex
+			align-items: center
+			gap: .5em
+			margin: 0 auto
+
+.PIEditScreen
+	> .editor
+		display: flex
+		flex-direction: column
+		gap: var(--spacing)
+		max-height: 100%
+		padding: var(--spacing)
+
+		> .actions
+			display: flex
+			gap: 2px
+
+			> .Button
+				flex: 1 1 auto
+
+		> .Textarea
+			width: 100%
+			height: 50vh
+
+.PIImportScreen
+	min-height: 0
+	max-height: 100%
+	display: flex
+	flex-direction: column
+
+	> .form
+		flex: 0 1 auto
+		min-height: 0
+		max-height: 100%
+		padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)
+		margin: var(--spacing) 0
+
+		> * + *
+			margin-top: var(--spacing-three-quarters)
+			padding-top: var(--spacing-three-quarters)
+
+		> * > header
+			display: flex
+			align-items: center
+			gap: var(--spacing)
+
+			> h1
+				flex: 1
+				text-transform: uppercase
+				font-size: 1.2em
+
+			> h2
+				font-family: var(--font-code)
+				font-weight: bold
+				font-size: 1.2em
+				display: flex
+				align-items: center
+				gap: .2em
+				color: var(--variant-z700)
+
+		> .import-code
+			display: flex
+			gap: var(--spacing-half)
+			--input-height: 2.4em
+
+			> .Input
+				flex: 1 1 0
+
+		> .title > header
+			> h1
+				flex: 0 0 auto
+
+			> .Input
+				flex: 1 1 0
+
+		> .processor
+			display: flex
+			flex-direction: column
+			gap: var(--spacing-half)
+
+			> header
+				max-width: 100%
+				display: flex
+				align-items: center
+				gap: var(--spacing)
+
+				> h2
+					max-width: 100%
+					min-width: 0
+					flex: 0 1 auto
+					display: flex
+					align-items: center
+					gap: var(--spacing-quarter)
+					font-weight: bold
+					font-size: 1.2em
+
+					> .Dropdown
+						flex: 0 1 auto
+						max-width: 100%
+						min-width: 0
+
+.PIPluginInstaller
+	display: flex
+	flex-direction: column
+	gap: var(--spacing-quarter)
+
+	.spacer
+		flex: 1 1 0
+		height: 0
+		border-top: 1px dotted var(--grey-o300)
+
+	> .versions
+		display: flex
+		flex-flow: row wrap
+		align-items: center
+		justify-content: space-between
+		gap: var(--spacing-quarter) var(--spacing)
+		margin: 0
+		padding: 0
+
+		> li
+			list-style: none
+			display: flex
+			align-items: center
+			gap: var(--spacing-quarter)
+			font-family: var(--font-code)
+			font-weight: bold
+			color: var(--variant-z800)
+
+			&.source
+				flex: 1 1 auto
+				width: 100%
+				min-width: 0
+
+				> .spacer
+					margin: 0 var(--spacing-three-quarters)
+
+			> .Icon
+				opacity: .5
+
+			> .title
+				flex: 0 1 auto
+				min-width: 0
+				display: flex
+				align-items: center
+				gap: .2em
+
+	> .installed + *
+		margin-top: var(--spacing-quarter)
+
+	> .actions
+		display: flex
+		align-items: stretch
+		flex-wrap: wrap
+		gap: var(--spacing-half)
+		margin-top: var(--spacing-quarter)
+
+		> .Button
+			flex: 1 1 0
+			min-width: 12em
+			display: flex
+			flex-direction: column
+			align-items: flex-start
+			justify-content: flex-start
+			flex-wrap: nowrap
+			gap: .4em
+			text-align: left
+			height: auto
+			line-height: 1.2
+			padding: var(--spacing-half)
+
+			> *
+				flex: 0 0 auto
+
+			> .title
+				font-weight: bold
+
+			> .description
+				opacity: .7
+				text-transform: none
+
+.PIOptionsViewer
+	display: flex
+	flex-direction: column
+	gap: var(--spacing-half)
+
+	> header
+		display: flex
+		align-items: center
+		justify-content: space-between
+
+		> .Nav
+			--height: var(--input-height)
+
+	.Pre
+		padding: var(--spacing-quarter) var(--spacing-half)
+		background: var(--darken)
+		border-radius: var(--border-radius)
+
+		.placeholder
+			font-style: italic
+			opacity: .4
+
+	dl
+		margin: 0
+
+		:is(dt, dd)
+			border: 1px dashed var(--grey-z400)
+
+		dt
+			display: flex
+			align-items: center
+			justify-content: space-between
+			gap: var(--spacing-half)
+			font-family: var(--font-code)
+			font-weight: bold
+			padding: var(--spacing-quarter) var(--spacing-half)
+			color: var(--grey-z700)
+			border-bottom: 0
+			background: var(--darken-300)
+			+selectable()
+			border-radius: 3px 3px 0 0
+
+			&.-warning
+				color: var(--warning-z900)
+				background: var(--warning-z200)
+				border-color: var(--warning)
+
+			&:is(dd + *)
+				margin-top: var(--spacing-half)
+
+			> .name
+				flex: 0 1 auto
+				min-width: 0
+				+ellipsis()
+
+			> .Icon.-warning
+				cursor: help
+
+		dd
+			margin: 0
+			border-top: 0
+			border-radius: 0 0 3px 3px
+
+			&.-warning
+				background: var(--warning-z100)
+				border-color: var(--warning)

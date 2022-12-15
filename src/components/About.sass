@@ -1,0 +1,153 @@
+.AboutJunction
+	display: flex
+	flex-direction: column
+	gap: var(--spacing)
+	padding: var(--spacing) 0
+
+	> .Nav
+		margin: 0 var(--spacing)
+
+	> :is(.About, .Events, .Tutorial, .UITests, .AppChangelog)
+		flex: 1 1 0
+		min-height: 0
+
+.About
+	display: flex
+	flex-direction: column
+	gap: var(--spacing-double)
+	padding: var(--spacing)
+
+	> footer
+		text-align: center
+		color: var(--grey)
+
+	> .versions > :not(:first-child)
+		margin-top: var(--spacing-half)
+
+.AboutHeader
+	display: flex
+
+	> .logo
+		flex: 0 0 auto
+		+size(4rem)
+		margin: var(--spacing-quarter) 10px 0
+		color: var(--brand)
+
+	> .meta
+		flex: 1 1 0
+		display: flex
+		flex-direction: column
+		gap: var(--spacing-quarter)
+
+		> h1
+			font-size: 2rem
+			line-height: 1.2
+			font-weight: bold
+
+		> .links
+			display: flex
+			flex-wrap: wrap
+			gap: var(--spacing-half)
+
+.ListBox
+	> h1
+		margin: 0
+		font-size: 1.2em
+		text-transform: uppercase
+
+	p
+		color: var(--grey)
+		margin: var(--spacing-half) 0 0
+
+	> ul
+		list-style: none
+		padding: 0
+		margin: var(--spacing) 0 0
+
+		> li
+			display: flex
+			align-items: center
+			justify-content: space-between
+			gap: var(--spacing)
+			padding: var(--spacing-half)
+			border-radius: var(--border-radius)
+
+			@media (max-width: 20rem)
+				flex-direction: column
+				align-items: flex-start
+				gap: 0
+
+			&:nth-child(odd)
+				background: var(--grey-o100)
+
+			> h1
+				margin: 0
+				font-size: 1em
+				font-weight: bold
+				white-space: nowrap
+
+				> .muted
+					color: var(--grey)
+					font-weight: normal
+
+			> a
+				max-width: 100%
+				+ellipsis()
+
+			code
+				user-select: text
+
+.AppPaths
+	> h1
+		margin: 0
+		font-size: 1.2em
+		text-transform: uppercase
+
+	> .paths
+		min-width: 0
+		max-width: 100%
+		list-style: none
+		padding: 0
+		margin: var(--spacing-half) 0 0
+
+		> li
+			--li-height: 3.5em
+			height: var(--li-height)
+			padding: 0 var(--spacing-quarter) 0 var(--spacing-half)
+			display: flex
+			align-items: center
+			border-radius: var(--border-radius)
+
+			&:nth-child(odd)
+				background: var(--grey-o100)
+
+			> .path
+				flex: 1 1 0
+				min-width: 0
+				margin-right: var(--spacing)
+				cursor: help
+				+selectable()
+
+				> code
+					display: block
+					min-width: 0
+					max-width: 100%
+					line-height: 1.25
+					+ellipsis()
+
+					&.name
+						font-weight: bold
+					&.value
+						font-size: .92em
+						color: var(--grey)
+
+			> .Button
+				flex: 0 0 auto
+				aspect-ratio: 1/1
+				width: auto
+				height: calc(100% - var(--spacing-half))
+				padding: 0
+				font-size: 1.2em
+
+.AppChangelog
+	padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)

@@ -1,0 +1,17 @@
+.PluginDisplayName
+	display: inline-flex
+	align-items: center
+	gap: .5em
+	font-weight: bold
+	font-family: var(--font-code)
+
+	> .name
+		flex: 0 1 auto
+		word-break: break-word
+		min-width: 0
+		+ellipsis()
+
+	> .stamp
+		+size(1em)
+		margin-right: -.3em
+		flex: 0 0 auto

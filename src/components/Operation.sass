@@ -1,0 +1,137 @@
+.Operation
+	display: flex
+	flex-direction: column
+	gap: var(--spacing)
+	margin: var(--spacing) 0
+	max-height: 100%
+
+	> *
+		margin: 0 var(--spacing)
+
+	> header
+		flex-wrap: nowrap
+
+		> .title > h1
+			+selectable()
+
+			&.-id:before
+				content: '#'
+				opacity: .5
+
+		> .actions > .to-profile
+			margin-right: var(--spacing-quarter)
+
+	> .Progress
+		height: calc(var(--input-height) * 1.3)
+
+	> .navigation
+		display: flex
+		justify-content: space-between
+		gap: var(--spacing-half)
+
+		.-to-logs > .Tag
+			margin-left: .2em
+
+	> .ExtensionDetails
+		flex: 1 1 0
+		margin: 0
+		padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)
+
+	> .InputsOutputs
+		flex: 1 1 0
+		min-height: 0
+		margin-right: 0
+
+	> :is(.Logs, .PayloadEditor)
+		flex: 1 1 0
+		min-height: 0
+
+.OperationMeta
+	display: flex
+	flex-flow: row wrap
+	margin: 0
+	padding: 0
+	gap: 1px
+	border-radius: 2px
+	overflow: hidden
+
+	> li
+		flex: 1 1 auto
+		list-style: none
+		background: var(--lighten-100)
+		padding: var(--spacing-half) var(--spacing)
+
+		> span
+			display: block
+
+		> .title
+			opacity: .5
+			font-weight: bold
+
+		> .value
+			+selectable()
+
+			&:is(.id > *)
+				font-family: var(--font-code)
+
+				&::before
+					content: '#'
+					opacity: .5
+
+.InputsOutputs
+	// Height of one .Item
+	--input-size: calc(var(--input-height) * 1.3)
+	--max-inputs-height: 30%
+	display: flex
+	flex-direction: column
+
+	> .inputs
+		flex: 0 0 calc(var(--input-size) * var(--items))
+		min-height: var(--input-size)
+		max-height: var(--max-inputs-height)
+
+	> .outputs
+		flex: 1 0 var(--input-size)
+		min-height: var(--input-size)
+
+	> .Items
+		padding-right: subScrollbar(var(--spacing))
+
+	> .placeholder
+		display: flex
+		align-items: center
+		justify-content: center
+		color: var(--muted)
+		font-style: italic
+
+	> .divider
+		flex: 0 0 auto
+		display: flex
+		align-items: center
+		padding: var(--spacing-half)
+		margin: var(--spacing-half) var(--spacing) var(--spacing-half) 0
+		border-radius: var(--border-radius)
+		cursor: ns-resize
+
+		> .count
+			display: flex
+			align-items: center
+			width: max-content
+			color: var(--muted)
+			border: 1px solid transparent
+			border-left: 0
+			border-right: 0
+			gap: .5em
+
+			> .Icon
+				margin: 0 -.3em
+
+			> .value
+				font-weight: bold
+				color: var(--fg)
+
+		> .spacer
+			flex: 1 1 0
+			height: 1px
+			margin: 0 var(--spacing)
+			background: var(--grey-o300)
