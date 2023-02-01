@@ -51,7 +51,6 @@ export async function createStore({
 	isWindowsPortable,
 	settingsFile = 'settings.json',
 	profilesFile = 'profiles.json',
-	processorsOptionsFile = 'processors.json',
 }: {
 	appPath: string;
 	userDataPath: string;
@@ -59,7 +58,6 @@ export async function createStore({
 	settingsFile?: string;
 	sessionFile?: string;
 	profilesFile?: string;
-	processorsOptionsFile?: string;
 }) {
 	// Settings need to load before we initialize other states, since they might
 	// depend on some values.
@@ -80,7 +78,7 @@ export async function createStore({
 	store.outputs = new Outputs(store);
 	store.plugins = new Plugins(store);
 	store.dependencies = new Dependencies(store);
-	store.processors = new Processors(Path.join(userDataPath, processorsOptionsFile), store);
+	store.processors = new Processors(store);
 	store.profiles = new Profiles(Path.join(userDataPath, profilesFile), store);
 	store.worker = new Worker(store);
 	store.recentFiles = new ExpiringSet<string>({

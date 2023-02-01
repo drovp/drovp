@@ -352,16 +352,14 @@ export class Processor {
 
 export class Processors {
 	store: Store;
-	storeFilePath: string;
 	all = signal<Processor[]>([]);
 	byId = signal<Map<string, Processor>>(new Map());
 	optionsData: Record<string, Record<string, any> | undefined> = {};
 	changeReactionDisposer: Disposer | null = null;
 	[Symbol.iterator] = () => this.all()[Symbol.iterator]();
 
-	constructor(storeFilePath: string, store: Store) {
+	constructor(store: Store) {
 		this.store = store;
-		this.storeFilePath = storeFilePath;
 	}
 
 	sorted = computed(() => {

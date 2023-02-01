@@ -260,8 +260,8 @@ process.on('message', async (serializedOperation: SerializedOperation) => {
 		// Set requested process priority
 		const priorityName = 'PRIORITY_' + serializedOperation.priority;
 		if (priorityName in OS.constants.priority) {
-			const constant = priorityName as keyof typeof OS.constants.priority; // why `in` type guarding no work?
-			const requestedPriority = OS.constants.priority[constant];
+			const priorityConstantName = priorityName as keyof typeof OS.constants.priority;
+			const requestedPriority = OS.constants.priority[priorityConstantName];
 
 			// Might not work on all platforms, let it just fail silently
 			try {

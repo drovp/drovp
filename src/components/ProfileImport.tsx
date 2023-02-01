@@ -749,7 +749,7 @@ function WarningScreen({onClose, onAcknowledged}: {onClose: () => void; onAcknow
 			</div>
 
 			<PIActions onClose={onClose}>
-				<Button large variant="warning" onClick={onAcknowledged}>
+				<Button large variant="success" onClick={onAcknowledged}>
 					I understand <Icon name="arrow-right" />
 				</Button>
 			</PIActions>
@@ -811,7 +811,7 @@ function EditScreen({
 						onClick={onBack}
 						tooltip="Discard changes and return to import screen"
 					>
-						<Icon name="arrow-left" /> Discard
+						<Icon name="arrow-left" /> Back
 					</Button>
 					<Button
 						class="submit"

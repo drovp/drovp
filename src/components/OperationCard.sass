@@ -100,23 +100,24 @@
 		> .spacer
 			flex: 1 1 0
 
-		> .profile
-			max-width: 30%
-			border-right: 1px solid var(--variant-o300)
-			padding-right: var(--spacing-half)
-
-			> .title
-				flex: 0 1 auto
-				+ellipsis()
-				min-width: 0
-
 		> .iconValue
 			display: flex
 			align-items: center
 			gap: .2em
 			font-family: var(--font-code)
-			font-weight: bold
 			opacity: .8
+
+		> .profile
+			display: block
+			flex: 0 1 auto
+			border-right: 1px solid var(--variant-o300)
+			padding-right: var(--spacing-half)
+			min-width: 0
+			+ellipsis()
+
+			> .Icon
+				vertical-align: bottom
+				margin-right: 0.1em
 
 		.Icon
 			font-size: 0.9em

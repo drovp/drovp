@@ -33,9 +33,26 @@ export const ProfileCard = observer(function ProfileCard({profile, style, clicka
 	const completed = profile.batch.completed();
 	const errors = profile.batch.errors();
 	const title = profile.title();
+	const containerRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const container = containerRef.current;
+
+		// Visualize newly created profiles
+		if (container && Date.now() - profile.createdAt < 1000) {
+			container.animate(
+				[
+					{backgroundColor: getComputedStyle(container).getPropertyValue('--info-o500')},
+					{backgroundColor: 'transparent'},
+				],
+				{duration: 1300}
+			);
+		}
+	}, []);
 
 	return (
 		<ProfileWrapper
+			innerRef={containerRef}
 			class="ProfileCard"
 			profile={profile}
 			onClick={clickable === false ? undefined : () => history.push(`/profiles/${profile.id}`)}
@@ -255,7 +272,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 						class="rowButton -remove"
 						style={`top:calc(${itemHeight} * ${r})`}
 						onClick={() => category.deleteRow(r)}
-						title="Remove the row below"
+						title="Remove row below"
 					>
 						<Icon name="trash" />
 					</button>
@@ -269,7 +286,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 						class="rowButton -add"
 						style={`top:0`}
 						onClick={() => category.insertRowAt(r)}
-						title="Add row"
+						title="Add row here"
 					>
 						<Icon name="plus" />
 					</button>

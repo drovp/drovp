@@ -38,6 +38,7 @@ import {compressToEncodedURIComponent} from 'lz-string';
 export interface SerializedProfile {
 	id: string;
 	processorId: string;
+	createdAt?: number;
 	title?: string;
 	commonOptions?: OptionsData;
 	options?: OptionsData;
@@ -169,6 +170,7 @@ export const gridPrecision = 0.00002;
 export class Profile {
 	store: Store;
 	id!: string;
+	createdAt: number;
 	categoryId: Signal<string>;
 	processorId: string;
 	processorName: string;
@@ -194,7 +196,7 @@ export class Profile {
 	_added = 0; // Number of items added by current addItems() operations thus far
 	addingListeners = new Set<AddingListener>();
 
-	constructor(data: SetOptional<SerializedProfile, 'position'> & {categoryId: string}, store: Store) {
+	constructor(data: SetOptional<SerializedProfile, 'position' | 'createdAt'> & {categoryId: string}, store: Store) {
 		this.store = store;
 		this.id = data.id;
 		this.categoryId = signal(data.categoryId);
@@ -203,6 +205,7 @@ export class Profile {
 		this.processorId = data.processorId;
 		this.version = signal(data.version);
 		this.outputs = new ProfileOutputs(store.outputs, this);
+		this.createdAt = parseInt(`${data.createdAt}`, 10) || Date.now();
 
 		let pluginName: string;
 		let processorName: string;
@@ -1100,6 +1103,7 @@ export class Profile {
 			id: this.id,
 			processorId: this.processorId,
 			title: this.title(),
+			createdAt: this.createdAt,
 			commonOptions: toJS(this.commonOptions),
 			options: toJS(this.optionsData),
 			version: this.version(),

@@ -61,7 +61,8 @@ export const OperationCard = observer(({operation, showProfileTitle}: OperationC
 			<div class="meta">
 				{showProfileTitle === true && (
 					<div class="iconValue profile" title={operation.profile.title()}>
-						<Icon name="profile" /> <span class="title">{operation.profile.title()}</span>
+						<Icon name="profile" />
+						{operation.profile.title()}
 					</div>
 				)}
 
@@ -83,7 +84,7 @@ export const OperationCard = observer(({operation, showProfileTitle}: OperationC
 					</div>
 				)}
 
-				<div class="iconValue logsCount" title="Logs count">
+				<div class="iconValue logsCount" title="Logged messages">
 					<Icon name="notes" /> {operation.logsCount()}
 				</div>
 
