@@ -171,6 +171,14 @@ export const schema = makeOptionsSchema<SerializedSettings>()([
 		description: `When copying import codes, use a compact mode that only includes options that differ from defaults. Creates a considerably smaller import code, but has a small potential for re-creating profiles that don't exactly match the original (when plugin decided to change its defaults without bumping major version).`,
 	},
 	{
+		name: 'operationsProcessPriority',
+		type: 'select',
+		options: ['LOW', 'BELOW_NORMAL', 'NORMAL', 'ABOVE_NORMAL', 'HIGH', 'HIGHEST'],
+		default: defaults.operationsProcessPriority,
+		title: 'Process priority',
+		description: `Priority to set for all operations' child processes. Might not work on all platforms.`,
+	},
+	{
 		name: 'operationsHistoryLimit',
 		type: 'number',
 		min: 1,

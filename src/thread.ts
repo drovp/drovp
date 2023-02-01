@@ -1,10 +1,11 @@
-import {throttle, normalizePath} from 'lib/utils';
+import {eem, throttle, normalizePath} from 'lib/utils';
 import {promises as FS} from 'fs';
+import OS from 'os';
 import manifest from 'manifest';
 import type {OperationStage, OperationTitle, OperationLogLine, OperationMeta, OperationOutput} from 'models/operations';
 import {createProgress} from 'models/progress';
 import type {PayloadData, Processor, ProcessorUtils, ProgressData, OutputMeta} from '@drovp/types';
-import type {SerializedOperationPayload, ThreadConfig} from 'models/worker';
+import type {SerializedOperation, ThreadConfig} from 'models/worker';
 
 export interface ThreadReady {
 	type: 'ready';
@@ -184,7 +185,7 @@ function createUtils(id: string): Utils {
 }
 
 // Listen for and process operations
-process.on('message', async (serializedOperation: SerializedOperationPayload) => {
+process.on('message', async (serializedOperation: SerializedOperation) => {
 	if (currentOperationUtils) {
 		handleError(
 			new Error(
@@ -206,16 +207,17 @@ process.on('message', async (serializedOperation: SerializedOperationPayload) =>
 
 	// Replace native console.log with the utils log
 	console.log = utils.log;
+	const serializedPayload = serializedOperation.payload;
 
 	// Decode base64 encoded binary blobs
-	for (let item of serializedOperation.inputs || []) {
+	for (let item of serializedPayload.inputs || []) {
 		if (item && 'kind' in item && item.kind === 'blob') {
 			// @ts-ignore
 			item.contents = Buffer.from(item.contents, 'base64');
 		}
 	}
 
-	const payload = serializedOperation as PayloadData;
+	const payload = serializedPayload as PayloadData;
 
 	// Shorthand for first item in inputs array
 	Object.defineProperty(payload, 'input', {get: () => payload?.inputs?.[0]});
@@ -253,6 +255,22 @@ process.on('message', async (serializedOperation: SerializedOperationPayload) =>
 				end(error);
 				return;
 			}
+		}
+
+		// Set requested process priority
+		const priorityName = 'PRIORITY_' + serializedOperation.priority;
+		if (priorityName in OS.constants.priority) {
+			const constant = priorityName as keyof typeof OS.constants.priority; // why `in` type guarding no work?
+			const requestedPriority = OS.constants.priority[constant];
+
+			// Might not work on all platforms, let it just fail silently
+			try {
+				if (OS.getPriority() !== requestedPriority) OS.setPriority(requestedPriority);
+			} catch (error) {
+				utils.log(`Couldn't set process priority to "${priorityName}". Error message: ${eem(error)}`);
+			}
+		} else {
+			throw new Error(`Can't set process priority, priority name "${serializedOperation.priority}" is invalid.`);
 		}
 
 		// Execute operation

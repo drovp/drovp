@@ -1,4 +1,5 @@
 type Variant = 'accent' | 'success' | 'info' | 'warning' | 'danger';
+type ProcessPriority = 'LOW' | 'BELOW_NORMAL' | 'NORMAL' | 'ABOVE_NORMAL' | 'HIGH' | 'HIGHEST';
 
 /**
  * Node module manifest.

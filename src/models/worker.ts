@@ -12,6 +12,11 @@ import type {ProgressData, Item} from '@drovp/types';
 import {computed} from 'statin';
 import {eem, makePromise, throttle} from 'lib/utils';
 
+export interface SerializedOperation {
+	id: string;
+	priority: ProcessPriority;
+	payload: SerializedOperationPayload;
+}
 export type SerializedOperationPayload =
 	| {
 			id: string;
@@ -239,9 +244,13 @@ export class Thread {
 				tmpPayload.inputs = serializedItems;
 			}
 
-			const serializedPayload = tmpPayload as SerializedOperationPayload;
+			const serializedOperation = {
+				id: operation.id,
+				priority: this.store.settings.operationsProcessPriority(),
+				payload: tmpPayload,
+			} satisfies SerializedOperation;
 
-			this.process!.send(serializedPayload);
+			this.process!.send(serializedOperation);
 			await promise;
 		} catch (error) {
 			this.job?.operation.handleOutput({kind: 'error', message: eem(error, true)});

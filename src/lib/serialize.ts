@@ -374,7 +374,7 @@ export async function dataTransferItem(
 	 */
 	if (itemKind === 'file') {
 		const fileItem = item.getAsFile() as File;
-console.log(fileItem);
+
 		// Is blob
 		if (!fileItem.path && fileItem.type && fileItem.size > 0) {
 			return {

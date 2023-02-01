@@ -18,6 +18,7 @@ export const defaults = {
 	closeToTray: false,
 	alwaysOnTop: false,
 	compactImportCodes: true,
+	operationsProcessPriority: 'NORMAL' as ProcessPriority,
 	operationsHistoryLimit: 1000,
 	outputsHistoryLimit: 1000,
 	operationLogLimit: 100000,
