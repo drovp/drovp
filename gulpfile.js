@@ -33,8 +33,8 @@ const argv = require('minimist')(process.argv.slice(2), {default: argvDefaults})
  */
 const ENV = {
 	NODE_ENV: argv.production ? 'production' : 'development',
-	FORCED_USER_DATA_PATH: argv.production ? false : Path.join(process.cwd(), argv.userData),
 };
+if (!argv.production) ENV.DROVP_FORCED_USER_DATA_PATH = Path.join(process.cwd(), argv.userData);
 const PATHS = {
 	assets: ['src/windows/*/*.html', 'src/assets/**/*', `!**/*.icns`],
 	build: 'build',

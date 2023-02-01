@@ -18,7 +18,7 @@ const IS_MAC = process.platform === 'darwin';
 const IS_WIN = process.platform === 'win32';
 const IS_LINUX = process.platform === 'linux';
 const APP_PATH = app.getAppPath();
-const FORCED_USER_DATA_PATH = process.env.FORCED_USER_DATA_PATH;
+const FORCED_USER_DATA_PATH = process.env.DROVP_FORCED_USER_DATA_PATH;
 let isWindowsPortable = false;
 const appReadyPromise = new Promise<void>((resolve) => {
 	ipcMain.handle('ready', () => {
