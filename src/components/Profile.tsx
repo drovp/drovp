@@ -265,6 +265,14 @@ export const Profile = observer(function Profile({profile, section, onSectionCha
 					</div>
 				)}
 				<div class="controls">
+					<button
+						class="processor-name"
+						title={`Processor: ${profile.processorId}`}
+						onClick={() => history.push(`/processors/${encodeURIComponent(profile.processorId)}`)}
+					>
+						<Icon name="processor" />
+						{profile.processorName}
+					</button>
 					<Button
 						variant="danger"
 						semitransparent
@@ -599,8 +607,8 @@ const ProfileExport = observer(function ProfileExport({profile}: {profile: Profi
 				<p>
 					<em>
 						Only include options that differ from defaults. Creates a considerably smaller import code, but
-						has a small potential for creating profiles that don't exactly match the original (when
-						plugin changed its defaults without bumping major version).
+						has a small potential for creating profiles that don't exactly match the original (when plugin
+						changed its defaults without bumping major version).
 					</em>
 				</p>
 			</div>

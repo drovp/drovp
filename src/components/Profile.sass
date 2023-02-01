@@ -113,6 +113,21 @@
 			align-items: center
 			gap: var(--spacing-half)
 
+			> .processor-name
+				max-width: 25vw
+				+ellipsis()
+				font-family: var(--font-code)
+				word-spacing: -0.3em
+				color: var(--muted)
+				background: transparent
+
+				> .Icon
+					margin-right: .1em
+					vertical-align: bottom
+
+				&:hover
+					color: var(--accent-z700)
+
 	> .progress
 		margin: 0 var(--profile-padding-adjusted)
 		height: calc(var(--input-height) * 2 + var(--spacing-quarter))
