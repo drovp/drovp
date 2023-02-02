@@ -271,7 +271,7 @@ async function package() {
 
 	// Force production environment
 	ENV.NODE_ENV = 'production';
-	ENV.FORCED_USER_DATA_PATH = false;
+	delete ENV.DROVP_FORCED_USER_DATA_PATH;
 
 	// Ensure out exists
 	await FSP.mkdir(PATHS.out, {recursive: true});
