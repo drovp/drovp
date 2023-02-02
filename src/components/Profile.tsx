@@ -458,7 +458,7 @@ const CommonProfileOptions = observer(function CommonProfileOptions({profile}: {
 							onClick={() => toggleSection('threads')}
 							tooltip="Toggle help"
 						>
-							<Icon name={section === 'threads' ? 'chevron-up' : 'chevron-down'} />
+							<Icon name={section === 'threads' ? 'info-up' : 'info-down'} />
 						</Button>
 					</div>
 				</div>
@@ -473,7 +473,7 @@ const CommonProfileOptions = observer(function CommonProfileOptions({profile}: {
 							tooltip="Toggle help"
 						>
 							<span class="count">{profile.allModifiers().length}</span>
-							<Icon name={section === 'modifiers' ? 'chevron-up' : 'chevron-down'} />
+							<Icon name={section === 'modifiers' ? 'info-up' : 'info-down'} />
 						</Button>
 					</div>
 				</div>

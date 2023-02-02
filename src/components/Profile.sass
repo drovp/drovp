@@ -114,7 +114,7 @@
 			gap: var(--spacing-half)
 
 			> .processor-name
-				max-width: 25vw
+				max-width: 30vw
 				+ellipsis()
 				font-family: var(--font-code)
 				word-spacing: -0.3em
@@ -185,6 +185,9 @@
 
 		> .Options
 			border-top: 1px solid var(--grey-o200)
+
+			&:is([data-uimode=compact] *)
+				border: 0
 
 .ProfileOptions
 	> .TitleBar

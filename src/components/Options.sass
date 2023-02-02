@@ -25,14 +25,14 @@
 	> .add-collection-item
 		display: flex
 		width: 100%
-		height: 3em
+		padding: var(--spacing) 0
 		margin-bottom: var(--spacing-double)
 
 		&:is(.collection-group-actions + *, .OptionDivider + *)
 			margin-top: var(--spacing)
 
-	> :is(.OptionCategory + .OptionDivider, .OptionDivider + .OptionDivider)
-		margin-top: var(--spacing)
+	> :is(.OptionCategory, .OptionCategory + .OptionDivider, .OptionDivider + .OptionDivider)
+		margin: var(--spacing) 0
 
 .Option
 	position: relative
@@ -40,27 +40,38 @@
 	flex-wrap: wrap
 	align-items: flex-start
 	gap: .4em 1em
-	padding: var(--spacing) 0
+	padding: var(--spacing-half) 0
 
 	&:not(:first-child, .OptionDivider + *)
 		border-top: 1px solid var(--grey-o100)
+
+	&:is([data-uimode=compact] *)
+		padding: var(--spacing-third) 0
+		border: 0
 
 	&.-collection-item
 		border-top: 0
 		padding: var(--spacing-half) 0
 
 	> .title
-		flex: 0 1 auto
+		position: relative
+		flex: 0 1 40%
 		grid-area: title
 		order: 0
-		width: 33%
 		min-width: 9em
-		font-weight: bold
-		word-break: break-word
+		display: flex
+		align-items: center
 		text-align: left
+		font-weight: bold
 		min-height: var(--input-height)
 		line-height: var(--input-height)
-		+ellipsis()
+		background: transparent
+
+		&:is(button)
+			cursor: help
+
+		&:is([data-uimode=compact] *)
+			font-weight: normal
 
 		&:is(.-changed > *)
 			color: var(--success-z600)
@@ -68,24 +79,34 @@
 			&:is([data-theme=dark] *)
 				color: var(--success-z800)
 
-		@media (--narrow)
-			width: 50%
+		> .text
+			flex: 0 1 auto
+			min-width: 0
+			+ellipsis()
+
+		> .Icon
+			opacity: 0.5
+			--size: 1em
+
+			&:is(.title:hover > *)
+				opacity: 1
 
 	> .title ~ *
 		order: 1
 
-	> .hint
-		display: flex
-		align-items: center
+	> .Hint
 		grid-area: hint
-		min-width: 3em
-		gap: .3em
-		flex: 0 0 auto
+		flex: 0 1 auto
+		align-self: center
+		min-width: 0
 		order: 2
-		height: var(--input-height)
 		color: var(--muted)
-
 		+selectable()
+		+ellipsis()
+
+		&:is(.Input + *)
+			margin-left: calc(var(--spacing-half) * -1)
+
 
 		@each $variant in $variants
 			&.-#{$variant}
@@ -99,34 +120,22 @@
 
 	// Boolean
 	&.-boolean
-		> .title
-			flex: initial
-		&::before
-			display: none
-
 		> .Checkbox
 			flex: 0 0 auto
 
 	// Number
 	&.-number
 		> .Slider
-			max-width: 36%
-			flex: 1 0 0
+			flex: 1 10 0
+			max-width: 15em
+			min-width: 4em
 
 		> .Input
-			width: 8em
+			flex: 0 1 8em
+			min-width: 0
 
 		> .Slider + .Input
-			width: 4em
-
-		@media (--narrow)
-			> .Slider
-				max-width: 100%
-				order: 2
-				flex: 1 0 100%
-			> .Slider ~ .Input,
-			> .Slider ~ .hint
-				order: 0
+			flex-basis: 4em
 
 	// String
 	&.-path,
@@ -138,32 +147,18 @@
 		> .StringControl.-text
 			flex: 1 0 100%
 
-		> .StringControl.-text + .hint
+		> .StringControl.-text + .Hint
 			order: 0
-
-		@media (--narrow)
-			> .hint
-				order: 0
-			> .StringControl.-string,
-			> .Input
-				flex: 1 0 100%
 
 	// Select
 	&.-select
 		> .Select
 			flex: 0 1 auto
 		> .Select.-multi
-			flex: 0 1 max-content
+			flex: 1 1 30%
+			height: auto
 		> .Dropdown
 			max-width: 15rem
-
-		@media (--narrow)
-			> .hint
-				order: 0
-			> .Select
-				flex: 1 0 100%
-			> .Dropdown
-				max-width: 100%
 
 	// List
 	&.-list
@@ -173,16 +168,18 @@
 		&.-of-text
 			grid: "title hint" auto "control control" 1fr "description description" auto / auto 1fr
 
-		> .hint
+		> .Hint
+			align-self: auto
 			height: auto
 
 		> .ListControl
 			grid-area: control
 
-		@media (--narrow)
-			grid: "title hint" auto "control control" auto "description description" auto / auto 1fr
-			> .hint
-				height: var(--input-height)
+		&.-of-string
+			@media (--narrow)
+				grid: "title hint" auto "control control" auto "description description" auto / auto 1fr
+				> .Hint
+					height: var(--input-height)
 
 .OptionDescription
 	position: relative

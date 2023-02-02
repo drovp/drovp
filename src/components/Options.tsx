@@ -1,5 +1,5 @@
 import {h, RenderableProps, VNode} from 'preact';
-import {useState, useMemo, useRef, Ref} from 'preact/hooks';
+import {useState, useMemo, useRef, Ref, useEffect} from 'preact/hooks';
 import {computed, action} from 'statin';
 import {observer} from 'statin-preact';
 import {eem, isOfType, uid, propPath} from 'lib/utils';
@@ -18,6 +18,7 @@ import {
 	toJS,
 	resetOptions,
 } from 'models/options';
+import {useStore} from 'models/store';
 import * as I from '@drovp/types';
 import {Button} from 'components/Button';
 import {Icon} from 'components/Icon';
@@ -56,6 +57,7 @@ export const Options = observer(function Options({
 }: OptionsProps) {
 	const containerRef = innerRef || useRef<HTMLDivElement>(null);
 	const optionsData = useMemo(() => computed(() => toJS(options)), [options])();
+	const compact = useStore().settings.compact();
 	const elements: VNode[] = [];
 
 	function openOptionsMenu(event: MouseEvent, signal?: AnyOptionSignal) {
@@ -113,7 +115,7 @@ export const Options = observer(function Options({
 							to={name}
 							activeMatch={value === name}
 							onClick={(value) => action(() => signal(value))}
-							tooltip={optionsMap[name]}
+							tooltip={`${optionsMap[name]} (options category)`}
 						>
 							<span>{optionsMap[name]}</span>
 						</NavLink>
@@ -337,6 +339,7 @@ export const Options = observer(function Options({
 						isChanged={isSignalChanged(signal)}
 						description={description}
 						onContextMenu={(event) => openOptionsMenu(event, signal)}
+						compact={compact}
 					>
 						{controlElement}
 					</Option>
@@ -383,9 +386,10 @@ export type OptionProps = RenderableProps<{
 	hint?: string;
 	description?: string;
 	onContextMenu?: (event: MouseEvent) => void;
+	compact?: boolean;
 }>;
 
-export const Option = observer(function Option({
+export function Option({
 	title,
 	type,
 	subtype,
@@ -396,25 +400,58 @@ export const Option = observer(function Option({
 	description,
 	children,
 	onContextMenu,
+	compact = false,
 }: OptionProps) {
 	let classNames = `Option -${type}`;
 	if (subtype) classNames += ` -${subtype}`;
 	if (extraClass) classNames += ` ${extraClass}`;
 	if (isChanged) classNames += ` -changed -success`;
+	const [showHelpState, setShowHelp] = useState(false);
+	const titleIsButton = description != null && compact;
+	const showHelp = compact ? showHelpState : true;
 
 	return (
 		<div class={classNames} onContextMenu={onContextMenu}>
-			{title && (
-				<label class="title" for={id} title={title}>
-					{title}
-				</label>
-			)}
+			{title &&
+				(titleIsButton ? (
+					<button
+						class="title"
+						title={`${title}\nClick to see description.`}
+						onClick={() => setShowHelp(!showHelp)}
+					>
+						<span class="text">{title}</span>
+						<Icon name={showHelp ? 'info-up' : 'info-down'} />
+					</button>
+				) : (
+					<label class="title" for={compact ? undefined : id} title={title}>
+						<span class="text">{title}</span>
+					</label>
+				))}
 			{children}
-			{hint != null && <div class="hint" dangerouslySetInnerHTML={{__html: `${hint}`}} />}
-			<Description class="description" description={description} />
+			{hint != null && <Hint value={hint} />}
+			{showHelp && (
+				<Description
+					class="description"
+					description={description}
+					initialReveal={titleIsButton}
+					onCrop={() => setShowHelp(false)}
+				/>
+			)}
 		</div>
 	);
-});
+}
+
+function Hint({value}: {value: string}) {
+	const containerRef = useRef<HTMLSpanElement>(null);
+	const [minWidth, setMinWidth] = useState<string>('auto');
+
+	useEffect(() => {
+		const container = containerRef.current;
+		if (container) setMinWidth(`${container.clientWidth}px`);
+	}, [value]);
+
+	return <span ref={containerRef} class="Hint" style={{minWidth}} dangerouslySetInnerHTML={{__html: `${value}`}} />;
+}
 
 export const OptionError = observer(function OptionError({dotPath, error}: {dotPath: string; error: any}) {
 	return (
@@ -429,29 +466,41 @@ function Description({
 	class: className,
 	description,
 	cutoff = 280,
+	initialReveal = false,
+	onReveal,
+	onCrop,
 }: {
 	class?: string;
 	description?: string;
 	cutoff?: number;
+	initialReveal?: boolean;
+	onReveal?: () => void;
+	onCrop?: () => void;
 }) {
 	const displayToggle = useMemo(() => {
 		if (!description) return false;
 		if (description.length > cutoff) return true;
 		if ((description.match(/\<br|\<\/p\>|\<\\li\>/g) || []).length > 3) return true;
 	}, [description]);
-	const [show, setShow] = useState(false);
+	const [reveal, setReveal] = useState(initialReveal);
 
 	let containerClassNames = 'OptionDescription';
 	if (className) containerClassNames += ` ${className}`;
-	if (displayToggle && !show) containerClassNames += ' -confined';
-	if (show) containerClassNames += ' -enabled';
+	if (displayToggle && !reveal) containerClassNames += ' -confined';
+	if (reveal) containerClassNames += ' -enabled';
+
+	function handleToggle() {
+		setReveal(!reveal);
+		if (reveal) onCrop?.();
+		else onReveal?.();
+	}
 
 	return description ? (
 		<div class={containerClassNames}>
 			<div class="description TextContent" dangerouslySetInnerHTML={{__html: `${description}`}} />
 			{displayToggle && (
-				<button tabIndex={-1} class="toggle" onClick={() => setShow((x) => !x)}>
-					{show ? ['Show less ', <b>-</b>] : ['Show more ', <b>+</b>]}
+				<button tabIndex={-1} class="toggle" onClick={handleToggle}>
+					{reveal ? ['Show less ', <b>-</b>] : ['Show more ', <b>+</b>]}
 				</button>
 			)}
 		</div>
