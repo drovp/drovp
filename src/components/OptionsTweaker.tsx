@@ -31,11 +31,11 @@ export function showOptionsTweaker(store: Store, items: Item[], profile: Profile
 
 	const options = createOptions(schema, profile.optionsData());
 	const [promise, resolve] = makePromise<OptionsTweakerData | false>();
-	const modifiers = profile.modifierDescriptions();
+	const modifiers = profile.processorModifiers();
 	const modifiersHelp =
-		modifiers == null
+		modifiers.length === 0
 			? undefined
-			: `Available modifiers to hold while pressing the Confirm button:\n${Object.entries(modifiers)
+			: `Available modifiers to hold while pressing the Confirm button:\n${modifiers
 					.map(([name, description]) => `${name}: ${description}`)
 					.join('\n')}`;
 

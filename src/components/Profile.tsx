@@ -405,11 +405,6 @@ const CommonProfileOptions = observer(function CommonProfileOptions({profile}: {
 	const humanThreadType = profile.humanThreadType();
 	const parallelizationMode = processor?.parallelizationMode();
 	const queuedOperationsCount = profile.batch.items().length - profile.batch.index() - profile.pending().length;
-	const modifierDescriptions = {
-		Shift: 'tweak options for current drop',
-		...profile.modifierDescriptions(),
-	};
-	const modifierNames = Object.keys(modifierDescriptions);
 
 	function toggleSection(name: string) {
 		setSection(section === name ? null : name);
@@ -477,7 +472,7 @@ const CommonProfileOptions = observer(function CommonProfileOptions({profile}: {
 							onClick={() => toggleSection('modifiers')}
 							tooltip="Toggle help"
 						>
-							<span class="count">{modifierNames.length}</span>
+							<span class="count">{profile.allModifiers().length}</span>
 							<Icon name={section === 'modifiers' ? 'chevron-up' : 'chevron-down'} />
 						</Button>
 					</div>
@@ -510,7 +505,7 @@ const CommonProfileOptions = observer(function CommonProfileOptions({profile}: {
 				</div>
 			</div>
 			{section === 'threads' && (
-				<div class="expando threads TextContent">
+				<div class="CommonOptionsExpando threads TextContent">
 					{parallelizationMode === false ? (
 						<p>Processor allows only a single thread to run at any given time.</p>
 					) : (
@@ -556,32 +551,38 @@ const CommonProfileOptions = observer(function CommonProfileOptions({profile}: {
 					)}
 				</div>
 			)}
-			{section === 'modifiers' && (
-				<div class="expando modifiers TextContent">
-					<p class="-muted">
-						<em>Effects of modifiers when dropping items into this profile:</em>
-					</p>
-					<ul class="modifierDescriptions">
-						{modifierNames.map((name) => (
-							<li>
-								<kbd>{name}</kbd> - {modifierDescriptions[name as keyof typeof modifierDescriptions]}
-							</li>
-						))}
-					</ul>
-					{modifierNames.length > 1 && (
-						<p class="-muted">
-							<Icon name="help" />{' '}
-							<em>
-								If you want to both tweak options <b>and</b> use one of the other modifiers, hold the
-								other modifier while pressing the <b>Start</b> button when confirming tweaking.
-							</em>
-						</p>
-					)}
-				</div>
-			)}
+			{section === 'modifiers' && <ModifiersInfo profile={profile} />}
 		</div>
 	);
 });
+
+function ModifiersInfo({profile}: {profile: ProfileModel}) {
+	const modifiers = profile.allModifiers();
+
+	return (
+		<div class="CommonOptionsExpando ModifiersInfo TextContent">
+			<p class="-muted">
+				<em>Effects of modifiers when dropping items into this profile:</em>
+			</p>
+			<ul class="descriptions">
+				{modifiers.map(([name, description]) => (
+					<li>
+						<kbd>{name}</kbd> - {description}
+					</li>
+				))}
+			</ul>
+			{modifiers.length > 1 && (
+				<p class="-muted">
+					<Icon name="help" />{' '}
+					<em>
+						If you want to both tweak options <b>and</b> use one of the other modifiers, hold the other
+						modifier while pressing the <b>Start</b> button when confirming tweaking.
+					</em>
+				</p>
+			)}
+		</div>
+	);
+}
 
 const ProfileExport = observer(function ProfileExport({profile}: {profile: ProfileModel}) {
 	const {settings} = useStore();
@@ -685,6 +686,10 @@ export const ProfileDetails = observer(function ProfileDetails({
 
 	return (
 		<Scrollable class={classNames}>
+			<div class="modifiers">
+				<ModifiersInfo profile={profile} />
+			</div>
+
 			<div class="processor">
 				<TitleBar variant="accent">Processor</TitleBar>
 				{processor ? (

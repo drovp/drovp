@@ -333,13 +333,16 @@ export class Profile {
 
 	dependenciesLoading = () => !!this.processor()?.dependenciesLoading();
 
-	modifierDescriptions = computed(() => {
+	allModifiers = computed(() => {
 		let config = this.processor()?.config.modifierDescriptions;
-		let result: {[key: string]: string} | undefined;
+		let result: [string, string][] = [];
 		if (typeof config === 'function') config = config(this.optionsData());
-		if (config != null && typeof config === 'object') result = config;
+		config = {...config, Shift: `tweak options for current drop`};
+		if (config != null && typeof config === 'object') result = Object.entries(config);
 		return result;
 	});
+
+	processorModifiers = computed(() => this.allModifiers().filter(([name]) => name !== 'Shift'));
 
 	issues = computed<Issue[]>(() => {
 		const issues: Issue[] = [];

@@ -285,22 +285,25 @@
 				.Button
 					+size(var(--height))
 
-	> .expando
+	> .CommonOptionsExpando
 		margin-top: var(--spacing-half)
-		padding: var(--spacing)
-		color: var(--muted)
-		background: var(--darken)
-		border-radius: var(--border-radius)
 
-		hr
-			border: 0
-			border-top: 1px solid var(--muted-100)
+.CommonOptionsExpando
+	padding: var(--spacing)
+	color: var(--muted)
+	background: var(--darken)
+	border-radius: var(--border-radius)
 
-		.modifierDescriptions
-			padding: 0
+	hr
+		border: 0
+		border-top: 1px solid var(--muted-100)
 
-			li
-				list-style: none
+.ModifiersInfo
+	> .descriptions
+		padding: 0
+
+		li
+			list-style: none
 
 .ProfileInstructions
 	> .Instructions
