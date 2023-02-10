@@ -337,7 +337,9 @@ export class Profile {
 		let config = this.processor()?.config.modifierDescriptions;
 		let result: [string, string][] = [];
 		if (typeof config === 'function') config = config(this.optionsData());
-		config = {...config, Shift: `tweak options for current drop`};
+		config = {...config};
+		delete config.Shift;
+		config = {Shift: `tweak options for current drop`, ...config};
 		if (config != null && typeof config === 'object') result = Object.entries(config);
 		return result;
 	});

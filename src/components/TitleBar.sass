@@ -9,9 +9,17 @@
 		cursor: help
 
 	> span
-		padding: var(--spacing-half)
+		display: flex
+		align-items: center
+		padding: 0 var(--spacing-half)
+		height: 2.6em
+		max-height: 2.6em
 		color: var(--variant-z900)
 		background-color: var(--variant-o200)
+		line-height: 1
+
+		&:is([title])
+			cursor: help
 
 		&:first-child
 			border-top-left-radius: var(--border-radius)
@@ -32,5 +40,8 @@
 		&.value
 			flex: 0 1 auto
 			min-width: 0
-			font-family: var(--font-code)
-			+ellipsis()
+
+			> span
+				max-width: 100%
+				font-family: var(--font-code)
+				+ellipsis()

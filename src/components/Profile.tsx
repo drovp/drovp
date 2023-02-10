@@ -560,26 +560,21 @@ function ModifiersInfo({profile}: {profile: ProfileModel}) {
 	const modifiers = profile.allModifiers();
 
 	return (
-		<div class="CommonOptionsExpando ModifiersInfo TextContent">
-			<p class="-muted">
-				<em>Effects of modifiers when dropping items into this profile:</em>
-			</p>
-			<ul class="descriptions">
-				{modifiers.map(([name, description]) => (
-					<li>
-						<kbd>{name}</kbd> - {description}
-					</li>
-				))}
-			</ul>
-			{modifiers.length > 1 && (
-				<p class="-muted">
-					<Icon name="help" />{' '}
-					<em>
-						If you want to both tweak options <b>and</b> use one of the other modifiers, hold the other
-						modifier while pressing the <b>Start</b> button when confirming tweaking.
-					</em>
-				</p>
-			)}
+		<div class="ModifiersInfo TextContent">
+			<TitleBar
+				tooltip="Effects of modifiers when dropping items into this profile"
+				help="If you want to both tweak options AND use one of the other modifiers, hold Shift when dropping items, tweak the options, and than hold the other modifier when confirming the tweaks."
+			>
+				Modifiers
+			</TitleBar>
+			<div class="modifiers">
+				{modifiers.map(([name, description]) => [
+					<div class="modifier">
+						<kbd>{name}</kbd>
+					</div>,
+					<div class="description">{description}</div>,
+				])}
+			</div>
 		</div>
 	);
 }
@@ -686,9 +681,7 @@ export const ProfileDetails = observer(function ProfileDetails({
 
 	return (
 		<Scrollable class={classNames}>
-			<div class="modifiers">
-				<ModifiersInfo profile={profile} />
-			</div>
+			<ModifiersInfo profile={profile} />
 
 			<div class="processor">
 				<TitleBar variant="accent">Processor</TitleBar>
