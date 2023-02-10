@@ -876,21 +876,6 @@ export class Plugins {
 
 					dependency = dependencies.byId().get(id);
 				}
-
-				if (dependency) {
-					if (!dependency.isReady()) {
-						staging.log(`dependency "${dependency.id}" is registered but not ready`);
-						await staging.substage((substage) => dependency?.install(substage));
-						if (!dependency.isReady()) {
-							modals.alert({
-								variant: 'danger',
-								title: `Dependency installation error`,
-								message: `Processor's "${processor.id}" dependency "${dependency.id}" couldn't be installed.`,
-								details: dependency.installError(),
-							});
-						}
-					}
-				}
 			}
 		}
 

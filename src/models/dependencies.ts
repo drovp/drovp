@@ -239,7 +239,43 @@ export class Dependency {
 				this.version(undefined);
 				this.payload(data);
 			}
-			if (errorMessage) this.loadError(errorMessage);
+
+			if (errorMessage) {
+				this.loadError(errorMessage);
+				const reportUrl = this.plugin.reportIssueUrl;
+				const homepageUrl = this.plugin.homepage;
+				this.store.modals.alert({
+					variant: 'danger',
+					title: 'Dependency loading error',
+					message: `Dependency "${this.id}" didn't load correctly.`,
+					details: errorMessage,
+					actions: [
+						reportUrl
+							? {
+									variant: 'info',
+									icon: 'bug',
+									title: 'Report bug',
+									action: () =>
+										reportIssue(reportUrl, {
+											title: 'Dependency loading error',
+											includeVersions: true,
+											body: `Hi! I got this error when installing dependency "${this.name}":\n\n\`\`\`\n${errorMessage}\n\`\`\``,
+										}),
+							  }
+							: homepageUrl
+							? {
+									variant: 'info',
+									icon: 'globe',
+									title: 'Plugin homepage',
+									action: () => shell.openExternal(homepageUrl),
+							  }
+							: {
+									title: 'Go to plugin',
+									action: () => this.store.history.push(`/plugins/${this.plugin.name}`),
+							  },
+					],
+				});
+			}
 		});
 
 		return data;
