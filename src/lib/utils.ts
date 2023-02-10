@@ -856,6 +856,9 @@ export function createUpdatesChecker(
 
 			checkForUpdatesMaybe();
 
+			// We decide every hour whether it is time to check for an update.
+			// This is a workaround for setTimeout overflowing on values larger
+			// than 25 days, causing instant infinite loops.
 			updateIntervalId = setInterval(checkForUpdatesMaybe, msInHour);
 		}, 1000),
 		{immediate: true}

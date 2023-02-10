@@ -10,7 +10,7 @@ export const defaults = {
 	beepOnOperationError: false,
 	appUpdatesCheckingInterval: 20,
 	pluginUpdatesCheckingInterval: 168,
-	nodeUpdatesCheckingInterval: 720,
+	nodeUpdatesCheckingInterval: 2160,
 	taskbarButton: true,
 	taskbarProgress: true,
 	trayIcon: false,

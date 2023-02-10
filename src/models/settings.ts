@@ -96,7 +96,7 @@ export const schema = makeOptionsSchema<SerializedSettings>()([
 	{
 		name: 'nodeUpdatesCheckingInterval',
 		type: 'number',
-		steps: [0, 20, 72, 168, 336, 720],
+		steps: [0, 168, 336, 720, 2160, 4320],
 		default: defaults.nodeUpdatesCheckingInterval,
 		title: 'Node.js',
 		hint: (hours) => (hours === 0 ? '<em>disabled</em>' : formatLongDuration(hours! * 60 * 60_000)),
