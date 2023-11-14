@@ -303,7 +303,7 @@ export function number<S extends OptionNumber>(schema: S, initial: unknown): Num
 				max: schema.softMax ? undefined : schema.max,
 				step: schema.step,
 		  };
-	const validator = schema.kind === 'integer' ? validateNumber : validateInteger;
+	const validator = schema.kind === 'float' ? validateNumber : validateInteger;
 	return optionSignal(
 		schema,
 		{
@@ -572,8 +572,9 @@ function signalFromOptionSchema<T extends OptionSerializable>(schema: T, initial
 
 	// Number
 	if (isOfType<OptionNumber>(schema, schema.type === 'number')) {
-		if (!isType(schema.default, Type.Number | Type.Undefined))
-			throw new Error(`"default" must be a number or undefined`);
+		if (!isType(schema.default, Type.Number | Type.Nuldef))
+			throw new Error(`"default" must be a number or null/undefined`);
+		if (schema.default === undefined) schema.default = null;
 
 		if (!numberKinds.includes(schema.kind)) throw new Error(`"kind" must be one of ${numberKinds.join('", "')}`);
 
@@ -604,6 +605,8 @@ function signalFromOptionSchema<T extends OptionSerializable>(schema: T, initial
 	if (isOfType<OptionSelect>(schema, schema.type === 'select')) {
 		if (!isType(schema.default, Type.String | Type.Number | Type.Array | Type.Nuldef))
 			throw new Error(`"default" must be a string or an array of strings`);
+		if (schema.default === undefined) schema.default = null;
+
 		if (isType<any[]>(schema.options, Type.Array)) {
 			if (schema.options.length === 0) throw new Error(`"options" array can't be empty`);
 			if (schema.options.findIndex((value: any) => typeof value !== 'string' && typeof value !== 'number') > -1) {
@@ -612,17 +615,21 @@ function signalFromOptionSchema<T extends OptionSerializable>(schema: T, initial
 		} else if (!isType(schema.options, Type.Object)) {
 			throw new Error(`"options" can only be an array of strings, or "{name: "Title"}" map`);
 		}
-		if (!isType(schema.nullable, Type.Boolean | Type.Undefined))
-			throw new Error(`"nullable" must be a boolean or undefined`);
+
+		if (!isType(schema.nullable, Type.Boolean | Type.Nuldef))
+			throw new Error(`"nullable" must be a boolean or null/undefined`);
+
 		if (schema.nullable == null) {
 			schema.nullable = schema.default == null;
 		} else if (schema.nullable === false && schema.default == null) {
 			throw new Error(`"default" value is required if "nullable" is disabled`);
 		}
+
 		for (const prop of ['min', 'max']) {
 			if (!isType((schema as any)[prop], Type.Nuldef | Type.Number))
 				throw new Error(`"${prop}" must be a number`);
 		}
+
 		return select(schema, initial) as SignalFromOption<T>;
 	}
 
