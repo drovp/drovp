@@ -6,9 +6,11 @@ import {ipcRenderer} from 'electron';
 import {promisify} from 'util';
 import {exec} from 'child_process';
 import semverCompare from 'semver-compare';
+import {Item} from '@drovp/types';
 import {signal, Signal, createAction, reaction, action, computed} from 'statin';
 import {
 	eem,
+	uid,
 	isOfType,
 	debounce,
 	promiseThrottle,
@@ -21,6 +23,7 @@ import {
 } from 'lib/utils';
 import {registerDraggingListener} from 'lib/draggingListener';
 import {extract} from 'lib/extract';
+import {addUrlItemsFromStrings} from 'lib/serialize';
 import {exists, deletePath, prepareEmptyDirectory} from 'lib/fs';
 import type {Store} from 'models/store';
 import type {Staging, SubstageCreator} from 'models/staging';
@@ -199,7 +202,7 @@ export class App {
 		);
 
 		// Protocol url handlers
-		ipcRenderer.on('protocol', (event, path) => {
+		ipcRenderer.on('protocol', (event, path: string) => {
 			const [action, ...parts] = path.split('/');
 			const payload = parts.join('/');
 
@@ -217,6 +220,46 @@ export class App {
 				case 'import':
 					this.store.modals.profileImport({initial: payload});
 					break;
+
+				case 'drop': {
+					console.log('drop parts:', parts);
+					const profileId = String(parts[0]);
+					const profile = this.store.profiles.byId().get(profileId);
+
+					if (!profile) {
+						this.store.app.showError({
+							title: 'drop protocol error',
+							message: `Received <b>drop</b> protocol request for profile id "<b>${profileId}</b>", which doesn't exist. Request URL:`,
+							details: `${manifest.name}://${path}`,
+						});
+						break;
+					}
+
+					const items: Item[] = parts
+						.slice(1)
+						.map(decodeURIComponent)
+						.map((contents) => ({
+							id: uid(),
+							created: Date.now(),
+							kind: 'string',
+							type: 'text/plain',
+							contents,
+						}));
+					addUrlItemsFromStrings(items);
+
+					if (items.length == 0) {
+						this.store.app.showError({
+							title: 'drop protocol error',
+							message: `Received <b>drop</b> protocol request for profile id "<b>${profileId}</b>", but no inputs. Request URL:`,
+							details: `${manifest.name}://${path}`,
+						});
+						break;
+					}
+
+					profile.dropItems(items, {action: 'protocol', modifiers: ''});
+
+					break;
+				}
 			}
 		});
 
@@ -225,7 +268,7 @@ export class App {
 		for (let setting of Object.keys(settings) as (keyof SerializedSettings)[]) {
 			reaction(
 				() => settings[setting](),
-				(value: ReturnType<typeof settings[typeof setting]>) => {
+				(value: ReturnType<(typeof settings)[typeof setting]>) => {
 					ipcRenderer.invoke(`set-setting`, setting, value);
 				}
 			);

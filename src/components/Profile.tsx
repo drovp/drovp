@@ -150,7 +150,7 @@ export const ProfileWrapper = observer(function ProfileWrapper({
 			style={style}
 			title={
 				onClick
-					? `${displayTitle}\nProcessor: ${profile.processorId}${
+					? `${displayTitle}\nID: ${profile.id}\nProcessor: ${profile.processorId}${
 							dependenciesLoading ? '\nLoading dependencies...' : ''
 					  }`
 					: undefined
@@ -681,6 +681,18 @@ export const ProfileDetails = observer(function ProfileDetails({
 
 	return (
 		<Scrollable class={classNames}>
+			<div class="id">
+				<div class="title">ID</div>
+				<div class="value">
+					<strong>
+						<pre>{profile.id}</pre>
+					</strong>
+					<Button transparent onClick={createCopyParticle(profile.id)} tooltip="Copy">
+						<Icon name="copy" />
+					</Button>
+				</div>
+			</div>
+
 			<ModifiersInfo profile={profile} />
 
 			<div class="processor">

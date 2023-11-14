@@ -64,7 +64,7 @@ export interface OperationPayload {
 }
 
 export interface PreparatorMeta {
-	action: 'drop' | 'paste';
+	action: 'drop' | 'paste' | 'protocol';
 	modifiers: string;
 }
 

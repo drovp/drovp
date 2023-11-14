@@ -437,7 +437,7 @@ function plainStringFilter(item: Item): item is ItemString {
 	return item.kind === 'string' && item.type === 'text/plain';
 }
 
-function addUrls(items: Item[]): Item[] {
+export function addUrlItemsFromStrings(items: Item[]): Item[] {
 	// Create `url` item from every string item containing a url
 	for (const item of items.filter(plainStringFilter)) {
 		const contents = item.contents.trim();
@@ -459,7 +459,7 @@ export async function dataTransfer(drop?: DataTransfer | null): Promise<Item[]> 
 	for (const item of drop.items) promises.push(dataTransferItem(item));
 	const items: Item[] = (await Promise.all(promises)).filter(createInvalidItemFilter());
 
-	return addUrls(items);
+	return addUrlItemsFromStrings(items);
 }
 
 /**
@@ -479,7 +479,7 @@ export async function electronClipboard(): Promise<Item[]> {
 			type: 'text/plain',
 			contents: clipboard.readText(),
 		});
-		addUrls(items);
+		addUrlItemsFromStrings(items);
 	}
 
 	// HTML strings
