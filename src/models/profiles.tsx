@@ -882,7 +882,9 @@ export class Profile {
 		};
 
 		const prepare = async (operation: Operation) => {
+			console.log('before', JSON.stringify(operation.payload, null, 2));
 			if (await this.prepareOperation(operation, meta)) preparedBatch.push(operation);
+			console.log('after', JSON.stringify(operation.payload, null, 2));
 		};
 
 		// Flushing because operations needs to go through an async preparation

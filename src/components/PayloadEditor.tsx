@@ -10,12 +10,20 @@ export const PayloadEditor = observer(function PayloadEditor({operation}: {opera
 	const [error, setError] = useState<string | null>(null);
 	const data = useMemo(() => {
 		const {payload} = operation;
-		const {id, options} = payload;
+		const keys = new Set(Object.keys(payload));
 		let inputsHidden = false;
-		// @ts-ignore make `id` and `options` first
-		const data: any = {id, options};
+		const data: any = {};
 		const blobs = new Map<string, any>();
 		const inputs: any[] = [];
+
+		// Make `id` and `options` first
+		for (const key of ['id', 'options']) {
+			if (keys.delete(key)) data[key] = payload[key];
+		}
+
+		// Next the rest of the data, except `inputs`, those come last
+		keys.delete('inputs');
+		for (const key of keys) data[key] = payload[key];
 
 		// Save blob content buffers into a map and swap them with placeholders
 		for (const item of payload.inputs || []) {
@@ -28,20 +36,12 @@ export const PayloadEditor = observer(function PayloadEditor({operation}: {opera
 			}
 		}
 
-		// Populated json source with other payload properties, except `id` and
-		// `operation`, which we already inserted at the beginning, and `inputs`,
-		// which need special handling, as well as should be at the end.
-		for (const [key, value] of Object.keys(payload)) {
-			if (!key || ['id', 'options', 'inputs'].includes(key)) continue;
-			data[key] = value;
-		}
-
 		if (inputs.length > 10) {
 			inputsHidden = true;
 			data.inputs = [
 				`... ${inputs.length} inputs placeholder ...`,
-				`If there's too many of them, inputs are hidden in JSON editor, and re-added back to the actual data behind the scenes.`,
-				`Editing this property has no effect.`
+				`If there's too many inputs, they are hidden in JSON editor, and re-added back to the actual data behind the scenes.`,
+				`Editing this property has no effect.`,
 			];
 		} else {
 			data.inputs = inputs;

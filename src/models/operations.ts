@@ -117,7 +117,6 @@ export class Operation {
 
 		// Construct payload
 		this.payload = {...rawPayload, id: this.id} as AnyPayload;
-		Object.defineProperty(this.payload, 'input', {get: () => this.payload?.inputs?.[0]});
 
 		// Figure out types of loads this operation will use, and max number of threads it allows
 		const threadType = processor.config.threadType;
