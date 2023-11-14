@@ -1761,7 +1761,7 @@ export function getColumnSpanEnd(value: number, columnSize: number, precision = 
 export function getCardWidthFraction(columns: number, suggestedWidth = 200) {
 	const pixelsPerColumn = Math.round(window.innerWidth / columns);
 	const suggestedColumns = Math.round(suggestedWidth / pixelsPerColumn);
-	return roundDecimals(suggestedColumns / columns, 6);
+	return roundDecimals(Math.max(1 / columns, suggestedColumns / columns), 6);
 }
 
 /**

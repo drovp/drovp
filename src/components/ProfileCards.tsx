@@ -95,8 +95,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 	const rows = category.rows();
 	const profilesGridColumns = settings.profilesGridColumns();
 	const columnFraction = roundDecimals(1 / profilesGridColumns, 6);
-	const minCardWidth = 100;
-	const minCardFraction = getCardWidthFraction(profilesGridColumns, minCardWidth);
+	const minCardFraction = getCardWidthFraction(profilesGridColumns, 20);
 	const defaultCardFraction = Math.min(getCardWidthFraction(profilesGridColumns), 0.333333);
 	const [draggingMode, setDraggingMode] = useState<string | null>(null);
 	const isProfileDragged = draggingMode === 'profile';
@@ -137,7 +136,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 		const startColumn = Math.round(position.left / columnFraction);
 		const endColumn = Math.round((position.left + position.width) / columnFraction);
 		const nextStartColumn = Math.round((next?.position().left ?? 1) / columnFraction);
-		const minWidthColumns = Math.round(minCardWidth / columnWidth);
+		const minWidthColumns = 1;
 
 		setIsResizing(true);
 
