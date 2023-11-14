@@ -375,13 +375,16 @@ async function _package(target, arch = 'x64') {
 	// through checking if userData folder exists under app root.
 	if (target === 'portable') {
 		if (os !== 'win') throw new Error(`Portable target is only supported on windows.`);
-		const noopPath = Path.join('userData', 'noop');
+		const keepMePath = Path.join('userData', 'KEEPME');
 		await FSP.mkdir('userData', {recursive: true});
-		await FSP.writeFile(noopPath, '');
+		await FSP.writeFile(
+			keepMePath,
+			'This file ensures the `userData` directory is not deleted during packaging, as its existence switches Drovp into portable mode.'
+		);
 		extraFiles = {
 			from: 'userData',
 			to: 'userData',
-			filter: ['noop'],
+			filter: ['KEEPME'],
 		};
 		target = 'zip';
 	}
