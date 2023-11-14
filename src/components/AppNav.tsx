@@ -3,11 +3,13 @@ import {action} from 'statin';
 import {useMemo} from 'preact/hooks';
 import {useLocation} from 'poutr';
 import {observer} from 'statin-preact';
-import {prevented} from 'lib/utils';
+import {prevented, TargetedEvent, isInsideElement} from 'lib/utils';
 import {useStore} from 'models/store';
 import {Icon, IconName} from 'components/Icon';
 import {Tag} from 'components/Tag';
 import {openContextMenu} from 'lib/contextMenus';
+
+const longDragEnterWaiters = new Set<HTMLElement>();
 
 export const AppNav = observer(function AppNav() {
 	const {app, node, plugins, settings} = useStore();
@@ -120,8 +122,35 @@ export function NavItem({
 		}
 	}
 
+	function handleButtonDragEnter(event: TargetedEvent<HTMLButtonElement, DragEvent>) {
+		const element = event.currentTarget;
+		if (longDragEnterWaiters.has(element)) return;
+
+		const cancel = () => {
+			clearTimeout(timeoutId);
+			element.removeEventListener('dragleave', handleLeave);
+			longDragEnterWaiters.delete(element);
+		};
+		const trigger = () => {
+			cancel();
+			navigate(to);
+		};
+		const handleLeave = (event: DragEvent) => {
+			if (!isInsideElement(element, event)) cancel();
+		};
+		let timeoutId = setTimeout(trigger, 300);
+		longDragEnterWaiters.add(element);
+		element.addEventListener('dragleave', handleLeave);
+	}
+
 	return (
-		<button class={classNames} onClick={prevented(() => navigate(to))} title={tooltip} {...rest}>
+		<button
+			class={classNames}
+			onDragEnter={handleButtonDragEnter}
+			onClick={prevented(() => navigate(to))}
+			title={tooltip}
+			{...rest}
+		>
 			<span className="icon">
 				<Icon name={icon} />
 				{countProps != null && (

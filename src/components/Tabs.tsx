@@ -8,6 +8,8 @@ import {Icon} from 'components/Icon';
 import {Scrollable} from 'components/Scrollable';
 import {useStore} from 'models/store';
 
+const longDragEnterWaiters = new Set<HTMLElement>();
+
 export interface Tab {
 	id: string;
 	title: string;
@@ -54,7 +56,6 @@ export function Tabs({
 	const tabsRef = useRef<HTMLDivElement>(null);
 	const listRef = useRef<HTMLDivElement>(null);
 	const listAnchorRef = useRef<HTMLButtonElement>(null);
-	const longDragEnterRef = useRef(new Set<HTMLElement>());
 	const tabsScrollerRef = useRef<Scroller | null>(null);
 	const contextScrollerRef = useRef<Scroller | null>(null);
 	const allowDelete = !keepOne || tabs.length > 1;
@@ -243,7 +244,7 @@ export function Tabs({
 
 	function handleButtonDragEnter(event: TargetedEvent<HTMLButtonElement, DragEvent>) {
 		const element = event.currentTarget;
-		if (longDragEnterRef.current.has(element)) return;
+		if (longDragEnterWaiters.has(element)) return;
 		const dragContext = getDragContext(element);
 
 		if (!dragContext) return;
@@ -251,7 +252,7 @@ export function Tabs({
 		const cancel = () => {
 			clearTimeout(timeoutId);
 			element.removeEventListener('dragleave', handleLeave);
-			longDragEnterRef.current.delete(element);
+			longDragEnterWaiters.delete(element);
 		};
 		const trigger = () => {
 			cancel();
@@ -261,7 +262,7 @@ export function Tabs({
 			if (!isInsideElement(element, event)) cancel();
 		};
 		let timeoutId = setTimeout(trigger, 300);
-		longDragEnterRef.current.add(element);
+		longDragEnterWaiters.add(element);
 		element.addEventListener('dragleave', handleLeave);
 	}
 
