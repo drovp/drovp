@@ -226,7 +226,7 @@ export function rafThrottle<T extends UnknownFn>(fn: T): DTWrapper<T> {
 }
 
 export function throttle<T extends UnknownFn>(fn: T, timeout: number = 100, noTrailing: boolean = false): DTWrapper<T> {
-	let timeoutId: NodeJS.Timer | null;
+	let timeoutId: ReturnType<typeof setTimeout> | null;
 	let args: any;
 	let context: any;
 	let last: number = 0;
@@ -268,7 +268,7 @@ export function throttle<T extends UnknownFn>(fn: T, timeout: number = 100, noTr
 }
 
 export function debounce<T extends UnknownFn>(fn: T, timeout: number = 100): DTWrapper<T> {
-	let timeoutId: NodeJS.Timer | null;
+	let timeoutId: ReturnType<typeof setTimeout> | null;
 	let args: any;
 	let context: any;
 

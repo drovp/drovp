@@ -347,7 +347,7 @@ export default class Worker {
 	store: Store;
 	options: WorkerOptions;
 	protected threadsByProcessor: Map<string, Thread[]>;
-	protected cleanupID: NodeJS.Timer | null;
+	protected cleanupID: ReturnType<typeof setTimeout> | null;
 	isPaused = signal<boolean>(false);
 
 	constructor(store: Store, options?: Partial<WorkerOptions>) {

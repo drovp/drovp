@@ -152,6 +152,7 @@ function styles() {
 	const postCssPlugins = [];
 
 	if (ENV.NODE_ENV === 'production') postCssPlugins.push(require('postcss-prune-var')());
+	// @ts-ignore
 	postCssPlugins.push(require('postcss-preset-env')({stage: 0, browsers: 'chrome 89'}));
 	postCssPlugins.push(require('postcss-declarations')(require(PATHS.themesFile)));
 	if (ENV.NODE_ENV === 'production') postCssPlugins.push(require('cssnano')({preset: 'default'}));

@@ -776,7 +776,7 @@ export class Profile {
 		const serializingItems = this.normalizeItems(rawItems, inputs, options, meta);
 		let serializingItemsDone = false;
 		let creatingOperations: Promise<void> | undefined;
-		let flushId: NodeJS.Timer | undefined;
+		let flushId: ReturnType<typeof setTimeout> | undefined;
 		// Periodically flushes the accumulator. Doing it at the end is bad,
 		// since when adding a lot of items you have to wait for the file
 		// system to finish listing before the 1st operation can start.
