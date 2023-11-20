@@ -2,6 +2,7 @@ import {h, RenderableProps, Fragment} from 'preact';
 import {useState, useRef, useEffect} from 'preact/hooks';
 import {reaction, action} from 'statin';
 import {NumberSignal} from 'models/options';
+import {eem} from 'lib/utils';
 import {Slider} from 'components/Slider';
 import {Input} from 'components/Input';
 
@@ -18,8 +19,8 @@ export function OptionNumber({id, name, signal, disabled}: OptionNumberProps) {
 	let {min, max, step, steps, nullable} = signal.schema;
 	const value: number | undefined = steps ? steps.indexOf(signal.value) : signal.value;
 	const [inputValue, setInputValue] = useState<string>(normalizeInputValue(value));
-	const [hasError, setHasError] = useState(false);
-	const variant = hasError ? 'danger' : undefined;
+	const [error, setError] = useState<string | undefined>(undefined);
+	const variant = error ? 'danger' : undefined;
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	if (steps != null) {
@@ -35,9 +36,9 @@ export function OptionNumber({id, name, signal, disabled}: OptionNumberProps) {
 			try {
 				const signalValue = inputValue.trim();
 				signal(steps ? (steps[value as any] as number) : nullable && signalValue === '' ? null : signalValue);
-				setHasError(false);
+				setError(undefined);
 			} catch (error) {
-				setHasError(true);
+				setError(eem(error));
 			}
 		});
 	}
@@ -51,7 +52,7 @@ export function OptionNumber({id, name, signal, disabled}: OptionNumberProps) {
 				() => (steps ? `${steps.indexOf(signal() as any)}` : normalizeInputValue(signal())),
 				(newValue: string) => {
 					setInputValue(newValue);
-					setHasError(false);
+					setError(undefined);
 				}
 			),
 		[signal]
@@ -70,6 +71,7 @@ export function OptionNumber({id, name, signal, disabled}: OptionNumberProps) {
 					value={value || 0}
 					onChange={handleChange}
 					disabled={disabled}
+					tooltip={error}
 				/>
 				{!steps && (
 					<Input
@@ -79,6 +81,7 @@ export function OptionNumber({id, name, signal, disabled}: OptionNumberProps) {
 						value={inputValue}
 						onChange={handleChange}
 						disabled={disabled}
+						tooltip={error}
 					/>
 				)}
 			</Fragment>

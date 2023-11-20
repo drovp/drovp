@@ -1,14 +1,12 @@
 import {h} from 'preact';
 import {useRef} from 'preact/hooks';
 import {observer} from 'statin-preact';
-import {Link} from 'poutr';
 import {useVolley} from 'lib/hooks';
 import {formatRelevantTime, formatDuration, clamp, rafThrottle} from 'lib/utils';
 import {useStore} from 'models/store';
 import type {Operation as OperationModel} from 'models/operations';
 import {Icon} from 'components/Icon';
 import {Progress} from 'components/Progress';
-import {RouteProps} from 'poutr';
 import {Nav, NavLink, NavLinkRelativePart} from 'components/Nav';
 import {Tag} from 'components/Tag';
 import {Vacant} from 'components/Vacant';
@@ -21,25 +19,24 @@ import {ProcessorCard} from 'components/ProcessorCard';
 import {PluginCard} from 'components/PluginCards';
 import {PayloadEditor} from 'components/PayloadEditor';
 
-export const OperationRoute = observer(function OperationRoute({match, location, history}: RouteProps) {
-	const {operations} = useStore();
-	const id = match?.groups?.id;
+interface OperationSubRouteProps {
+	id?: string | null;
+}
 
-	if (!id) return <Vacant title={`Operation route is missing ID param.`} />;
+export const OperationSubRoute = observer(function OperationSubRoute({id}: OperationSubRouteProps) {
+	const {operations, history} = useStore();
 
-	const section = location.searchParams.get('section') || undefined;
-	const from = location.searchParams.get('from') || undefined;
+	if (!id) return <Vacant title={`Operation section is missing ID param.`} />;
+
 	const operation = operations.byId().get(id);
 
 	return operation ? (
 		<Operation
 			operation={operation}
-			section={section}
-			from={from}
+			section={history.location.searchParams.get('operationSection')}
 			onSectionChange={(section) => {
-				const params = new URLSearchParams();
-				if (from) params.set('from', from);
-				params.set('section', section);
+				const params = new URLSearchParams(history.location.search);
+				params.set('operationSection', section);
 				history.replace(`?${params.toString()}`);
 			}}
 		/>
@@ -50,12 +47,11 @@ export const OperationRoute = observer(function OperationRoute({match, location,
 
 interface OperationProps {
 	operation: OperationModel;
-	section?: string;
-	from?: string;
+	section?: string | null;
 	onSectionChange: (section: string) => void;
 }
 
-const Operation = observer(function Operation({operation, section, from, onSectionChange}: OperationProps) {
+const Operation = observer(function Operation({operation, section, onSectionChange}: OperationProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const {history, staging} = useStore();
 	const state = operation.state();
@@ -63,18 +59,18 @@ const Operation = observer(function Operation({operation, section, from, onSecti
 	const isDone = state === 'done';
 	const isPending = state === 'pending';
 	const hasError = operation.hasError();
-	const parentProfileUrl = `/profiles/${encodeURIComponent(operation.profile.id)}`;
 	const title = operation.title();
 
 	section = section || 'io';
 
 	function deleteOperation() {
+		const profileId = operation.profile.id;
 		operation.delete();
-		history.push(from ? from : parentProfileUrl);
+		history.replace(`/profiles/${profileId}?section=operations`);
 	}
 
 	let classNames = `Operation -${state}`;
-	let headerClassNames = 'CommonHeader';
+	let headerClassNames = '';
 	if (hasError) {
 		classNames += ' -error';
 		headerClassNames += ' -danger';
@@ -91,63 +87,68 @@ const Operation = observer(function Operation({operation, section, from, onSecti
 			data-context-menu="operation"
 			data-context-menu-payload={operation.id}
 		>
-			<header class={headerClassNames}>
-				<div class="state" title={!isDone ? 'pending' : hasError ? 'Contains errors' : 'Done'}>
-					<Icon name={!isDone ? 'circle' : hasError ? 'warning' : 'circle-check'} />
-				</div>
-
-				<div class="title">
-					{title ? (
-						<h1 title={title}>{title}</h1>
-					) : (
-						<h1 class="-id" title="Operation ID">
-							<code>{operation.id}</code>
-						</h1>
-					)}
-					<h2>Operation</h2>
-				</div>
-
-				<div class="actions -primary">
-					<Button
-						semitransparent
-						class="to-profile"
-						onClick={() => history.push(parentProfileUrl)}
-						tooltip={`To parent profile:\n${operation.profile.title()}`}
-					>
-						<Icon name="profile-up-into" />
-					</Button>
-
-					{isQueued ? (
-						<Button variant="success" class="force-start" onClick={operation.start} tooltip="Force start">
-							<Icon name="play" />
-						</Button>
-					) : (
-						<Button
-							variant="success"
-							class="restart"
-							onClick={operation.restart}
-							tooltip="Restart operation"
-							disabled={!isDone || staging.isStaging()}
-						>
-							<Icon name="refresh" />
-						</Button>
-					)}
-
-					{isPending ? (
-						<Button variant="danger" class="stop" onClick={() => operation.stop()} tooltip="Stop operation">
-							<Icon name="stop" />
-						</Button>
-					) : (
-						<Button variant="warning" class="delete" onClick={deleteOperation} tooltip="Delete operation">
-							<Icon name="trash" />
-						</Button>
-					)}
-				</div>
-			</header>
 
 			<OperationProgress operation={operation} />
+			<header class={headerClassNames}>
+				{title ? (
+					<h1 title={title}>{title}</h1>
+				) : (
+					<h1 class="-id" title="Operation ID">
+						<code>{operation.id}</code>
+					</h1>
+				)}
 
-			<Nav style="overline">
+				{isQueued ? (
+					<Button
+						class="force-start"
+						variant="success"
+						semitransparent
+						muted
+						onClick={operation.start}
+						tooltip="Force start"
+					>
+						<Icon name="play" />
+					</Button>
+				) : (
+					<Button
+						class="restart"
+						variant="success"
+						semitransparent
+						muted
+						onClick={operation.restart}
+						tooltip="Restart operation"
+						disabled={!isDone || staging.isStaging()}
+					>
+						<Icon name="refresh" />
+					</Button>
+				)}
+
+				{isPending ? (
+					<Button
+						class="stop"
+						variant="danger"
+						semitransparent
+						muted
+						onClick={() => operation.stop()}
+						tooltip="Stop operation"
+					>
+						<Icon name="stop" />
+					</Button>
+				) : (
+					<Button
+						class="delete"
+						variant="warning"
+						semitransparent
+						muted
+						onClick={deleteOperation}
+						tooltip="Delete operation"
+					>
+						<Icon name="trash" />
+					</Button>
+				)}
+			</header>
+
+			<Nav style="bar">
 				<NavLink to="io" onClick={onSectionChange} activeMatch={section === 'io'} tooltip="Inputs/Outputs">
 					<Icon name="input" />
 					Inputs / Outputs
@@ -250,6 +251,8 @@ const InputsOutputs = observer(function InputsOutputs({operation}: {operation: O
 		const container = containerRef.current;
 		const inputs = container?.children[0];
 		if (!container || !inputs) return;
+		event.preventDefault();
+		event.stopPropagation();
 
 		const initialCursor = document.documentElement.style.cursor;
 		const containerHeight = container.getBoundingClientRect().height;
@@ -337,14 +340,6 @@ export const OperationDetails = observer(function OperationDetails({
 				<li class="id">
 					<span class="title">ID</span>
 					<span class="value">{operation.id}</span>
-				</li>
-				<li class="profile">
-					<span class="title">Profile</span>
-					<span class="value">
-						<Link to={`/profiles/${operation.profile.id}`} title="Go to profile">
-							{profile.displayTitle()}
-						</Link>
-					</span>
 				</li>
 				<li class="state">
 					<span class="title">State</span>

@@ -97,6 +97,14 @@ $in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55)
 @function subScrollbar($spacing: var(--spacing))
 	@return calc(#{$spacing} - var(--scrollbar-size))
 
+=rightSpacingScrollable($spacing: var(--spacing), $offset: 2px)
+	margin-right: calc(#{$spacing} - var(--scrollbar-size) - #{$offset})
+	padding-right: $offset
+
+=hSpacingScrollable($spacing: var(--spacing), $offset: 2px)
+	margin-left: $spacing
+	+rightSpacingScrollable($spacing, $offset)
+
 =autogrid($minItemWidth: 25em)
 	display: grid
 	grid-template-columns: repeat(auto-fit, minmax(min(#{$minItemWidth}, 100%), 1fr))
@@ -118,23 +126,23 @@ $in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55)
 	@else
 		mask-image: $mask
 
-=fadeTop($size: 1.5rem, $subtractScrollbar: false)
-	+addFadeMask(linear-gradient(to bottom, transparent 5px, black #{$size}), $subtractScrollbar)
+=fadeTop($size: 1rem, $subtractScrollbar: false)
+	+addFadeMask(linear-gradient(to bottom, #0003 5px, black #{$size}), $subtractScrollbar)
 
-=fadeBottom($size: 1.5rem, $subtractScrollbar: false)
-	+addFadeMask(linear-gradient(to bottom, black calc(100% - #{$size}), transparent calc(100% - 5px)), $subtractScrollbar)
+=fadeBottom($size: 1rem, $subtractScrollbar: false)
+	+addFadeMask(linear-gradient(to bottom, black calc(100% - #{$size}), #0003 calc(100% - 5px)), $subtractScrollbar)
 
-=fadeTopBottom($size: 1.5rem, $subtractScrollbar: false)
-	+addFadeMask(linear-gradient(to bottom, transparent 5px, black #{$size}, black calc(100% - #{$size}), transparent calc(100% - 5px)), $subtractScrollbar)
+=fadeTopBottom($size: 1rem, $subtractScrollbar: false)
+	+addFadeMask(linear-gradient(to bottom, #0003 5px, black #{$size}, black calc(100% - #{$size}), #0003 calc(100% - 5px)), $subtractScrollbar)
 
-=fadeLeft($size: 1.5rem, $subtractScrollbar: false)
-	+addFadeMask(linear-gradient(to right, transparent 5px, black #{$size}), $subtractScrollbar)
+=fadeLeft($size: 1rem, $subtractScrollbar: false)
+	+addFadeMask(linear-gradient(to right, #0003 5px, black #{$size}), $subtractScrollbar)
 
-=fadeRight($size: 1.5rem, $subtractScrollbar: false)
-	+addFadeMask(linear-gradient(to right, black calc(100% - #{$size}), transparent calc(100% - 5px)), $subtractScrollbar)
+=fadeRight($size: 1rem, $subtractScrollbar: false)
+	+addFadeMask(linear-gradient(to right, black calc(100% - #{$size}), #0003 calc(100% - 5px)), $subtractScrollbar)
 
-=fadeLeftRight($size: 1.5rem, $subtractScrollbar: false)
-	+addFadeMask(linear-gradient(to right, transparent 5px, black #{$size}, black calc(100% - #{$size}), transparent calc(100% - 5px)), $subtractScrollbar)
+=fadeLeftRight($size: 1rem, $subtractScrollbar: false)
+	+addFadeMask(linear-gradient(to right, #0003 5px, black #{$size}, black calc(100% - #{$size}), #0003 calc(100% - 5px)), $subtractScrollbar)
 
 // Hide element from view/layout, but not from screen readers.
 =visuallyHidden()

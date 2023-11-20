@@ -1,5 +1,5 @@
 import {signal, toJS as statinToJS, createAction} from 'statin';
-import {isOfType, arrayMoveItem, isType, Type, uid, propPath} from 'lib/utils';
+import {isOfType, arrayMoveItem, isType, Type, uid, propPath, roundDecimals} from 'lib/utils';
 import {UnionToIntersection} from 'type-fest';
 import {
 	OptionBoolean,
@@ -125,17 +125,10 @@ export interface ValidateNumberOptions {
 function validateNumber(value: unknown, options?: ValidateNumberOptions): number {
 	const asString = `${value}`.trim();
 	if (!/^-?\d+(\.\d+)?$/.exec(asString)) throw new Error('Not a number.');
-	let number = parseFloat(asString);
+	let number = roundDecimals(parseFloat(asString), 10);
 	if (options?.steps) {
 		if (!options.steps.includes(number)) throw new Error(`Number is not one of the allowed steps.`);
 		return number;
-	}
-	if (options?.step != null) {
-		// We need to get rid of the floating point noise
-		const remainder = number % options.step;
-		if (remainder > 0.00000000001 && options.step - Math.abs(remainder) > 0.00000000001) {
-			throw new Error(`Not an increment of ${options.step}.`);
-		}
 	}
 	if (options?.min != null && number < options.min) throw new Error('Too small.');
 	if (options?.max != null && number > options.max) throw new Error('Too big.');
@@ -738,7 +731,9 @@ export function listStringValues(data: any, schema?: OptionsSchema, path: (strin
 
 		if (option.type === 'string' || option.type === 'path') {
 			const value = propPath(data, currentPath);
-			values.push({name: currentPath.join('.'), value, isSuspicious: includesJSLiteral(value)});
+			if (value != null) {
+				values.push({name: currentPath.join('.'), value, isSuspicious: includesJSLiteral(value)});
+			}
 		}
 
 		if (option.type === 'list' && option.schema.type === 'string') {
@@ -747,7 +742,9 @@ export function listStringValues(data: any, schema?: OptionsSchema, path: (strin
 				for (let i = 0; i < listValues.length; i++) {
 					const itemPath = [...currentPath, i];
 					const value = propPath(data, itemPath);
-					values.push({name: itemPath.join('.'), value, isSuspicious: includesJSLiteral(value)});
+					if (value != null) {
+						values.push({name: itemPath.join('.'), value, isSuspicious: includesJSLiteral(value)});
+					}
 				}
 			}
 		}

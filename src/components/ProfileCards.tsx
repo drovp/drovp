@@ -127,6 +127,8 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 		const container = containerRef.current;
 		const handle = event.currentTarget;
 		if (!container) return;
+		event.preventDefault();
+		event.stopPropagation();
 		const position = profile.position.value;
 		const containerRect = container.getBoundingClientRect();
 		const columnWidth = containerRect.width / profilesGridColumns;

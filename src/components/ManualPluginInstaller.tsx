@@ -37,24 +37,24 @@ export const ManualPluginInstaller = observer(function ExternalPluginInstaller({
 
 	return (
 		<div class="ManualPluginInstaller" ref={containerRef}>
-			<Input
-				type="path"
-				class="input"
-				placeholder="identifier, url, or path"
-				value={value}
-				onChange={setValue}
-				onSubmit={install}
-			/>
-
-			{valueIsEmpty && (
-				<Alert variant="info" icon="info">
-					Enter plugin identifier to install.
-				</Alert>
-			)}
+			<div class="input">
+				<div class="value">
+					<Input
+						type="path"
+						placeholder="identifier, url, or path"
+						value={value}
+						onChange={setValue}
+						onSubmit={install}
+					/>
+				</div>
+				{valueIsEmpty && <Alert icon="info">Enter plugin identifier to install.</Alert>}
+			</div>
 
 			<Button class="install" variant="success" onClick={install} loading={isInstalling} disabled={isDisabled}>
 				Install
 			</Button>
+
+			<hr />
 
 			<Scrollable class="content">
 				{freshPlugins && freshPlugins.length > 0 && (

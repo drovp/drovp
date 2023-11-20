@@ -5,6 +5,7 @@
 
 	> article
 		--height: calc(var(--input-height) * 1.5)
+		flex: 0 0 auto
 		display: flex
 		align-items: stretch
 		gap: var(--spacing-quarter)
@@ -53,6 +54,7 @@
 				display: flex
 				align-items: center
 				gap: .4em
+				font-weight: bold
 				overflow: hidden
 				white-space: nowrap
 
@@ -73,6 +75,7 @@
 
 		> .delete
 			flex: 0 1 auto
+			color: var(--danger-z600)
 
 			&:not([disabled]):hover
 				color: var(--variant-fg)

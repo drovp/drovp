@@ -6,7 +6,7 @@ export type NavOptions = RenderableProps<{
 	class?: string;
 	align?: 'left' | 'right' | 'center';
 	variant?: Variant;
-	style?: 'bar' | 'underline' | 'overline';
+	style?: 'bar' | 'underline' | 'tabs';
 }>;
 
 export function Nav({class: className, align = 'center', variant, style = 'bar', children}: NavOptions) {

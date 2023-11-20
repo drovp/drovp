@@ -269,7 +269,7 @@ export const Plugin = observer(function Plugin({data, section, onSectionChange}:
 
 			{issues && issues.length > 0 && <Issues issues={issues} />}
 
-			<Nav style="overline">
+			<Nav style="tabs">
 				<NavLink
 					to="readme"
 					onClick={onSectionChange}

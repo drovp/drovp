@@ -5,21 +5,21 @@
 		+size(4rem)
 
 	> article
-		margin-bottom: var(--spacing-double)
+		margin-bottom: var(--spacing-half)
 
 		> header
 			display: flex
 			gap: var(--spacing-half)
 			align-items: center
 			padding-bottom: var(--spacing-half)
-			margin-bottom: var(--spacing-half)
-			background: var(--muted-50)
-			padding: var(--spacing-half)
-			border-radius: 3px
+			margin-bottom: 2px
+			background: var(--muted-100)
+			padding: var(--spacing-half) var(--spacing)
+			border-radius: var(--border-radius) var(--border-radius) 0 0
 
 			&:is(.-current > *)
-				background: var(--success-o100)
-				color: var(--success-z700)
+				background: var(--success-o300)
+				color: var(--success-z800)
 
 			> hgroup
 				flex: 1 1 auto
@@ -42,4 +42,9 @@
 				margin-left: auto
 
 		> .body
-			padding: var(--spacing-half)
+			padding: var(--spacing)
+			background: var(--muted-50)
+			border-radius: 0 0 var(--border-radius) var(--border-radius)
+
+			&:is(.-current > *)
+				background: var(--success-o100)

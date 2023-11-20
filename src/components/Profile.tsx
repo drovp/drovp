@@ -2,8 +2,8 @@ import {h, RenderableProps} from 'preact';
 import {useRef, useState, useEffect, useMemo, Ref} from 'preact/hooks';
 import {action} from 'statin';
 import {observer} from 'statin-preact';
-import {useEventListener, useVolley, useScrollPosition, useCache} from 'lib/hooks';
-import {TargetedEvent, isInputElement, uid} from 'lib/utils';
+import {useEventListener, useVolley, useScrollPosition} from 'lib/hooks';
+import {TargetedEvent, isTextInputElement, uid} from 'lib/utils';
 import {Icon} from 'components/Icon';
 import {RouteProps, Redirect} from 'poutr';
 import {Vacant} from 'components/Vacant';
@@ -20,6 +20,7 @@ import {ProcessorCard} from 'components/ProcessorCard';
 import {DependencyCard} from 'components/DependencyCard';
 import {PluginCard} from 'components/PluginCards';
 import {OperationsSection} from 'components/Operations';
+import {OperationSubRoute} from 'components/Operation';
 import {Nav, NavLink, NavLinkRelativePart} from 'components/Nav';
 import {ProfileProgress} from './ProfileProgress';
 import {useStore} from 'models/store';
@@ -36,6 +37,7 @@ export const ProfileRoute = observer(function ProfileRoute({match, history, loca
 	if (!id) throw new Error(`Missing ID.`);
 
 	const section = location.searchParams.get('section');
+	const searchId = location.searchParams.get('id');
 	const isNew = location.searchParams.has('new');
 	const profile = profiles.byId().get(id);
 
@@ -47,14 +49,8 @@ export const ProfileRoute = observer(function ProfileRoute({match, history, loca
 
 	return section && profile ? (
 		<div class="ProfileRoute">
-			<Profile
-				key={id}
-				profile={profile}
-				section={section}
-				isNew={isNew}
-				onSectionChange={(section) => history.replace(`/profiles/${id}?section=${section}`)}
-			/>
-			{section === 'operations' && <ProfileOutputs profile={profile} />}
+			<Profile key={id} profile={profile} focusTitle={isNew} />
+			{section === 'operations' && !searchId && <ProfileOutputs profile={profile} />}
 		</div>
 	) : (
 		<Vacant title={[`Profile "`, <code>{id}</code>, `" not found`]} />
@@ -156,6 +152,7 @@ export const ProfileWrapper = observer(function ProfileWrapper({
 					: undefined
 			}
 			draggable={draggable}
+			onMouseDown={draggable ? (event) => event.stopPropagation() : undefined}
 			onDragStart={profile.handleDragStart}
 			onDragEnter={profile.handleDragEnter}
 			onDragLeave={profile.handleDragLeave}
@@ -203,31 +200,25 @@ export const ProfileWrapper = observer(function ProfileWrapper({
 
 interface ProfileProps {
 	profile: ProfileModel;
-	section?: string;
-	onSectionChange: (section: string) => void;
-	isNew?: boolean;
+	focusTitle?: boolean;
 }
 
-export const Profile = observer(function Profile({profile, section, onSectionChange, isNew}: ProfileProps) {
+export const Profile = observer(function Profile({profile, focusTitle}: ProfileProps) {
 	const {history} = useStore();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const titleRef = useRef<HTMLInputElement>(null);
 	const mountId = useMemo(() => uid(), []);
 	const issues = profile.issues();
-	const [cachedOperationsSection, setCachedOperationsSection] = useCache(
-		`profile[${profile.id}].operationsSection`,
-		'all'
-	);
-	const [operationsSection, setOperationsSection] = useState(cachedOperationsSection);
 	const hasPending = profile.hasPendingOperations();
 	const processor = profile.processor();
 	const instructions = processor?.instructions || processor?.plugin.readme;
-
-	setCachedOperationsSection(operationsSection);
+	const section = history.location.searchParams.get('section') || undefined;
+	const id = history.location.searchParams.get('id');
+	const changeSectionTo = (name: string) => history.replace(`?section=${name}`);
 
 	useEffect(() => {
 		const titleElement = titleRef.current;
-		if (titleElement && isNew) {
+		if (titleElement && focusTitle) {
 			// We have to wait, or chromium auto-scrolls the document out of
 			// bounds to center the focused input which is due to the inward
 			// animation positioned off screen. I just love when the environment
@@ -238,7 +229,7 @@ export const Profile = observer(function Profile({profile, section, onSectionCha
 	}, []);
 
 	useEventListener('paste', (event: ClipboardEvent) => {
-		if (!isInputElement(event.target)) profile.handlePaste(event);
+		if (!isTextInputElement(event.target)) profile.handlePaste(event);
 	});
 	useVolley(containerRef, {perpetual: true});
 
@@ -250,15 +241,20 @@ export const Profile = observer(function Profile({profile, section, onSectionCha
 	return (
 		<ProfileWrapper innerRef={containerRef} class="Profile" profile={profile} hideProgress={issues.length > 0}>
 			<header>
-				<input
-					class="title"
-					ref={titleRef}
-					type="text"
-					placeholder={profile.displayTitle()}
-					value={profile.title()}
-					onInput={(event) => action(() => profile.title(event.currentTarget.value))}
-					title="Click to edit"
-				/>
+				<div
+					class="title-editable"
+					data-value={profile.title() || profile.displayTitle()} // Allows grid based horizontal resizing in CSS
+				>
+					<input
+						ref={titleRef}
+						type="text"
+						size={1}
+						placeholder={profile.displayTitle()}
+						value={profile.title()}
+						onInput={(event) => action(() => profile.title(event.currentTarget.value))}
+						title="Click to edit"
+					/>
+				</div>
 				{profile.isAdding() && (
 					<div class="adding" title="Adding (serializing) dropped items">
 						<Spinner /> <span class="count">{profile.added()}</span>
@@ -287,16 +283,16 @@ export const Profile = observer(function Profile({profile, section, onSectionCha
 
 			{issues.length > 0 && <Issues issues={issues} />}
 
-			<Nav style="overline" class="navigation">
+			<Nav style="tabs" class="navigation">
 				<NavLink
 					to="operations"
-					onClick={onSectionChange}
+					onClick={changeSectionTo}
 					activeMatch={section === 'operations'}
 					tooltip="Operations"
 				>
 					<Icon name="operation" /> Operations
 				</NavLink>
-				<NavLink to="options" onClick={onSectionChange} activeMatch={section === 'options'} tooltip="Options">
+				<NavLink to="options" onClick={changeSectionTo} activeMatch={section === 'options'} tooltip="Options">
 					<Icon name="cog" /> <NavLinkRelativePart>Options</NavLinkRelativePart>
 				</NavLink>
 				{instructions && (
@@ -305,18 +301,18 @@ export const Profile = observer(function Profile({profile, section, onSectionCha
 						to={`${history.location.path}?section=instructions`}
 						mode="replace"
 						activeMatch={section === 'instructions'}
-						tooltip="See instructions"
+						tooltip="Instruction"
 					>
 						<Icon name="info" />
 						<NavLinkRelativePart>Instructions</NavLinkRelativePart>
 					</NavLink>
 				)}
-				<NavLink to="export" onClick={onSectionChange} activeMatch={section === 'export'} tooltip="Export">
+				<NavLink to="export" onClick={changeSectionTo} activeMatch={section === 'export'} tooltip="Export">
 					<Icon name="export" /> {!instructions && <NavLinkRelativePart>Export</NavLinkRelativePart>}
 				</NavLink>
 				<NavLink
 					to="details"
-					onClick={onSectionChange}
+					onClick={changeSectionTo}
 					activeMatch={section === 'details'}
 					variant={issues.length > 0 ? 'danger' : undefined}
 					tooltip="Profile details"
@@ -333,12 +329,18 @@ export const Profile = observer(function Profile({profile, section, onSectionCha
 				<ProfileInstructions mountId={mountId} instructions={instructions} />
 			) : section === 'details' ? (
 				<ProfileDetails profile={profile} />
+			) : section === 'operations' && id ? (
+				<OperationSubRoute id={id} />
 			) : (
 				<OperationsSection
 					allSignal={profile.operations}
 					errorsSignal={profile.errors}
-					section={operationsSection}
-					onSection={setOperationsSection}
+					section={history.location.searchParams.get('operationsSection') || undefined}
+					onSection={(name) => {
+						const params = new URLSearchParams(history.location.search);
+						params.set('operationsSection', name);
+						history.replace(`?${params.toString()}`);
+					}}
 					onClearQueue={() => profile.clearQueue()}
 					onClearHistory={() => profile.clearHistory()}
 				/>
@@ -762,6 +764,7 @@ const ProfileOutputs = observer(function ProfileRoute({profile}: {profile: Profi
 			heightRatio={settings.profileOutputsDrawerHeight()}
 			onHeightRatioChange={(height) => action(() => settings.profileOutputsDrawerHeight(height))}
 			maxHeightRatio={0.5}
+			toOperationLinks={true}
 		/>
 	);
 });

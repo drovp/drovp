@@ -413,7 +413,7 @@ export function formatDuration(total: number): string {
 	const seconds = Math.floor(millisecondsLeft / 1000);
 	let secondsString = result
 		? ` ${String(seconds).padStart(2, '0')}`
-		: `${String(Math.round(seconds))}${millisecondsLeft < 10000 ? `.${Math.round((total % 1000) / 10)}` : ''}`;
+		: `${Math.round(seconds)}`;
 	result += `${secondsString}s`;
 
 	if (isNegative) result = `-${result}`;
@@ -880,7 +880,7 @@ export function normalizePath(path: string) {
 /**
  * Check for input elements (input, textarea, ...).
  */
-export function isInputElement(value: any): boolean {
+export function isTextInputElement(value: any): boolean {
 	if (value == null || typeof value.nodeName !== 'string') return false;
 	if (value.nodeName === 'TEXTAREA') return !value.readOnly;
 	if (value.nodeName === 'INPUT') {
@@ -893,12 +893,26 @@ export function isInputElement(value: any): boolean {
 }
 
 /**
+ * Check for input elements that need mouse dragging functionality to operate.
+ */
+export function isDragRequiringElement(value: any): boolean {
+	if (value == null || typeof value.nodeName !== 'string') return false;
+	if (value.nodeName === 'TEXTAREA') return !value.readOnly;
+	if (value.nodeName === 'INPUT') {
+		if (value.type === 'checkbox') return false;
+		if (value.type === 'radio') return false;
+		return !value.readOnly;
+	}
+	return false;
+}
+
+/**
  * Check for interactive elements (buttons, input, textarea, ...).
  */
 export function isInteractiveElement(value: any): boolean {
 	if (value == null || typeof value.nodeName !== 'string') return false;
 	if (value.nodeName === 'BUTTON') return !value.disabled;
-	return isInputElement(value);
+	return isTextInputElement(value);
 }
 
 /**
@@ -1117,6 +1131,10 @@ export function isInsideElement(element: HTMLElement, {x, y}: {x: number; y: num
 	 * lot of false positives.
 	 */
 	return x > Math.round(left) && x < Math.round(right) && y > Math.round(top) && y < Math.round(bottom);
+}
+
+export function getPointToPointDistance(ax: number, ay: number, bx: number, by: number) {
+	return Math.sqrt((Math.pow(bx-ax,2))+(Math.pow(by-ay,2)));
 }
 
 /**

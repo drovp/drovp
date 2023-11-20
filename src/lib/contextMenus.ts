@@ -15,7 +15,8 @@ export type ContextMenuItem =
 	| {
 			type?: 'normal';
 			label: string;
-			subLabel?: string;
+			sublabel?: string;
+			accelerator?: string;
 			enabled?: boolean;
 			click?: ContextMenuClick;
 			submenu?: ContextMenuItem[];
@@ -23,7 +24,8 @@ export type ContextMenuItem =
 	| {
 			type: 'checkbox' | 'radio';
 			label: string;
-			subLabel?: string;
+			sublabel?: string;
+			accelerator?: string;
 			enabled?: boolean;
 			checked?: boolean;
 			click?: ContextMenuClick;
@@ -35,14 +37,16 @@ export type ContextMenuIPCItem =
 	| {
 			type?: 'normal';
 			label: string;
-			subLabel?: string;
+			sublabel?: string;
+			accelerator?: string;
 			enabled?: boolean;
 			submenu?: ContextMenuIPCItem[];
 	  }
 	| {
 			type: 'checkbox' | 'radio';
 			label: string;
-			subLabel?: string;
+			sublabel?: string;
+			accelerator?: string;
 			enabled?: boolean;
 			checked?: boolean;
 			submenu?: ContextMenuIPCItem[];

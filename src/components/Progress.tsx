@@ -55,7 +55,7 @@ export function Progress({
 			{completed != null && completed > 0 && (
 				<div
 					class="bar labels"
-					style={{clipPath: `inset(0% ${clamp(0, 1 - completed, 1) * 100}% 0 0 round var(--border-radius))`}}
+					style={{clipPath: `inset(0% ${clamp(0, 1 - completed, 1) * 100}% 0 0 round calc(var(--border-radius) - 1px))`}}
 				>
 					{labelLeft && <div class="left">{labelLeft}</div>}
 					{label && <div class="center">{label}</div>}

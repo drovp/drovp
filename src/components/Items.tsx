@@ -1,6 +1,7 @@
-import {shell, ipcRenderer} from 'electron';
+import Path from 'path';
+import {shell, clipboard, ipcRenderer} from 'electron';
 import {h} from 'preact';
-import {Ref} from 'preact/hooks';
+import {Ref, useState} from 'preact/hooks';
 import {observer} from 'statin-preact';
 import {formatSize, prevented, reportIssue} from 'lib/utils';
 import {ContextMenus} from 'lib/contextMenus';
@@ -21,6 +22,7 @@ export const Items = observer(function Items({
 	style,
 	reversed,
 	profileTitles,
+	toOperationLinks,
 }: {
 	items: (() => (ItemModel | RawItemModel)[]) | (ItemModel | RawItemModel)[];
 	innerRef?: Ref<HTMLDivElement | null>;
@@ -28,6 +30,7 @@ export const Items = observer(function Items({
 	style?: string | {[key: string]: string};
 	reversed?: boolean;
 	profileTitles?: boolean;
+	toOperationLinks?: boolean;
 }) {
 	let classNames = 'Items';
 	if (className) classNames += ` ${className}`;
@@ -39,7 +42,9 @@ export const Items = observer(function Items({
 			style={style}
 			reversed={reversed}
 			items={Array.isArray(items) ? items : items()}
-			render={(item) => <Item key={item.id} item={item} profileTitle={profileTitles} />}
+			render={(item) => (
+				<Item key={item.id} item={item} profileTitle={profileTitles} toOperationLinks={toOperationLinks} />
+			)}
 		/>
 	);
 });
@@ -47,14 +52,19 @@ export const Items = observer(function Items({
 export function Item({
 	item,
 	profileTitle: displayProfileTitle,
+	toOperationLinks,
 }: {
 	item: ItemModel | RawItemModel;
 	profileTitle?: boolean;
+	toOperationLinks?: boolean;
 }) {
 	const {modals, history} = useStore();
 	let classNames = `Item -${item.kind}`;
 	const operation = 'operation' in item ? item.operation : null;
 	const plugin = operation?.profile.plugin();
+	const [showActions, setShowActions] = useState(false);
+	const handleMouseEnter = () => setShowActions(true);
+	const handleMouseLeave = () => setShowActions(false);
 
 	function showContextMenu(event: MouseEvent) {
 		event.preventDefault();
@@ -87,6 +97,15 @@ export function Item({
 			tooltip={item.badge.title || undefined}
 		/>
 	) : null;
+	const toOperationButton = toOperationLinks && showActions ? (
+		<button
+			onClick={operation ? prevented(() => history.push(`/operations/${operation.id}`)) : undefined}
+			disabled={operation == null}
+			title={operation ? 'To operation' : 'Operation was deleted'}
+		>
+			<Icon name="operation" />
+		</button>
+	) : undefined;
 
 	if (item.kind === 'file') {
 		if (item.exists) {
@@ -96,31 +115,55 @@ export function Item({
 					class={classNames}
 					onContextMenu={showContextMenu}
 					draggable
-					onDragStart={prevented(() => ipcRenderer.invoke('start-drag', item.path))}
+					onDragStart={prevented(() => ipcRenderer.send('start-drag', item.path))}
 					onClick={() => shell.openPath(item.path)}
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
 					title={`Open file:\n${item.path}`}
 				>
-					{itemTitle}
-					{profileTitle}
-					{badge}
-					{flair}
-					<span class="meta">
-						<span class="kind">{item.type ? item.type : item.kind}</span>
-						<span class="stats">, {formatSize(item.size)}</span>
-					</span>
+					<div class="content">
+						{itemTitle}
+						{profileTitle}
+						{badge}
+						{flair}
+						<span class="meta">
+							<span class="kind">{item.type ? item.type : item.kind}</span>
+							<span class="stats">, {formatSize(item.size)}</span>
+						</span>
+					</div>
+					{showActions && (
+						<div class="actions">
+							<button
+								onClick={prevented(() => shell.showItemInFolder(Path.normalize(item.path)))}
+								title="Show in folder"
+							>
+								<Icon name="folder-open" />
+							</button>
+							{toOperationButton}
+						</div>
+					)}
 				</button>
 			);
 		} else {
 			classNames += ' -disabled -warning';
 			return (
-				<article class={classNames} onContextMenu={showContextMenu} title={`Missing file:\n${item.path}`}>
-					{itemTitle}
-					{profileTitle}
-					{badge}
-					{flair}
-					<span class="meta">
-						<span class="kind">{item.kind}</span>
-					</span>
+				<article
+					class={classNames}
+					onContextMenu={showContextMenu}
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
+					title={`Missing file:\n${item.path}`}
+				>
+					<div class="content">
+						{itemTitle}
+						{profileTitle}
+						{badge}
+						{flair}
+						<span class="meta">
+							<span class="kind">{item.kind}</span>
+						</span>
+					</div>
+					{showActions && <div class="actions">{toOperationButton}</div>}
 				</article>
 			);
 		}
@@ -133,31 +176,45 @@ export function Item({
 				<button
 					class={classNames}
 					onContextMenu={showContextMenu}
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
 					draggable
-					onDragStart={prevented(() => ipcRenderer.invoke('start-drag', item.path))}
+					onDragStart={prevented(() => ipcRenderer.send('start-drag', item.path))}
 					onClick={() => shell.openPath(item.path)}
 					title={`Open folder:\n${item.path}`}
 				>
-					{itemTitle}
-					{profileTitle}
-					{badge}
-					{flair}
-					<span class="meta">
-						<span class="kind">{item.kind}</span>
-					</span>
+					<div class="content">
+						{itemTitle}
+						{profileTitle}
+						{badge}
+						{flair}
+						<span class="meta">
+							<span class="kind">{item.kind}</span>
+						</span>
+					</div>
+					{showActions && <div class="actions">{toOperationButton}</div>}
 				</button>
 			);
 		} else {
 			classNames += ' -disabled -warning';
 			return (
-				<article class={classNames} onContextMenu={showContextMenu} title={`Missing folder:\n${item.path}`}>
-					{itemTitle}
-					{profileTitle}
-					{badge}
-					{flair}
-					<span class="meta">
-						<span class="kind">{item.kind}</span>
-					</span>
+				<article
+					class={classNames}
+					onContextMenu={showContextMenu}
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
+					title={`Missing folder:\n${item.path}`}
+				>
+					<div class="content">
+						{itemTitle}
+						{profileTitle}
+						{badge}
+						{flair}
+						<span class="meta">
+							<span class="kind">{item.kind}</span>
+						</span>
+					</div>
+					{showActions && <div class="actions">{toOperationButton}</div>}
 				</article>
 			);
 		}
@@ -170,17 +227,29 @@ export function Item({
 				class={classNames}
 				draggable
 				onDragStart={(event: DragEvent) => event.dataTransfer!.setData('text/plain', item.url)}
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
 				onClick={() => shell.openExternal(item.url)}
 				onContextMenu={showContextMenu}
 				title={`Open URL:\n${item.url}`}
 			>
-				{itemTitle}
-				{profileTitle}
-				{badge}
-				{flair}
-				<span class="meta">
-					<span class="kind">{item.kind}</span>
-				</span>
+				<div class="content">
+					{itemTitle}
+					{profileTitle}
+					{badge}
+					{flair}
+					<span class="meta">
+						<span class="kind">{item.kind}</span>
+					</span>
+				</div>
+				{showActions && (
+					<div class="actions">
+						<button onClick={prevented(() => clipboard.writeText(item.url))} title="Copy">
+							<Icon name="copy" />
+						</button>
+						{toOperationButton}
+					</div>
+				)}
 			</button>
 		);
 	}
@@ -192,6 +261,8 @@ export function Item({
 				class={classNames}
 				draggable
 				onDragStart={(event: DragEvent) => event.dataTransfer?.setData('text/plain', item.contents)}
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
 				onClick={() =>
 					modals.alert({
 						title: 'String item',
@@ -202,31 +273,57 @@ export function Item({
 				onContextMenu={showContextMenu}
 				title={item.contents.length > 200 ? `${item.contents.slice(0, 200)}…` : item.contents}
 			>
-				{itemTitle}
-				{profileTitle}
-				{badge}
-				{flair}
-				<span class="meta">
-					<span class="kind">{item.kind}</span>
-					<span class="stats" title={`${item.contents.length} characters`}>
-						, {item.contents.length}ch
+				<div class="content">
+					{itemTitle}
+					{profileTitle}
+					{badge}
+					{flair}
+					<span class="meta">
+						<span class="kind">{item.kind}</span>
+						<span class="stats" title={`${item.contents.length} characters`}>
+							, {item.contents.length}ch
+						</span>
 					</span>
-				</span>
+				</div>
+				{showActions && (
+					<div class="actions">
+						<button onClick={prevented(() => clipboard.writeText(item.contents))} title="Copy">
+							<Icon name="copy" />
+						</button>
+						{toOperationButton}
+					</div>
+				)}
 			</button>
 		);
 	}
 
 	if (item.kind === 'blob') {
 		return (
-			<article class={classNames} onContextMenu={showContextMenu} title="Binary blob">
-				{itemTitle}
-				{profileTitle}
-				{badge}
-				{flair}
-				<span class="meta">
-					<span class="kind">{item.kind}</span>
-					<span class="stats">, {formatSize(item.contents.length)}</span>
-				</span>
+			<article
+				class={classNames}
+				onContextMenu={showContextMenu}
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
+				title="Binary blob"
+			>
+				<div class="content">
+					{itemTitle}
+					{profileTitle}
+					{badge}
+					{flair}
+					<span class="meta">
+						<span class="kind">{item.kind}</span>
+						<span class="stats">, {formatSize(item.contents.length)}</span>
+					</span>
+				</div>
+				{showActions && (
+					<div class="actions">
+						<button onClick={prevented(() => clipboard.writeBuffer(item.mime, item.contents))} title="Copy">
+							<Icon name="copy" />
+						</button>
+						{toOperationButton}
+					</div>
+				)}
 			</article>
 		);
 	}
@@ -276,16 +373,21 @@ export function Item({
 			<button
 				class={classNames}
 				onContextMenu={showContextMenu}
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
 				title={isError ? 'Error' : 'Warning'}
 				onClick={showModal}
 			>
-				{itemTitle}
-				{profileTitle}
-				{badge}
-				{flair}
-				<span class="meta">
-					<span class="kind">{item.kind}</span>
-				</span>
+				<div class="content">
+					{itemTitle}
+					{profileTitle}
+					{badge}
+					{flair}
+					<span class="meta">
+						<span class="kind">{item.kind}</span>
+					</span>
+				</div>
+				{showActions && <div class="actions">{toOperationButton}</div>}
 			</button>
 		);
 	}
@@ -297,14 +399,23 @@ export function Item({
 		});
 
 	return (
-		<button class={classNames} onContextMenu={showContextMenu} onClick={showModal}>
-			{itemTitle}
-			{profileTitle}
-			{badge}
-			{flair}
-			<span class="meta">
-				<span class="kind">unknown</span>
-			</span>
+		<button
+			class={classNames}
+			onContextMenu={showContextMenu}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
+			onClick={showModal}
+		>
+			<div class="content">
+				{itemTitle}
+				{profileTitle}
+				{badge}
+				{flair}
+				<span class="meta">
+					<span class="kind">unknown</span>
+				</span>
+			</div>
+			{showActions && <div class="actions">{toOperationButton}</div>}
 		</button>
 	);
 }

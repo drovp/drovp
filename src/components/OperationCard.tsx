@@ -1,4 +1,5 @@
 import {h, ComponentChild} from 'preact';
+import {useState} from 'preact/hooks';
 import {observer} from 'statin-preact';
 import {prevented} from 'lib/utils';
 import {Icon} from 'components/Icon';
@@ -25,6 +26,9 @@ export const OperationCard = observer(({operation, showProfileTitle}: OperationC
 	const outputsCount = operation.outputs().length;
 	const remaining = operation.remaining();
 	const humanProgress = operation.humanProgress();
+	const [showActions, setShowActions] = useState(false);
+	const handleMouseEnter = () => setShowActions(true);
+	const handleMouseLeave = () => setShowActions(false);
 
 	let classNames = `OperationCard -${state}`;
 	if (hasError) classNames += ' -danger';
@@ -34,121 +38,125 @@ export const OperationCard = observer(({operation, showProfileTitle}: OperationC
 	return (
 		<button
 			class={classNames}
-			onClick={() =>
-				history.push(`/operations/${operation.id}?from=${encodeURIComponent(history.location.href)}`)
-			}
 			data-context-menu="operation"
 			data-context-menu-payload={operation.id}
+			onClick={() => history.push(`/profiles/${operation.profile.id}?section=operations&id=${operation.id}`)}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
 		>
 			<OperationProgress operation={operation} />
 
-			<header>
-				<OperationTitle operation={operation} compact />
+			<div class="content">
+				<header>
+					<OperationTitle operation={operation} compact />
 
-				{stage && (
-					<div class="stage" title={`Current stage: ${stage}`}>
-						{stage}
+					{stage && (
+						<div class="stage" title={`Current stage: ${stage}`}>
+							{stage}
+						</div>
+					)}
+
+					{state === 'pending' && humanProgress ? (
+						<div class="percent">{humanProgress}</div>
+					) : (
+						!stage && <div class="state">{hasError ? 'error' : state}</div>
+					)}
+				</header>
+
+				<div class="meta">
+					{showProfileTitle === true && (
+						<div class="iconValue profile" title={operation.profile.title()}>
+							<Icon name="profile" />
+							{operation.profile.title()}
+						</div>
+					)}
+
+					{inputsCount > 0 && outputsCount === 0 && (
+						<div class="iconValue inputs" title={`${inputsCount} inputs`}>
+							{inputsCount} <Icon name="input" />
+						</div>
+					)}
+
+					{outputsCount > 0 && inputsCount === 0 && (
+						<div class="iconValue outputs" title={`${outputsCount} outputs`}>
+							<Icon name="output" /> {outputsCount}
+						</div>
+					)}
+
+					{outputsCount > 0 && inputsCount > 0 && (
+						<div class="iconValue inputsOutputs" title={`${inputsCount} inputs -> ${outputsCount} outputs`}>
+							{inputsCount} <Icon name="operation" /> {outputsCount}
+						</div>
+					)}
+
+					<div class="iconValue logsCount" title="Logged messages">
+						<Icon name="notes" /> {operation.logsCount()}
 					</div>
-				)}
 
-				{state === 'pending' && humanProgress ? (
-					<div class="percent">{humanProgress}</div>
-				) : (
-					!stage && <div class="state">{hasError ? 'error' : state}</div>
-				)}
-			</header>
+					<div class="spacer" />
 
-			<div class="meta">
-				{showProfileTitle === true && (
-					<div class="iconValue profile" title={operation.profile.title()}>
-						<Icon name="profile" />
-						{operation.profile.title()}
-					</div>
-				)}
+					{!isQueued && (
+						<div class="iconValue duration" title="Duration">
+							{operation.elapsed()}
+						</div>
+					)}
 
-				{inputsCount > 0 && outputsCount === 0 && (
-					<div class="iconValue inputs" title={`${inputsCount} inputs`}>
-						{inputsCount} <Icon name="input" />
-					</div>
-				)}
+					{isPending && remaining && <Icon name="time" />}
 
-				{outputsCount > 0 && inputsCount === 0 && (
-					<div class="iconValue outputs" title={`${outputsCount} outputs`}>
-						<Icon name="output" /> {outputsCount}
-					</div>
-				)}
-
-				{outputsCount > 0 && inputsCount > 0 && (
-					<div class="iconValue inputsOutputs" title={`${inputsCount} inputs -> ${outputsCount} outputs`}>
-						{inputsCount} <Icon name="operation" /> {outputsCount}
-					</div>
-				)}
-
-				<div class="iconValue logsCount" title="Logged messages">
-					<Icon name="notes" /> {operation.logsCount()}
+					{isPending && remaining && (
+						<div class="iconValue remaining" title="Remaining">
+							{remaining}
+						</div>
+					)}
 				</div>
-
-				<div class="spacer" />
-
-				{!isQueued && (
-					<div class="iconValue duration" title="Duration">
-						{operation.elapsed()}
-					</div>
-				)}
-
-				{isPending && remaining && <Icon name="time" />}
-
-				{isPending && remaining && (
-					<div class="iconValue remaining" title="Remaining">
-						{remaining}
-					</div>
-				)}
 			</div>
 
-			<div class="actions">
-				{isPending ? (
-					<Button
-						variant="danger"
-						transparent
-						muted
-						onClick={prevented(() => operation.stop())}
-						tooltip="Stop"
-					>
-						<Icon name="stop" />
-					</Button>
-				) : isQueued ? (
-					[
+			{showActions && (
+				<div class="actions">
+					{isPending ? (
+						<Button
+							variant="danger"
+							transparent
+							muted
+							onClick={prevented(() => operation.stop())}
+							tooltip="Stop"
+						>
+							<Icon name="stop" />
+						</Button>
+					) : isQueued ? (
+						[
+							<Button
+								variant="info"
+								transparent
+								muted
+								onClick={prevented(() => operation.start())}
+								tooltip="Force start"
+							>
+								<Icon name="play" />
+							</Button>,
+							<Button
+								variant="warning"
+								transparent
+								muted
+								onClick={prevented(() => operation.delete())}
+								tooltip="Delete"
+							>
+								<Icon name="trash" />
+							</Button>,
+						]
+					) : (
 						<Button
 							variant="info"
 							transparent
 							muted
-							onClick={prevented(() => operation.start())}
-							tooltip="Force start"
+							onClick={prevented(() => operation.restart())}
+							tooltip="Restart"
 						>
-							<Icon name="play" />
-						</Button>,
-						<Button
-							variant="warning"
-							transparent
-							muted
-							onClick={prevented(() => operation.delete())}
-							tooltip="Delete"
-						>
-							<Icon name="trash" />
-						</Button>,
-					]
-				) : (
-					<Button
-						variant="info"
-						transparent
-						muted
-						onClick={prevented(() => operation.restart())}
-						tooltip="Restart"
-					>
-						<Icon name="refresh" />
-					</Button>
-				)}
-			</div>
+							<Icon name="refresh" />
+						</Button>
+					)}
+				</div>
+			)}
 		</button>
 	);
 });

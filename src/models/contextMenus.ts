@@ -35,8 +35,10 @@ export function registerContextMenus(store: Store) {
 		const accepts = profile.processor()?.config.accepts;
 
 		if (accepts?.urls && isTextInClipboardUrl) {
+			let urlJuice = clipboardText.replace(/[\w-]+:\/\/(www\.)?/i, '')
+			if (urlJuice.length > 22) urlJuice = urlJuice.slice(0, 20) + '…';
 			items.push({
-				label: `Paste URL: "${clipboardText.slice(0, 10)}..."`,
+				label: `Paste URL: "${urlJuice}"`,
 				click: () =>
 					profile.dropItems([{id: uid(), created: Date.now(), kind: 'url', url: clipboardText}], {
 						modifiers: '',

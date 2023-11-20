@@ -674,9 +674,7 @@ function PIOptionsViewer({options, processor}: {options: any; processor: Process
 			) : (
 				<dl class="strings">
 					{stringValues.length === 0 ? (
-						<dd>
-							<span class="placeholder">no string values</span>
-						</dd>
+						<Alert icon="info">The options inside this import code don't contain any suspicious strings.</Alert>
 					) : (
 						stringValues.map(({name, value, isSuspicious}) => {
 							return [

@@ -2,8 +2,8 @@
 	--height: calc(var(--input-height) * 1.3)
 	--border-size: 2px
 	--underline-size: 2px
-	--overline-size: 2px
-	--overline-color: var(--variant-z600)
+	--tabs-size: 2px
+	--tabs-color: var(--variant-z700)
 	position: relative
 	min-width: 0
 	max-width: 100%
@@ -14,34 +14,27 @@
 	overflow: hidden
 
 	&.-underline
-		--height: calc(var(--input-height) * 1.6)
+		justify-content: space-between
 
-		&:before
-			content: ''
-			+absolute(_ _ 0 0)
-			+size(100% var(--underline-size))
-			background: var(--muted-100)
-			border-radius: 999em
+		> .NavLink
+			flex: 0 1 auto
 
-	&.-overline
+	&.-tabs
 		--height: calc(var(--input-height) * 1.4)
-		--gap: calc(var(--overline-size) * 2)
+		--gap: calc(var(--tabs-size) * 2)
 		align-items: flex-start
 		gap: 2px
 
 		&:after
 			content: ''
 			+absolute(_ _ 0 0)
-			+size(100% var(--overline-size))
-			background: var(--overline-color)
+			+size(100% var(--tabs-size))
+			background: var(--tabs-color)
 			border-radius: var(--border-radius)
 
 	&.-bar
-		background: var(--darken)
+		background: var(--variant-o200)
 		border-radius: var(--border-radius)
-
-		&:is([data-theme=dark] *)
-			padding: 1px
 
 	&.-left
 		justify-content: flex-start
@@ -83,6 +76,7 @@
 		align-items: center
 		justify-content: center
 		gap: .5em
+		white-space: nowrap
 		overflow: hidden
 
 		> *
@@ -125,12 +119,12 @@
 			transition-duration: 0s
 
 			&.-exact
-				color: var(--bg)
+				color: var(--grey-z0)
 				border-color: var(--variant-z800)
-				background: var(--variant-z800)
+				background: var(--tabs-color)
 				border-color: transparent
 				opacity: 1
-				--tag-color: var(--variant-z800)
+				--tag-color: var(--tabs-color)
 				--tag-background: var(--variant-z100)
 
 		// Discrete border between buttons
@@ -176,13 +170,13 @@
 			&.-exact
 				--border-opacity: 1
 
-	.Nav.-overline > &
+	.Nav.-tabs > &
 		color: var(--variant)
 		border-radius: var(--border-radius)
 		transition: none
 
 		&:not(.-active)
-			height: calc(100% - var(--overline-size) - 2px)
+			height: calc(100% - var(--tabs-size) - 2px)
 			color: var(--variant-z700)
 			background: var(--variant-o200)
 
@@ -203,8 +197,8 @@
 		&.-active
 			z-index: 3
 			color: var(--grey-z0)
-			background: var(--overline-color)
-			padding-bottom: var(--overline-size)
+			background: var(--tabs-color)
+			padding-bottom: var(--tabs-size)
 			border: 0
 			border-bottom-left-radius: 0
 			border-bottom-right-radius: 0
@@ -213,9 +207,9 @@
 			&::after
 				content: ''
 				position: absolute
-				bottom: var(--overline-size)
+				bottom: var(--tabs-size)
 				+size(var(--border-radius))
-				background: var(--overline-color)
+				background: var(--tabs-color)
 
 			&:not(:first-child)::before
 				right: 100%

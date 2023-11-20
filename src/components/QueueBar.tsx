@@ -56,6 +56,7 @@ export const QueueBar = observer(function QueueBar() {
 			<Button
 				semitransparent
 				variant="warning"
+				muted
 				onClick={() => operations.clearHistory()}
 				tooltip="Clear history of all profiles"
 			>

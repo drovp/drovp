@@ -1,13 +1,8 @@
 .OperationCard
 	--height: 3.3em
 	position: relative
-	display: grid
-	grid-template: ".actions" 1fr "title actions" 1.3em "meta actions" 1.3em ".actions" 1fr / 1fr auto
-	gap: 0 4px
 	width: 100%
 	height: var(--height)
-	padding-left: var(--spacing-half)
-	color: var(--variant-z900)
 	background: var(--variant-o200)
 	border-radius: var(--border-radius)
 	transition: background 33ms linear
@@ -39,36 +34,97 @@
 			&:is(html[data-freeze-animations=true] *)
 				animation: none
 
-	> header
-		grid-area: title
-		min-width: 0
+	&:has(> .actions > :nth-child(1))
+		--buttons: 1
+
+		> .content
+			--button-width: calc(var(--height) - 4px)
+			--fade-start: calc(100% - (2px + (var(--button-width) * (var(--buttons) + 1.25))))
+			--fade-end: calc(var(--fade-start) + var(--button-width))
+			mask-image: linear-gradient(to right, white, white var(--fade-start), transparent var(--fade-end))
+
+	&:has(> .actions > :nth-child(2))
+		--buttons: 2
+
+	&:has(> .actions > :nth-child(3))
+		--buttons: 3
+
+	> .content
 		display: flex
-		align-items: center
-		gap: var(--spacing-half)
+		flex-flow: column
+		align-items: stretch
+		justify-content: center
+		+size(100%)
+		padding: 0 var(--spacing-three-quarters)
 
-		> .OperationTitle
-			flex: 1 1 auto
-			font-weight: bold
-
-		> .stage
-			display: block
-			flex: 0 1 auto
+		> header
+			grid-area: title
 			min-width: 0
-			font-size: calc(var(--font-size) - 1px)
-			font-family: var(--font-code)
-			font-style: italic
-			+ellipsis()
+			display: flex
+			align-items: center
+			gap: var(--spacing-half)
 
-		> .state
-			font-family: var(--font-code)
-			font-style: italic
+			> .OperationTitle
+				flex: 1 1 auto
+				font-weight: bold
 
-		> .percent
-			font-family: var(--font-code)
-			font-weight: bold
+			> .stage
+				display: block
+				flex: 0 1 auto
+				min-width: 0
+				font-size: calc(var(--font-size) - 1px)
+				font-family: var(--font-code)
+				font-style: italic
+				+ellipsis()
+
+			> .state
+				font-family: var(--font-code)
+				font-style: italic
+
+			> .percent
+				font-family: var(--font-code)
+				font-weight: bold
+
+		> .meta
+			grid-area: meta
+			min-width: 0
+			display: flex
+			align-items: center
+			gap: var(--spacing-half)
+			margin-top: -0.2em
+			color: var(--variant-z900)
+
+			> *
+				flex: 0 0 auto
+
+			> .spacer
+				flex: 1 1 0
+
+			> .iconValue
+				display: flex
+				align-items: center
+				gap: .2em
+				font-family: var(--font-code)
+				opacity: .8
+
+			> .profile
+				display: block
+				flex: 0 1 auto
+				border-right: 1px solid var(--variant-o300)
+				padding-right: var(--spacing-half)
+				min-width: 0
+				+ellipsis()
+
+				> .Icon
+					vertical-align: bottom
+					margin-right: 0.1em
+
+			.Icon
+				font-size: 0.9em
+				opacity: .8
 
 	> .actions
-		grid-area: actions
+		+absolute(0 0 _ _)
 		flex: 0 0 auto
 		display: flex
 		height: var(--height)
@@ -79,46 +135,6 @@
 			outline-offset: -4px
 			height: var(--height)
 			aspect-ratio: 1/1
-			opacity: .5
 
 			> .Icon
 				+size(1.8em)
-
-			&:hover
-				opacity: 1
-
-	> .meta
-		grid-area: meta
-		min-width: 0
-		display: flex
-		align-items: center
-		gap: var(--spacing-half)
-
-		> *
-			flex: 0 0 auto
-
-		> .spacer
-			flex: 1 1 0
-
-		> .iconValue
-			display: flex
-			align-items: center
-			gap: .2em
-			font-family: var(--font-code)
-			opacity: .8
-
-		> .profile
-			display: block
-			flex: 0 1 auto
-			border-right: 1px solid var(--variant-o300)
-			padding-right: var(--spacing-half)
-			min-width: 0
-			+ellipsis()
-
-			> .Icon
-				vertical-align: bottom
-				margin-right: 0.1em
-
-		.Icon
-			font-size: 0.9em
-			opacity: .8

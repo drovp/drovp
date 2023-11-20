@@ -64,15 +64,13 @@ export const ProcessorRoute = observer(function ProcessorRoute({history, locatio
 	const plugin = plugins.byId().get(pluginId);
 	const profiles = processor?.profiles() || [];
 	const isReady = processor?.isReady() || false;
-	const dependenciesReady = processor?.dependenciesReady() || false;
 	const hasInstructions = processor?.hasInstructions;
 	const issues = processor?.issues() || [];
 	const hasIssues = issues.length > 0;
 
 	let section = location.searchParams.get('section');
 	if (!section) {
-		const nextUrl = dependenciesReady && profiles.length > 0 ? 'profiles' : 'details';
-		return <Redirect to={`${location.path}?section=${nextUrl}`} />;
+		return <Redirect to={`${location.path}?section=details`} />;
 	}
 
 	if (!processor) {
@@ -135,15 +133,15 @@ export const ProcessorRoute = observer(function ProcessorRoute({history, locatio
 
 			{hasIssues && <Issues issues={issues} />}
 
-			<Nav style="overline" class="navigation">
+			<Nav style="tabs" class="navigation">
 				<NavLink
-					to={`${location.path}?section=profiles`}
+					class="details"
+					to={`${location.path}?section=details`}
 					mode="replace"
-					activeMatch={section === 'profiles'}
-					tooltip="Profiles"
+					activeMatch={section === 'details'}
+					tooltip="Processor details"
 				>
-					<Icon name="profile" /> Profiles
-					<Tag>{profiles.length}</Tag>
+					<Icon name="info" /> Details
 				</NavLink>
 				{hasInstructions && (
 					<NavLink
@@ -156,13 +154,13 @@ export const ProcessorRoute = observer(function ProcessorRoute({history, locatio
 					</NavLink>
 				)}
 				<NavLink
-					class="details"
-					to={`${location.path}?section=details`}
+					to={`${location.path}?section=profiles`}
 					mode="replace"
-					activeMatch={section === 'details'}
-					tooltip="Processor details"
+					activeMatch={section === 'profiles'}
+					tooltip="Profiles"
 				>
-					<Icon name="info" /> Details
+					<Icon name="profile" /> Profiles
+					<Tag>{profiles.length}</Tag>
 				</NavLink>
 			</Nav>
 

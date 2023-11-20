@@ -106,6 +106,8 @@ export function Tabs({
 		if (event.button !== 0 || !onMove) return;
 		let dragContext = getDragContext(event.target);
 		if (!dragContext) return;
+		event.preventDefault();
+		event.stopPropagation();
 		const {container, draggedElement, index: draggedIndex, tabElements, action} = dragContext;
 		let targetIndex = draggedIndex;
 		const containerRect = container.getBoundingClientRect();
@@ -273,12 +275,12 @@ export function Tabs({
 	}
 
 	async function addTab(index: number) {
-		const result = await modals.prompt({title: 'New tab', message: 'Title:'});
+		const result = await modals.prompt({title: 'New tab title'});
 		if (!result.canceled) onAdd?.(result.payload, index);
 	}
 
 	async function renameTab(tab: Tab) {
-		const result = await modals.prompt({title: 'New tab', message: 'Title:'}, {default: tab.title});
+		const result = await modals.prompt({title: 'New tab title'}, {default: tab.title});
 		if (!result.canceled) onRename?.(tab.id, result.payload);
 	}
 

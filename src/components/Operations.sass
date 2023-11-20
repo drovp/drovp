@@ -1,5 +1,6 @@
 .Operations
 	min-height: 0
+	+hSpacingScrollable(var(--spacing-h, 0))
 
 	> .OperationCard + .OperationCard
 		margin-top: 2px
@@ -9,13 +10,16 @@
 	flex-direction: column
 
 	> .OperationsSection
+		--spacing-h: var(--spacing)
 		flex: 1 1 auto
-		margin: var(--spacing)
+		margin: var(--spacing) 0
 
 	> .Outputs
 		flex: 0 0 auto
+		--spacing-h: var(--spacing)
 
 .OperationsSection
+	--spacing-h: 0
 	flex: 1 1 0
 	margin: 0
 	min-height: 0
@@ -24,6 +28,7 @@
 	gap: var(--spacing-half)
 
 	> .controls
+		margin: 0 var(--spacing-h)
 		display: flex
 		align-items: center
 

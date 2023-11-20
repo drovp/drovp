@@ -60,6 +60,7 @@ const Profiles = observer(function Profiles() {
 				onHeightRatioChange={settings.globalOutputsDrawerHeight}
 				maxHeightRatio={0.8}
 				profileTitles
+				toOperationLinks={true}
 			/>
 		</div>
 	);

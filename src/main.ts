@@ -92,6 +92,7 @@ if (!app.requestSingleInstanceLock()) {
 		await settingsLoading;
 		app.dock?.[settings.taskbarButton ? 'show' : 'hide']();
 		await createMainWindow();
+		hideTrayIconMenuItem.enabled = settings.taskbarButton;
 		alwaysOnTopMenuItem.checked = settings.alwaysOnTop;
 		if (settings.trayIcon) createTrayIcon();
 
@@ -161,6 +162,10 @@ let alwaysOnTopMenuItem = new MenuItem({
 	accelerator: 't',
 	click: () => toggleAlwaysOnTop(),
 });
+let hideTrayIconMenuItem = new MenuItem({
+	label: 'Hide tray icon',
+	click: () => setSetting('trayIcon', false),
+});
 
 async function createMainWindow() {
 	let windowShown: () => void;
@@ -178,6 +183,11 @@ async function createMainWindow() {
 		minWidth: 420,
 		minHeight: 530,
 		icon,
+		titleBarStyle: process.platform === 'linux' ? 'default' : 'hidden',
+		// Enabling this on a mac when title bar is hidden has no other effect but making electron expose the
+		// `env(titlebar-area-x)` css variable needed for navigation styling, as we have to use the native mac traffic
+		// lights (they can't be disabled without loosing window corner radius, border, shadow, resizing, ...).
+		titleBarOverlay: process.platform === 'darwin',
 		focusable: true,
 		autoHideMenuBar: true,
 		skipTaskbar: !settings.taskbarButton,
@@ -258,6 +268,7 @@ function createTrayIcon() {
 				},
 			},
 			alwaysOnTopMenuItem,
+			hideTrayIconMenuItem,
 			{
 				label: 'Exit',
 				click: () => {
@@ -278,7 +289,7 @@ function createTrayIcon() {
 }
 
 // Sync session variables
-function setSetting<T extends keyof typeof settings>(name: T, value: typeof settings[T]) {
+function setSetting<T extends keyof typeof settings>(name: T, value: (typeof settings)[T]) {
 	if (settings[name] === value) return;
 	settings[name] = value;
 	mainWindow?.webContents.send('set-setting', name, value);
@@ -302,17 +313,36 @@ function getIpcEventBrowserWindow(event: Electron.IpcMainInvokeEvent): BrowserWi
 	return event.sender.getOwnerBrowserWindow();
 }
 
-ipcMain.handle('exit', () => app.exit());
-ipcMain.handle('relaunch', (event, link) => {
+ipcMain.on('exit', () => app.exit());
+ipcMain.on('relaunch', (event, link) => {
 	app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
 	app.exit(0);
 });
 
 // Open links and paths with OS's default apps
-ipcMain.handle('open-external', (event, link) => shell.openExternal(link));
+ipcMain.on('open-external', (event, link) => shell.openExternal(link));
 
 // Update window progress
-ipcMain.handle('set-progress', (event, progress, mode) => mainWindow?.setProgressBar(progress, {mode}));
+ipcMain.on('set-progress', (event, progress, mode) => mainWindow?.setProgressBar(progress, {mode}));
+
+// Window movement
+ipcMain.handle('get-window-position', (event) => getIpcEventBrowserWindow(event).getPosition());
+ipcMain.on('move-window-to', (event, x, y) => getIpcEventBrowserWindow(event).setPosition(x, y));
+
+// Initiates dragging of a file at specified path
+ipcMain.on('start-drag', async ({sender}, path) => {
+	const paths: string[] = (Array.isArray(path) ? path : [path]).filter((path) => !!path);
+	if (paths.length === 0) return;
+	let icon = Path.join(APP_PATH, 'assets', 'file.png');
+
+	try {
+		if ((await FSP.stat(paths[0]!)).isDirectory()) {
+			icon = Path.join(APP_PATH, 'assets', 'folder.png');
+		}
+	} catch {}
+
+	sender.startDrag({file: path, icon: icon});
+});
 
 // File dialogs
 ipcMain.handle('show-open-dialog', (event, options) => dialog.showOpenDialog(getIpcEventBrowserWindow(event), options));
@@ -349,13 +379,13 @@ ipcMain.handle('run-updater', (event, {nodeBin, sequence, restartAction}: RunUpd
 });
 
 // Reveal (un-minimize and focus) window that sent the event
-ipcMain.handle('reveal-window', (event) => {
+ipcMain.on('reveal-window', (event) => {
 	const srcWindow = getIpcEventBrowserWindow(event);
 	if (srcWindow.isMinimized()) srcWindow.show();
 	srcWindow.focus();
 });
 
-ipcMain.handle('set-setting', (event, prop, value) => {
+ipcMain.on('set-setting', (event, prop, value) => {
 	if (!(prop in settings)) return;
 
 	// @ts-ignore
@@ -370,6 +400,7 @@ ipcMain.handle('set-setting', (event, prop, value) => {
 		case 'taskbarButton':
 			app.dock?.[value ? 'show' : 'hide']();
 			mainWindow?.setSkipTaskbar(!value);
+			hideTrayIconMenuItem.enabled = value;
 			break;
 
 		case 'trayIcon':
@@ -383,7 +414,7 @@ ipcMain.handle('set-setting', (event, prop, value) => {
 	}
 });
 
-ipcMain.handle('start-drag', async ({sender}, path) => {
+ipcMain.on('start-drag', async ({sender}, path) => {
 	const paths: string[] = (Array.isArray(path) ? path : [path]).filter((path) => !!path);
 	if (paths.length === 0) return;
 	let icon = Path.join(APP_PATH, 'assets', 'file.png');
@@ -396,11 +427,12 @@ ipcMain.handle('start-drag', async ({sender}, path) => {
 
 	sender.startDrag({file: path, icon: icon});
 });
-ipcMain.handle('open-devtools', ({sender}) => sender.openDevTools());
-ipcMain.handle('close-devtools', ({sender}) => sender.closeDevTools());
-ipcMain.handle('toggle-devtools', ({sender}) => sender.toggleDevTools());
-ipcMain.handle('reload-window', ({sender}) => sender.reloadIgnoringCache());
-ipcMain.handle('close-app', () => app.exit(0));
+ipcMain.on('open-devtools', ({sender}) => sender.openDevTools());
+ipcMain.on('close-devtools', ({sender}) => sender.closeDevTools());
+ipcMain.on('toggle-devtools', ({sender}) => sender.toggleDevTools());
+ipcMain.on('reload-window', ({sender}) => sender.reloadIgnoringCache());
+ipcMain.on('minimize-window', (event) => getIpcEventBrowserWindow(event).minimize());
+ipcMain.on('close-app', () => app.exit(0));
 
 /**
  * Modal windows with context.

@@ -66,11 +66,9 @@ export const Options = observer(function Options({
 		openContextMenu([
 			signal
 				? {
-						label: `Reset "${(signal.schema.title || signal.schema.name || 'option').replace(
-							/(.{12,12}).+/i,
-							(_, $1) => `${$1}…`
-						)}" to default`,
+						label: `Reset option to default`,
 						click: signal.reset,
+						sublabel: 'Or Shift+Click the title',
 				  }
 				: false,
 			{label: 'Reset all to default', click: () => resetOptions(options)},
@@ -331,6 +329,7 @@ export const Options = observer(function Options({
 					<Option
 						key={signal.id}
 						id={id}
+						signal={signal}
 						title={schema.title ?? name}
 						type={schema.type}
 						subtype={subtype}
@@ -377,10 +376,11 @@ export const Options = observer(function Options({
 });
 
 export type OptionProps = RenderableProps<{
+	id: string;
+	signal: AnyOptionSignal;
 	title: string | false;
 	type: string;
 	subtype?: string;
-	id?: string;
 	extraClass?: string;
 	isChanged?: boolean;
 	hint?: string;
@@ -390,10 +390,11 @@ export type OptionProps = RenderableProps<{
 }>;
 
 export function Option({
+	id,
+	signal,
 	title,
 	type,
 	subtype,
-	id,
 	extraClass,
 	hint,
 	isChanged,
@@ -407,33 +408,40 @@ export function Option({
 	if (extraClass) classNames += ` ${extraClass}`;
 	if (isChanged) classNames += ` -changed -success`;
 	const [showHelpState, setShowHelp] = useState(false);
-	const titleIsButton = description != null && compact;
+	const showDescriptionToggle = description != null && compact;
 	const showHelp = compact ? showHelpState : true;
+
+	function handleClick(event: MouseEvent) {
+		if (event.shiftKey) {
+			event.preventDefault();
+			event.stopPropagation();
+			signal.reset?.();
+		}
+	}
 
 	return (
 		<div class={classNames} onContextMenu={onContextMenu}>
-			{title &&
-				(titleIsButton ? (
-					<button
-						class="title"
-						title={`${title}\nClick to see description.`}
-						onClick={() => setShowHelp(!showHelp)}
-					>
-						<span class="text">{title}</span>
-						<Icon name={showHelp ? 'info-up' : 'info-down'} />
-					</button>
-				) : (
-					<label class="title" for={compact ? undefined : id} title={title}>
-						<span class="text">{title}</span>
-					</label>
-				))}
+			{title && (
+				<label class="title" for={id} title={title} onClick={handleClick}>
+					<span class="text">{title}</span>
+					{showDescriptionToggle && (
+						<button
+							class={showHelp ? '-active' : undefined}
+							title="Toggle description"
+							onClick={() => setShowHelp(!showHelp)}
+						>
+							<Icon name={showHelp ? 'info-up' : 'info-down'} />
+						</button>
+					)}
+				</label>
+			)}
 			{children}
 			{hint != null && <Hint value={hint} />}
 			{showHelp && (
 				<Description
 					class="description"
 					description={description}
-					initialReveal={titleIsButton}
+					initialReveal={showDescriptionToggle}
 					onCrop={() => setShowHelp(false)}
 				/>
 			)}

@@ -16,6 +16,8 @@ html
 	-webkit-text-size-adjust: none
 	font-family: var(--font-text)
 	font-size: var(--font-size)
+	color: var(--fg)
+	font-variant-numeric: tabular-nums
 	tab-size: 2
 
 	// Disable browser scrolling when it pleases
@@ -49,9 +51,9 @@ body
 		scroll-behavior: smooth
 
 // Reset user-select and cursor for interactive elements
-code:not(a *), textarea, input
-	user-select: auto
-	cursor: auto
+		code: not(a *), textarea, input
+		user-select: auto
+		cursor: auto
 
 // Prevent user dragging
 :where(a, img)
@@ -78,6 +80,7 @@ code:not(a *), textarea, input
 	color: inherit
 	font: inherit
 	font-size: inherit
+	font-variant-numeric: inherit
 	letter-spacing: inherit
 	word-spacing: inherit
 
@@ -105,6 +108,9 @@ code:not(a *), textarea, input
 
 :where(pre > code)
 	display: block
+
+:where(hr)
+	border-top: 1px solid var(--grey-z200)
 
 // Correct the cursor style of increment and decrement buttons
 [type="number"]::-webkit-inner-spin-button,
@@ -169,7 +175,7 @@ a
 // Focus outline
 :focus-visible
 	outline: 1px dashed var(--variant)
-	outline-offset: 3px
+	outline-offset: var(--outline-offset)
 
 // Make sure users can't select button text
 :where(button, button[type], input[type="button"], input[type="submit"], input[type="reset"]),

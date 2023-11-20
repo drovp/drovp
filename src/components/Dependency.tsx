@@ -57,7 +57,7 @@ export const DependencyRoute = observer(function DependencyRoute({history, locat
 	let variant: Variant = 'success';
 
 	let section = location.searchParams.get('section');
-	if (!section) return <Redirect to={`${location.path}?section=payload`} />;
+	if (!section) return <Redirect to={`${location.path}?section=details`} />;
 
 	const isPending = operations.pending().length > 0;
 	const controlsDisabled = isPending || isStaging || isLoading || state === 'installing' || configError != null;
@@ -191,16 +191,16 @@ export const DependencyRoute = observer(function DependencyRoute({history, locat
 
 			{version && <TitleBar value={version}>Version</TitleBar>}
 
-			<Nav style="overline" class="navigation">
+			<Nav style="tabs" class="navigation">
 				<NavLink
-					class="payload"
-					to={`${location.path}?section=payload`}
+					class="details"
+					to={`${location.path}?section=details`}
 					mode="replace"
-					activeMatch={section === 'payload'}
-					tooltip="See payload"
+					activeMatch={section === 'details'}
+					tooltip="Details"
 				>
-					<Icon name="payload" />
-					<NavLinkRelativePart>Payload</NavLinkRelativePart>
+					<Icon name="info" />
+					<NavLinkRelativePart>Details</NavLinkRelativePart>
 				</NavLink>
 				{hasInstructions && (
 					<NavLink
@@ -215,14 +215,14 @@ export const DependencyRoute = observer(function DependencyRoute({history, locat
 					</NavLink>
 				)}
 				<NavLink
-					class="details"
-					to={`${location.path}?section=details`}
+					class="payload"
+					to={`${location.path}?section=payload`}
 					mode="replace"
-					activeMatch={section === 'details'}
-					tooltip="Details"
+					activeMatch={section === 'payload'}
+					tooltip="See payload"
 				>
-					<Icon name="info" />
-					<NavLinkRelativePart>Details</NavLinkRelativePart>
+					<Icon name="payload" />
+					<NavLinkRelativePart>Payload</NavLinkRelativePart>
 				</NavLink>
 			</Nav>
 

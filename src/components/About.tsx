@@ -18,6 +18,7 @@ import {Tag} from 'components/Tag';
 import {UITestsRoute} from 'components/UITests';
 import {EventsRoute} from 'components/Events';
 import {Tutorial} from 'components/Tutorial';
+import {Settings} from 'components/Settings';
 import {Changelog} from 'components/Changelog';
 import {Scrollable} from 'components/Scrollable';
 
@@ -39,6 +40,7 @@ async function ensurePathExistsAndOpen(path: string, open: (path: string) => voi
 const sections: {[k: string]: (props: RouteProps) => VNode} = {
 	about: (props: RouteProps) => <AboutRoute {...props} />,
 	events: (props: RouteProps) => <EventsRoute {...props} />,
+	settings: () => <Settings />,
 	tutorial: () => <Tutorial />,
 	changelog: () => <AppChangelog />,
 };
@@ -60,7 +62,7 @@ export const AboutJunction = observer(function AboutJunction(props: RouteProps) 
 	if (section === 'about-junction') {
 		// If request is coming from within this section, go to default page.
 		// If it's coming from other sections, use the last cached url we were on.
-		const fromInside = history.from?.path.match(/^\/(about|events|tutorial|uitests)(\/.*)?/) != null;
+		const fromInside = history.from?.path.match(/^\/(about|settings|changelog|events|tutorial|uitests)(\/.*)?/) != null;
 		return <Redirect to={fromInside ? defaultUrl : lastUrl} />;
 	}
 
@@ -81,6 +83,9 @@ export const AboutJunction = observer(function AboutJunction(props: RouteProps) 
 			<Nav>
 				<NavLink to="/about" tooltip="About the app">
 					About
+				</NavLink>
+				<NavLink to="/settings" tooltip="App settings">
+					Settings
 				</NavLink>
 				<NavLink to="/events" tooltip="Past errors, stagings, and other events">
 					Events <Tag>{events.all().length}</Tag>

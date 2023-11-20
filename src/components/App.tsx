@@ -6,7 +6,6 @@ import {reaction} from 'statin';
 import {observer} from 'statin-preact';
 import {useStore} from 'models/store';
 import {ProfilesJunction} from 'components/Profiles';
-import {SettingsRoute} from 'components/Settings';
 import {PluginsJunction} from 'components/PluginsJunction';
 import {OperationsJunction} from 'components/Operations';
 import {ExtensionsJunction} from 'components/Extensions';
@@ -113,10 +112,9 @@ export function App() {
 						}
 						component={nodeGuarded(PluginsJunction)}
 					/>
-					<Route key="settings" path={/^\/settings$/} component={SettingsRoute} />
 					<Route
 						key="about"
-						path={/^\/(?<section>(about-junction|about|events|tutorial|changelog|uitests))$/}
+						path={/^\/(?<section>(about-junction|about|settings|events|tutorial|changelog|uitests))$/}
 						component={AboutJunction}
 					/>
 					<Route key="tutorial" path={/^\/tutorial/} component={Tutorial} />

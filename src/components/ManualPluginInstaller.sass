@@ -9,13 +9,32 @@
 	> *
 		margin: 0 var(--spacing)
 
-	> .input,
+	> .input
+		display: flex
+		flex-flow: column
+		gap: 1px
+
+		> .value
+			padding: var(--spacing)
+			background: var(--grey-z200)
+			border-radius: var(--border-radius)
+
+			> .Input
+				font-size: 1.2em
+				width: 100%
+
+		&:has(> .Alert)
+			> .value
+				border-bottom-right-radius: 0
+				border-bottom-left-radius: 0
+			> .Alert
+				border-top-right-radius: 0
+				border-top-left-radius: 0
+
 	> .install
 		width: auto
 		max-width: none
 		font-size: 1.2em
-
-	> .install
 		height: 2.2em
 
 	> .content
@@ -27,7 +46,7 @@
 		min-height: 0
 		max-height: 100%
 		margin: 0
-		padding: 0 var(--spacing)
+		+hSpacingScrollable(var(--spacing))
 
 		> .installedPlugins > .TitleBar
 			margin-bottom: var(--spacing-quarter)

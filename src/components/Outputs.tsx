@@ -18,6 +18,7 @@ export const Outputs = observer(function Outputs({
 	onHeightRatioChange,
 	heightRatio,
 	maxHeightRatio,
+	toOperationLinks,
 }: {
 	title: string;
 	tooltip?: string;
@@ -26,6 +27,7 @@ export const Outputs = observer(function Outputs({
 	onHeightRatioChange: (value: number) => void;
 	maxHeightRatio: number;
 	profileTitles?: boolean;
+	toOperationLinks?: boolean;
 }) {
 	const {session, app} = useStore();
 	const [isDragged, setIsDragged] = useState(false);
@@ -51,7 +53,10 @@ export const Outputs = observer(function Outputs({
 		event.preventDefault();
 		event.stopPropagation();
 
-		const initialDocumentCursor = document.documentElement.style.cursor;
+		const cursorOverlay = document.createElement('div');
+		Object.assign(cursorOverlay.style, {position: 'fixed', inset: 0, zIndex: 10000, cursor: 'ns-resize'});
+		document.body.appendChild(cursorOverlay);
+
 		const initialY = event.clientY;
 		const initialHeight = container.offsetHeight;
 		const maxHeight = parentContainer.offsetHeight;
@@ -82,12 +87,10 @@ export const Outputs = observer(function Outputs({
 			}
 
 			onHeightRatioChange(newHeightRatio);
-			document.documentElement.style.cursor = initialDocumentCursor;
+			cursorOverlay.remove();
 			setIsDragged(false);
 		}
 
-		// Set temporary global cursor so it doesn't flash while moving
-		document.documentElement.style.cursor = `ns-resize`;
 		setIsDragged(true);
 		window.addEventListener('mouseup', handleMouseUp);
 		window.addEventListener('mousemove', handleMouseMove);
@@ -119,17 +122,14 @@ export const Outputs = observer(function Outputs({
 	return (
 		<div class={classNames} ref={containerRef} style={`--height: ${heightRatio}`} data-volley-ignore>
 			{!renderItems && !app.draggingMode() && (
-				<div class="dragger" onMouseDown={initiateResize} title={tooltip}>
-					<span>
-						<Icon name="chevron-up" /> {title} <Icon name="chevron-up" />
-					</span>
+				<div class="tease" onMouseDown={initiateResize} title={tooltip}>
+					<Icon name="chevron-up" /> {title} <Icon name="chevron-up" />
 				</div>
 			)}
 
 			<div class="content">
 				{renderFilterBar && (
 					<div class="controls" title={tooltip}>
-						<div class="dragger" onMouseDown={initiateResize} />
 						<Select
 							class="filters"
 							transparent
@@ -158,13 +158,19 @@ export const Outputs = observer(function Outputs({
 							</SelectOption>
 						</Select>
 
-						<Button class="clear" transparent muted variant="danger" onClick={clear}>
+						<div class="spacer" onMouseDown={initiateResize} />
+
+						<Button class="clear" semitransparent muted variant="danger" onClick={clear}>
 							<Icon name="clear-all" /> Clear
 						</Button>
+
+						<div class="handle" onMouseDown={initiateResize}></div>
 					</div>
 				)}
 
-				{renderItems && <Items reversed profileTitles={profileTitles} items={items} />}
+				{renderItems && (
+					<Items reversed profileTitles={profileTitles} items={items} toOperationLinks={toOperationLinks} />
+				)}
 			</div>
 		</div>
 	);

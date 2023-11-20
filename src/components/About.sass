@@ -7,7 +7,7 @@
 	> .Nav
 		margin: 0 var(--spacing)
 
-	> :is(.About, .Events, .Tutorial, .UITests, .AppChangelog)
+	> :is(.About, .Settings, .Events, .Tutorial, .UITests, .AppChangelog)
 		flex: 1 1 0
 		min-height: 0
 
@@ -15,7 +15,8 @@
 	display: flex
 	flex-direction: column
 	gap: var(--spacing-double)
-	padding: var(--spacing)
+	padding: var(--spacing) 0
+	+hSpacingScrollable(var(--spacing))
 
 	> footer
 		text-align: center
@@ -150,4 +151,4 @@
 				font-size: 1.2em
 
 .AppChangelog
-	padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)
+	+hSpacingScrollable(var(--spacing))

@@ -58,20 +58,38 @@
 		flex: 0 1 40%
 		grid-area: title
 		order: 0
-		min-width: 9em
 		display: flex
 		align-items: center
-		text-align: left
 		font-weight: bold
+		min-width: 9em
+		text-align: left
 		min-height: var(--input-height)
 		line-height: var(--input-height)
-		background: transparent
-
-		&:is(button)
-			cursor: help
 
 		&:is([data-uimode=compact] *)
 			font-weight: normal
+
+		> button
+			display: flex
+			align-items: center
+			justify-content: center
+			margin-left: auto
+			padding: .2em
+			background: var(--grey-o200)
+			border-radius: 999em
+			cursor: help
+			opacity: 0.5
+
+			&.-active
+				color: var(--grey-z100)
+				background: var(--grey-z800)
+
+			&:hover
+				opacity: 1
+
+			> .Icon
+				--size: 1em
+
 
 		&:is(.-changed > *)
 			color: var(--success-z600)
@@ -84,13 +102,6 @@
 			min-width: 0
 			+ellipsis()
 
-		> .Icon
-			opacity: 0.5
-			--size: 1em
-
-			&:is(.title:hover > *)
-				opacity: 1
-
 	> .title ~ *
 		order: 1
 
@@ -99,6 +110,7 @@
 		flex: 0 1 auto
 		align-self: center
 		min-width: 0
+		margin-right: 0.3em
 		order: 2
 		color: var(--muted)
 		+selectable()

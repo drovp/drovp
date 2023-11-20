@@ -1,7 +1,6 @@
 import {h} from 'preact';
 import {useRef} from 'preact/hooks';
 import {useVolley} from 'lib/hooks';
-import {RouteProps} from 'poutr';
 import {Options} from 'components/Options';
 import {Button} from 'components/Button';
 import {Icon} from 'components/Icon';
@@ -10,7 +9,7 @@ import {useStore} from 'models/store';
 import {resetOptions} from 'models/options';
 import {schema} from 'models/settings';
 
-export const SettingsRoute = function Settings(props: RouteProps) {
+export function Settings() {
 	const {settings} = useStore();
 	const optionsRef = useRef<HTMLDivElement>(null);
 

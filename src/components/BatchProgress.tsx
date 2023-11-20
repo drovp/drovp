@@ -142,7 +142,7 @@ export function BatchProgress({class: className, batch, tooltip, label}: BatchPr
 			</div>
 			<div
 				class="bar labels"
-				style={{clipPath: `inset(0% ${clamp(0, 1 - completed, 1) * 100}% 0 0 round var(--border-radius))`}}
+				style={{clipPath: `inset(0% ${clamp(0, 1 - completed, 1) * 100}% 0 0 round calc(var(--border-radius) - 1px))`}}
 			>
 				<canvas ref={canvasRef} />
 				{!isDone && <div class="left">{completedCount}</div>}

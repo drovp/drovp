@@ -16,6 +16,8 @@ export type VirtualListProps<T extends unknown> = RenderableProps<{
 	reversed?: boolean;
 	/** Define to remember and restore scroll position. */
 	scrollPositionId?: string;
+	/** How many times more items ot render than is visible. */
+	overProvision?: number;
 	render: (item: T, index: number) => VNode;
 }>;
 
@@ -27,20 +29,25 @@ export function VirtualList<T extends unknown = unknown>({
 	direction = 'vertical',
 	reversed,
 	scrollPositionId,
+	overProvision = 3,
 	innerRef,
 }: VirtualListProps<T>) {
 	const containerRef = innerRef || useRef<HTMLDivElement>(null);
 	// Initial dimensions are designed to initially render multiple items so that
 	// we can retrieve the real dimensions and spacings.
-	const [rawSpacing, setRawSpacing] = useState<number | null>(null);
-	const [scrollPosition, setScrollPosition] = useCache(scrollPositionId || CACHE_IGNORE_KEY, 0);
-	const [pos, setPos] = useState(scrollPosition);
-	const [viewSize, setViewSize] = useState(10);
-	const [isInitialized, setIsInitialized] = useState(false);
 	const isHorizontal = direction === 'horizontal';
-	const spacing = rawSpacing || viewSize / 10;
-	const renderCount = min(ceil(viewSize / spacing) + 1, items.length);
-	const startIndex = min(floor(pos / spacing), items.length - renderCount);
+	const [rawSpacing, setRawSpacing] = useState<number | null>(null);
+	const [initScrollPosition, setInitScrollPosition] = useCache(scrollPositionId || CACHE_IGNORE_KEY, 0);
+	const [scrollPosition, setScrollPosition] = useState(initScrollPosition);
+	let [viewSizePx, setViewSizePx] = useState(10);
+	if (viewSizePx < 1) viewSizePx = 1;
+	const spacing = rawSpacing != null ? Math.max(rawSpacing, 1) : viewSizePx / 10;
+	const visibleCount = ceil(viewSizePx / spacing);
+	const renderCount = min(visibleCount * overProvision, items.length);
+	const startIndex = min(
+		floor(Math.max(0, scrollPosition - (renderCount / overProvision) * spacing) / spacing),
+		items.length - renderCount
+	);
 	const startSpacing = `${Math.round(startIndex * spacing)}px`;
 	const endSpacing = `${Math.round((items.length - startIndex - renderCount) * spacing)}px`;
 	let style = `overflowX:${isHorizontal ? 'auto' : 'hidden'};overflowY:${
@@ -59,14 +66,15 @@ export function VirtualList<T extends unknown = unknown>({
 
 		if (!container) throw new Error();
 
-		const handleViewResize = throttle(() =>
-			setViewSize(Math.max(container[isHorizontal ? 'clientWidth' : 'clientHeight'], 1))
-		);
-		const handleScroll = () => {
+		let isInitialized = false;
+		const handleViewResize = throttle(() => {
+			setViewSizePx(Math.max(container[isHorizontal ? 'clientWidth' : 'clientHeight'], 1));
+		});
+		const handleScroll = throttle(() => {
 			const pos = container[isHorizontal ? 'scrollLeft' : 'scrollTop'];
-			if (scrollPositionId) setScrollPosition(pos);
-			setPos(pos);
-		};
+			if (scrollPositionId) setInitScrollPosition(pos);
+			setScrollPosition(pos);
+		});
 		const updateRawSpacing = () => {
 			const item1 = container.children[1];
 			const item2 = container.children[2];
@@ -79,24 +87,30 @@ export function VirtualList<T extends unknown = unknown>({
 			}
 		};
 		const handleItemResize = throttle(updateRawSpacing);
-		const handleMutation = debounce(() => {
+		const handleChildrenMutation = debounce(() => {
 			itemResizeDisposer();
 			const firstRealChild = container.children[1];
 			if (container.children.length >= 3 && firstRealChild) itemResizeDisposer.reconnect(firstRealChild);
-			setIsInitialized(true);
+
+			// Restore scroll position when requested
+			if (!isInitialized && container && initScrollPosition !== 0) {
+				isInitialized = true;
+				container[isHorizontal ? 'scrollLeft' : 'scrollTop'] = initScrollPosition;
+			}
 		});
 
 		const viewResizeDisposer = observeElementSize(container, handleViewResize);
 		const itemResizeDisposer = observeElementSize(null, handleItemResize);
-		const mutationObserver = new MutationObserver(handleMutation);
+		const mutationObserver = new MutationObserver(handleChildrenMutation);
 
 		mutationObserver.observe(container, {childList: true});
 		container.addEventListener('scroll', handleScroll);
 
 		// Initial initialization
+		handleViewResize();
 		updateRawSpacing();
-		handleMutation();
-		handleMutation.flush();
+		handleChildrenMutation();
+		handleChildrenMutation.flush();
 
 		return () => {
 			handleViewResize.cancel();
@@ -107,14 +121,6 @@ export function VirtualList<T extends unknown = unknown>({
 			container.removeEventListener('scroll', handleScroll);
 		};
 	}, []);
-
-	// Restore scroll position when requested
-	useLayoutEffect(() => {
-		const container = containerRef.current;
-		if (isInitialized && container && scrollPosition !== 0) {
-			container[isHorizontal ? 'scrollLeft' : 'scrollTop'] = scrollPosition;
-		}
-	}, [isInitialized]);
 
 	return (
 		<Scrollable class={className} style={style} direction={direction} innerRef={containerRef}>

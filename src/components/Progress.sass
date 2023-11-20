@@ -1,4 +1,5 @@
 .Progress
+	--padding-h: var(--spacing-half)
 	padding: 0
 	position: relative
 	background: var(--grey-z200)
@@ -7,10 +8,10 @@
 	font-family: var(--font-code)
 
 	// So that background doesn't peak through rounded corners
-	&.-round-more-left
+	&:where(.-round-more-left)
 		border-top-left-radius: calc(var(--border-radius) + 2px)
 		border-bottom-left-radius: calc(var(--border-radius) + 2px)
-	&.-round-more-right
+	&:where(.-round-more-right)
 		border-top-right-radius: calc(var(--border-radius) + 2px)
 		border-bottom-right-radius: calc(var(--border-radius) + 2px)
 
@@ -29,7 +30,7 @@
 		align-items: center
 		gap: var(--spacing-half)
 		grid-template-areas: "left center right"
-		padding: 0 var(--spacing-half)
+		padding: 0 var(--padding-h)
 		color: var(--fg)
 
 		> *

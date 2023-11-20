@@ -6,6 +6,7 @@ const {promisify} = require('util');
 const manifest = require('./package.json');
 const {src, dest, series, parallel, watch: gulpWatch} = require('gulp');
 const exec = promisify(CP.exec);
+const esbuild = require('esbuild');
 
 const isDevelopment = String(process.env.NODE_ENV).toLowerCase() !== 'production';
 
@@ -63,8 +64,6 @@ const cleanManifest = (manifest) => ({
 });
 
 async function scripts() {
-	const esbuild = require('esbuild');
-
 	// Load manifest and create a plugin that intercepts it and cleans it up
 	const rawManifestContents = await FSP.readFile('package.json', {encoding: 'utf8'});
 	const manifest = cleanManifest(JSON.parse(rawManifestContents));
@@ -124,7 +123,7 @@ async function scripts() {
 		plugins: [cleanupManifestPlugin],
 		define: define,
 		format: 'cjs',
-		target: ['node14.16.0', 'es2018'],
+		target: ['node18.7.1'],
 		logLevel: 'warning',
 		bundle: true,
 		minify: ENV.NODE_ENV === 'production',

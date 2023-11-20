@@ -6,13 +6,8 @@
 	flex-wrap: nowrap
 	gap: calc(var(--spacing) / 2)
 	min-height: 0
-	width: 100%
-	margin: 0 auto
-	padding: var(--spacing)
-	padding-right: subScrollbar(var(--spacing))
-
-	> .Nav
-		margin: 0 var(--spacing)
+	padding: var(--spacing) 0
+	+hSpacingScrollable(var(--spacing))
 
 	> header
 		margin-bottom: var(--spacing)

@@ -1,7 +1,8 @@
 .Tutorial
-	padding: 2em
-	padding-rigth: subScrollbar(var(--spacing-third))
+	padding: 2em calc(2em - var(--spacing)) 2em 2em
+	+rightSpacingScrollable(var(--spacing))
 	color: var(--muted)
+	user-select: none
 
 	> *
 		max-width: 40rem !important

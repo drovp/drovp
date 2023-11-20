@@ -1,4 +1,5 @@
 import {h, RenderableProps} from 'preact';
+import {ipcRenderer} from 'electron';
 import {action} from 'statin';
 import {useMemo} from 'preact/hooks';
 import {useLocation} from 'poutr';
@@ -17,6 +18,7 @@ export const AppNav = observer(function AppNav() {
 		.all()
 		.reduce((count, plugin) => (plugin.updateAvailable() ? count + 1 : count), 0);
 	const appOrNodeUpdateAvailable = app.updateAvailable() || node.updateAvailable();
+	const renderWindowControls = app.isWindowTitleBarHidden() && process.platform === 'win32';
 
 	function openProfilesContextMenu(event: MouseEvent) {
 		event.preventDefault();
@@ -72,24 +74,35 @@ export const AppNav = observer(function AppNav() {
 			>
 				Plugins
 			</NavItem>
-			<NavItem to="/settings" activeMatch={/^\/settings\/?.*/} icon="cog" tooltip="Settings">
-				Settings
-			</NavItem>
 			<NavItem
 				to="/about-junction"
-				activeMatch={/^\/(about-junction|about|events|tutorial|changelog|uitests)\/?.*/}
+				activeMatch={/^\/(about-junction|about|settings|events|tutorial|changelog|uitests)\/?.*/}
 				exactMatch={/^\/about\/?.*/}
-				icon="help"
+				icon="logo"
 				indicator={appOrNodeUpdateAvailable ? 'success' : undefined}
-				tooltip="About, Events, Tutorial"
+				tooltip="About, Settings, Changelog, Events, Tutorial"
 			>
-				About
+				Drovp
 			</NavItem>
+			{renderWindowControls && (
+				<button
+					className="WindowControl -minimize"
+					onClick={() => ipcRenderer.send('minimize-window')}
+					title="Minimize"
+				/>
+			)}
+			{renderWindowControls && (
+				<button
+					className="WindowControl -close"
+					onClick={() => ipcRenderer.send('close-app')}
+					title="Close app"
+				/>
+			)}
 		</nav>
 	);
 });
 
-export type NavItemOptions = RenderableProps<{
+type NavItemOptions = RenderableProps<{
 	to: string;
 	icon: IconName;
 	count?: number | {number: number; variant: Variant};
@@ -100,21 +113,11 @@ export type NavItemOptions = RenderableProps<{
 	[key: string]: any;
 }>;
 
-export function NavItem({
-	to,
-	count,
-	tooltip,
-	activeMatch,
-	exactMatch,
-	icon,
-	indicator,
-	children,
-	...rest
-}: NavItemOptions) {
+function NavItem({to, count, tooltip, activeMatch, exactMatch, icon, indicator, children, ...rest}: NavItemOptions) {
 	const [{path}, navigate] = useLocation();
 	const countProps = typeof count === 'number' ? {number: count, variant: undefined} : count;
 
-	let classNames = useMemo(() => `-to-${to.replace(/^\//, '').replace('/', '-')}`, [to]);
+	let classNames = useMemo(() => `NavItem -to-${to.replace(/^\//, '').replace('/', '-')}`, [to]);
 	if (activeMatch ? (typeof activeMatch === 'string' ? activeMatch === path : activeMatch.exec(path)) : path === to) {
 		classNames += ' -active';
 		if (!exactMatch || (typeof exactMatch === 'string' ? exactMatch === path : exactMatch.exec(path))) {

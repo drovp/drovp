@@ -12,6 +12,7 @@ export type SliderProps = RenderableProps<{
 	step: number;
 	variant?: Variant;
 	disabled?: boolean;
+	tooltip?: string;
 	onChange: (value: number) => void;
 }>;
 
@@ -25,6 +26,7 @@ export function Slider({
 	step,
 	variant,
 	disabled,
+	tooltip,
 	onChange,
 }: SliderProps) {
 	const onChangeRef = useRef<SliderProps['onChange']>(onChange);
@@ -54,6 +56,7 @@ export function Slider({
 			step={step}
 			value={value}
 			disabled={disabled}
+			title={tooltip}
 		/>
 	);
 }

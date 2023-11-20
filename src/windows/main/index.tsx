@@ -7,10 +7,13 @@ import {
 	debounce,
 	throttle,
 	prevented,
-	isInputElement,
+	isTextInputElement,
 	isInteractiveElement,
 	setAppPath,
 	idModifiers,
+	isDragRequiringElement,
+	getPointToPointDistance,
+	rafThrottle,
 } from 'lib/utils';
 import {action, createAction, reaction} from 'statin';
 import {createStore, Store} from 'models/store';
@@ -205,7 +208,7 @@ ipcRenderer.invoke('get-paths').then(async (paths) => {
 
 		addEventListener('keydown', (event) => {
 			// Ignore keys from interactive elements
-			if (isInputElement(event.target)) return;
+			if (isTextInputElement(event.target)) return;
 
 			switch (event.key) {
 				case 'ArrowUp':
@@ -364,7 +367,7 @@ Error: Only 0 arguments allowed, but 1 was passed.
 		'keydown',
 		createAction((event: KeyboardEvent) => {
 			// Ignore keys from interactive elements
-			if (isInputElement(event.target) || event.ctrlKey || event.altKey || event.metaKey) return;
+			if (isTextInputElement(event.target) || event.ctrlKey || event.altKey || event.metaKey) return;
 
 			let fellThrough = false;
 			switch (event.key) {
@@ -404,7 +407,62 @@ Error: Only 0 arguments allowed, but 1 was passed.
 		})
 	);
 
-	// Expose store in development mode
+	// Window dragging
+	addEventListener('mousedown', function (event) {
+		const {target} = event;
+		if (
+			!store.app.isWindowTitleBarHidden() ||
+			!isOfType<HTMLElement>(target, target != null) ||
+			isDragRequiringElement(target) ||
+			getComputedStyle(target).userSelect !== 'none'
+		) {
+			return;
+		}
+
+		let $overlay: HTMLDivElement | undefined;
+		let initialized = false;
+		let distance = 0;
+		let deltaX = 0;
+		let deltaY = 0;
+		let startPos: [number, number] | null = null;
+		const flushMove = rafThrottle(() => {
+			if (startPos) ipcRenderer.send('move-window-to', startPos[0] + deltaX, startPos[1] + deltaY);
+		});
+
+		ipcRenderer.invoke('get-window-position').then((pos) => {
+			if (Array.isArray(pos) && Number.isFinite(pos[0]) && Number.isFinite(pos[1])) {
+				startPos = pos as any;
+			}
+		});
+
+		function handleMove(event: MouseEvent) {
+			if (!initialized) {
+				distance += getPointToPointDistance(0, 0, event.movementX, event.movementY);
+				if (distance > 6) {
+					initialized = true;
+
+					// Prevents click and other cursor actions on release
+					$overlay = document.createElement('div');
+					Object.assign($overlay.style, {position: 'fixed', inset: 0, zIndex: 10000});
+					document.body.appendChild($overlay);
+				}
+			}
+			deltaX += event.movementX;
+			deltaY += event.movementY;
+			flushMove();
+		}
+
+		function handleUp() {
+			removeEventListener('mouseup', handleUp);
+			removeEventListener('mousemove', handleMove);
+			setTimeout(() => $overlay?.remove(), 100);
+		}
+
+		addEventListener('mousemove', handleMove);
+		addEventListener('mouseup', handleUp);
+	});
+
+	// Expose store
 	reaction(() => {
 		(window as any).store = settings.developerMode() ? store : undefined;
 	});
@@ -423,7 +481,7 @@ Error: Only 0 arguments allowed, but 1 was passed.
 		},
 		throttle(
 			({progress, isPaused}: {progress: number; isPaused: boolean}) =>
-				ipcRenderer.invoke(`set-progress`, progress, isPaused ? 'paused' : 'normal'),
+				ipcRenderer.send(`set-progress`, progress, isPaused ? 'paused' : 'normal'),
 			100
 		)
 	);
@@ -453,10 +511,11 @@ Error: Only 0 arguments allowed, but 1 was passed.
 		appContainer.innerHTML = '';
 
 		// Styling settings
+		document.documentElement.dataset.os = ({win32: 'win', darwin: 'mac'} as any)[process.platform] ?? 'linux';
 		reaction(() => {
 			document.documentElement.dataset.theme = store.app.theme();
 			document.documentElement.dataset.uimode = settings.compact() ? 'compact' : '';
-			document.documentElement.style.fontSize = `${settings.fontSize()}px`;
+			document.documentElement.style.setProperty('--font-size', `${settings.fontSize()}px`);
 			document.documentElement.dataset.freezeAnimations = store.app.isModalWindowOpen() ? 'true' : 'false';
 		});
 
@@ -474,7 +533,7 @@ Error: Only 0 arguments allowed, but 1 was passed.
 	}
 
 	// Re-open devtools
-	if (store.settings.openDevTools()) ipcRenderer.invoke('open-devtools');
+	if (store.settings.openDevTools()) ipcRenderer.send('open-devtools');
 
 	// Check for update errors
 	store.app.checkUpdateError();

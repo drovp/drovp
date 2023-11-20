@@ -31,9 +31,10 @@
 	--spacing-sixth: calc(var(--spacing) / 6)
 	--spacing-three-quarters: calc(var(--spacing) * 0.75)
 	--controlbar-height: calc(var(--spacing) * 2.4)
-	--border-radius: 3px
+	--border-radius: 5px
 	--scrollbar-size: 6px
 	--max-article-width: 50em
+	--outline-offset: 0.1em
 
 	&[data-uimode=compact]
 		--input-height: 1.8em
@@ -62,9 +63,6 @@
 
 // Variants & their proxies
 $variants: accent, success, info, warning, danger
-
-:root
-	color: var(--fg)
 
 :root, .-primary
 	+variantProxy('grey')

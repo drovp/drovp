@@ -96,7 +96,7 @@ export const PayloadEditor = observer(function PayloadEditor({operation}: {opera
 		);
 	}
 	if (alerts.length === 0) {
-		alerts.push(<Alert icon="info">Modifying without knowing what you're doing can break operations.</Alert>);
+		alerts.push(<Alert icon="warning">Modifying can break operations.</Alert>);
 	}
 
 	return (

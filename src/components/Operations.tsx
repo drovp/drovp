@@ -1,10 +1,9 @@
 import {h} from 'preact';
 import {useRef} from 'preact/hooks';
-import {useCache, useVolley} from 'lib/hooks';
+import {useVolley} from 'lib/hooks';
 import {observer} from 'statin-preact';
 import {OperationCard} from './OperationCard';
 import {VirtualList} from 'components/VirtualList';
-import {OperationRoute} from 'components/Operation';
 import {Select, SelectOption} from 'components/Select';
 import {Button} from 'components/Button';
 import {Icon} from 'components/Icon';
@@ -14,22 +13,24 @@ import {RouteProps, Redirect} from 'poutr';
 import {useStore} from 'models/store';
 import type {Operation as OperationModel} from 'models/operations';
 
-const junctionPath = '/operations';
-
 export function OperationsJunction(props: RouteProps) {
-	const {match, location, history} = props;
-	let [lastUrl, setLastUrl] = useCache<string>('operations.lastUrl', junctionPath);
-	const isJunctionPath = location.path === junctionPath;
+	const {match} = props;
+	const store = useStore();
+	const id = match?.groups?.id;
 
-	// Click on the main nav button, needs to be triaged
-	if (isJunctionPath) {
-		const fromInside = history.from?.path.match(/^\/operations(\/.*)?/) != null;
-		if (!fromInside && lastUrl !== junctionPath) return <Redirect to={lastUrl} />;
+	if (id) {
+		const operation = store.operations.byId.value.get(id);
+		if (!operation) {
+			return <Vacant title={`Operation "${id}" is missing.`} />;
+		}
+		const profile = operation.profile;
+		if (!profile || !store.profiles.byId.value.has(profile.id)) {
+			return <Vacant title={`Operation "${id}" profile has been deleted.`} />;
+		}
+		return <Redirect to={`/profiles/${profile.id}?section=operation&id=${id}`} />;
 	}
 
-	setLastUrl(location.href);
-
-	return match.groups?.id ? <OperationRoute {...props} /> : <OperationsRoute {...props} />;
+	return <OperationsRoute {...props} />;
 }
 
 export function OperationsRoute(props: RouteProps) {
@@ -74,7 +75,7 @@ export const OperationsSection = observer(function OperationsSection({
 }: {
 	allSignal: () => OperationModel[];
 	errorsSignal: () => OperationModel[];
-	section: string;
+	section?: string;
 	onSection: (section: string) => void;
 	onClearQueue?: () => void;
 	onClearHistory?: () => void;
@@ -83,6 +84,7 @@ export const OperationsSection = observer(function OperationsSection({
 	const operations = allSignal();
 	const errors = errorsSignal();
 	const containerRef = useRef<HTMLDivElement>(null);
+	section = section == 'errors' ? 'errors' : 'all';
 
 	useVolley(containerRef);
 

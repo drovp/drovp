@@ -2,45 +2,53 @@
 	display: flex
 	flex-direction: column
 	gap: var(--spacing)
-	margin: var(--spacing) 0
 	max-height: 100%
 
 	> *
 		margin: 0 var(--spacing)
 
 	> header
-		flex-wrap: nowrap
+		display: flex
+		align-items: stretch
+		gap: 2px
+		height: calc(var(--input-height) * 1.3)
+		margin-top: calc(var(--spacing) * -1 + 2px)
 
-		> .title > h1
+		> h1
+			flex: 1 1 auto
+			margin-right: auto
+			font-size: 1.1em
+			line-height: 2.2em
+			font-weight: bold
+			padding: 0 var(--spacing-half)
+			background: var(--grey-z200)
+			border-radius: var(--border-radius)
+			+ellipsis()
 			+selectable()
 
 			&.-id:before
 				content: '#'
 				opacity: .5
 
-		> .actions > .to-profile
-			margin-right: var(--spacing-quarter)
+		> .Button
+			aspect-ratio: 1.2
+			height: 100%
 
 	> .Progress
-		height: calc(var(--input-height) * 1.3)
-
-	> .navigation
-		display: flex
-		justify-content: space-between
-		gap: var(--spacing-half)
-
-		.-to-logs > .Tag
-			margin-left: .2em
+		height: var(--input-height)
+		overflow: hidden
 
 	> .ExtensionDetails
 		flex: 1 1 0
 		margin: 0
-		padding: 0 subScrollbar(var(--spacing)) 0 var(--spacing)
+		+hSpacingScrollable()
 
 	> .InputsOutputs
 		flex: 1 1 0
 		min-height: 0
 		margin-right: 0
+		margin-left: 0
+		--spacing-h: var(--spacing)
 
 	> :is(.Logs, .PayloadEditor)
 		flex: 1 1 0
@@ -95,7 +103,7 @@
 		min-height: var(--input-size)
 
 	> .Items
-		padding-right: subScrollbar(var(--spacing))
+		+hSpacingScrollable(var(--spacing-h))
 
 	> .placeholder
 		display: flex
@@ -109,7 +117,7 @@
 		display: flex
 		align-items: center
 		padding: var(--spacing-half)
-		margin: var(--spacing-half) var(--spacing) var(--spacing-half) 0
+		margin: var(--spacing-half) var(--spacing-h)
 		border-radius: var(--border-radius)
 		cursor: ns-resize
 
