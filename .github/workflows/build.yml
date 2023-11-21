@@ -103,7 +103,7 @@ jobs:
 
       - name: Generate a changelog
         id: git-cliff
-        uses: orhun/git-cliff-action@v1
+        uses: orhun/git-cliff-action@v2
         with:
           config: cliff.toml
           args: --verbose --latest
