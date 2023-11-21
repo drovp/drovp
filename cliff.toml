@@ -5,14 +5,12 @@ body = """
     {% for commit in commits %}
         {%- if commit.scope -%}
         {% else %}
-            - {% if commit.breaking %}[**BREAKING**] {% endif -%}{{ commit.message | upper_first }}.\
-            {% if commit.body %}{% for line in commit.body | split(pat="\n") %}\n{{ "    > " ~ line }}{% endfor %}{% endif %}\
+            - **{% if commit.breaking %}[**BREAKING**] {% endif -%}{{ commit.message | upper_first }}.**{% if commit.body %}\n{{ commit.body | indent(first=true) }}{% endif %}\
         {% endif %}\
     {% endfor %}\
     {% for commit in commits | filter(attribute="scope") | sort(attribute="scope") %}
-        - {% if commit.breaking %}[**BREAKING**] {% endif -%}\
-        **{{ commit.scope | upper }}**: {{ commit.message | upper_first }}.\
-        {% if commit.body %}{% for line in commit.body | split(pat="\n") %}\n{{ "    > " ~ line }}{% endfor %}{% endif %}\
+        - **{% if commit.breaking %}[**BREAKING**] {% endif -%}\
+        **{{ commit.scope | upper }}**: {{ commit.message | upper_first }}.**{% if commit.body %}\n{{ commit.body | indent(first=true) }}{% endif %}\
     {% endfor %}\n
 {% endfor %}
 """
