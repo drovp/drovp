@@ -85,10 +85,7 @@ ipcRenderer.invoke('get-paths').then(async (paths) => {
 		}, 300);
 
 		try {
-			const reloadApp = debounce(() => {
-				// @ts-ignore
-				window.location.reload(true);
-			}, 500);
+			const reloadApp = debounce(() => ipcRenderer.send('reload-window'), 500);
 
 			watch(appPath, {recursive: true}, (type: string, filename: string) => {
 				const ext = filename && Path.extname(filename);

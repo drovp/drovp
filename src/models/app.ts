@@ -29,6 +29,7 @@ import type {Store} from 'models/store';
 import type {Staging, SubstageCreator} from 'models/staging';
 import type {SerializedSettings} from 'models/settings';
 import {makeToast} from 'components/Toast';
+import {AppClosePrompt} from 'components/App';
 import type {Sequence, SequenceAction} from 'update';
 
 const execPromise = promisify(exec);
@@ -101,7 +102,8 @@ export class App {
 	lastDropTime = 0;
 	latest = signal<null | VersionResponse>(null);
 	isCheckingForUpdates = signal(false);
-	windowFocusTimeoutId: ReturnType<typeof setTimeout> | null = null;
+	topmostWindowTimeoutId: ReturnType<typeof setTimeout> | null = null;
+	lastDragEnd = 0; // timestamp
 
 	/**
 	 * A map of <pluginId, latestAvailableVersion>. We can't keep latest version
@@ -159,7 +161,6 @@ export class App {
 		addEventListener('focus', this.handleFocus);
 		addEventListener('blur', this.handleBlur);
 		addEventListener('resize', debounce(this.handleResize, 200));
-		addEventListener('beforeunload', this.handleUnload);
 		addEventListener('drop', () => (this.lastDropTime = Date.now()));
 
 		// Sets up time interval observables
@@ -262,6 +263,8 @@ export class App {
 				}
 			}
 		});
+
+		ipcRenderer.on('close-intercept', this.close);
 
 		// Sync settings with main process
 		const settings = this.store.settings;
@@ -640,23 +643,24 @@ export class App {
 		return [{action: 'replace-contents', from: extractedPath, to: this.binPath}] as Sequence;
 	};
 
-	queueWindowFocus = (time = 1000) => {
-		this.cancelQueueWindowFocus();
-		this.windowFocusTimeoutId = setTimeout(() => ipcRenderer.send('focus-window'), time);
+	queueTopmostWindow = (time = 1000) => {
+		this.cancelQueueTopmostWindow();
+		this.topmostWindowTimeoutId = setTimeout(() => ipcRenderer.send('topmost-window'), time);
 	};
 
-	cancelQueueWindowFocus = () => {
-		if (this.windowFocusTimeoutId) {
-			clearTimeout(this.windowFocusTimeoutId);
-			this.windowFocusTimeoutId = null;
+	cancelQueueTopmostWindow = () => {
+		if (this.topmostWindowTimeoutId) {
+			clearTimeout(this.topmostWindowTimeoutId);
+			this.topmostWindowTimeoutId = null;
 		}
 	};
 
 	startDragging = createAction((event: DragEvent) => {
 		const transfer = event.dataTransfer;
 		if (transfer != null) {
-			// Focus window if dragged over for longer than a second
-			this.queueWindowFocus(1000);
+			// Bring window to the top of all other windows when dragging over it for a period of time.
+			// We ignore macOS because it handles this natively already.
+			if (process.platform !== 'darwin') this.queueTopmostWindow(1000);
 
 			if (transfer.types[0] === 'profile') this.draggingMode('profile');
 			else if (transfer.types[0] === 'Files') this.draggingMode('files');
@@ -667,7 +671,10 @@ export class App {
 	});
 
 	endDragging = createAction(() => {
-		this.cancelQueueWindowFocus();
+		if (this.draggingMode()) {
+			this.lastDragEnd = Date.now();
+		}
+		this.cancelQueueTopmostWindow();
 		this.draggingMode(null);
 		this.draggingMeta(null);
 
@@ -706,6 +713,38 @@ export class App {
 
 	handleBlur = createAction(() => this.focused(false));
 
+	// Prompts the user when queue is not empty, or operations are pending
+	close = () => {
+		if (this.store.operations.pending().length + this.store.operations.queued().length > 0) {
+			this.store.modals.create({
+				variant: 'danger',
+				title: 'Unfinished operations!',
+				content: AppClosePrompt,
+				actions: [
+					{
+						variant: 'danger',
+						icon: 'power',
+						title: 'Quit',
+						action: () => this.quit(),
+					},
+					{
+						icon: 'x',
+						title: 'Cancel',
+						muted: true,
+						focused: true,
+						action: () => {},
+					},
+				],
+			});
+		} else {
+			this.quit();
+		}
+	};
+
+	// Gracefully quits the app
+	quit = () => ipcRenderer.send('quit');
+
+	// Force exit, ignores any prevention or whatever is going on
 	exit = () => ipcRenderer.send('exit');
 
 	/**
@@ -737,60 +776,5 @@ export class App {
 	/**
 	 * App error handler.
 	 */
-	handleError = (error: any) => {
-		this.showError({title: 'Error', details: eem(error, true)});
-	};
-
-	/**
-	 * Intercept app quits & window location loads.
-	 */
-	handleUnload = (event: Event) => {
-		/**
-		 * Prevent quits when there are still pending operations.
-		 */
-		const pendingCount = this.store.operations.pending().length;
-		if (pendingCount > 0) {
-			this.store.modals.create({
-				variant: 'danger',
-				title: 'Operations pending!',
-				message: `There are still <b>${pendingCount}</b> operations pending. Are you sure you want to quit?`,
-				actions: [
-					{
-						variant: 'danger',
-						icon: 'power',
-						title: 'Quit',
-						action: () => this.exit(),
-					},
-					{
-						icon: 'x',
-						title: 'Cancel',
-						muted: true,
-						focused: true,
-						action: () => {},
-					},
-				],
-			});
-			event.preventDefault();
-			event.returnValue = false;
-			return `Don't leave!`;
-		}
-
-		/**
-		 * Code below is desperately trying to prevent loading a different file
-		 * in this electron browser window. This happens very rarely when you drag
-		 * something into the window, and instead of electron triggering drop
-		 * event as it should, it tries to load the dragged file as a view.
-		 * After a lot of hours of testing I have no idea what is causing it or how
-		 * to fix it other than preventing it from loading a file, and letting the
-		 * drop event do nothing, since we can't access `DragEvent.dataTransfer` in this event.
-		 * This code is probably not needed anymore, since navigation is now being
-		 * prevented directly in the main process.
-		 */
-		if (!this.draggingMode()) return;
-		console.log('preventing unload');
-		event.preventDefault();
-		event.returnValue = false;
-		this.endDragging();
-		return `Don't leave!`;
-	};
+	handleError = (error: any) => this.showError({title: 'Error', details: eem(error, true)});
 }

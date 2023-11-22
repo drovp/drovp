@@ -13,3 +13,46 @@
 
 	> .NodeGuard
 		min-height: 0
+
+.AppClosePrompt
+	display: flex
+	flex-direction: column
+	gap: var(--spacing-double)
+	padding: 0 var(--spacing-double) var(--spacing-double)
+
+	> .counters
+		display: flex
+		justify-content: center
+		gap: var(--spacing)
+
+		> div
+			display: flex
+			gap: 2px
+
+			> *
+				padding:  var(--spacing-half) var(--spacing)
+
+			> .value
+				font-weight: bold
+				background: var(--variant-o500)
+				border-top-left-radius: var(--border-radius)
+				border-bottom-left-radius: var(--border-radius)
+
+			> .title
+				font-style: italic
+				background: var(--variant-o300)
+				border-top-right-radius: var(--border-radius)
+				border-bottom-right-radius: var(--border-radius)
+
+	> label
+		display: flex
+		align-items: stretch
+		justify-content: center
+		gap: var(--spacing)
+
+		> .Checkbox.-disabled + .title
+			color: var(--muted)
+
+		> .title
+			display: flex
+			align-items: center

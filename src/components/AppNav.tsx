@@ -92,11 +92,7 @@ export const AppNav = observer(function AppNav() {
 				/>
 			)}
 			{renderWindowControls && (
-				<button
-					className="WindowControl -close"
-					onClick={() => ipcRenderer.send('close-app')}
-					title="Close app"
-				/>
+				<button className="WindowControl -close" onClick={() => app.close()} title="Close app" />
 			)}
 		</nav>
 	);

@@ -1,5 +1,5 @@
 import {h, FunctionComponent, Fragment} from 'preact';
-import {useEffect, useRef} from 'preact/hooks';
+import {useEffect, useRef, useState} from 'preact/hooks';
 import manifest from 'manifest';
 import {Switch, Route, Redirect, RouteProps} from 'poutr';
 import {reaction} from 'statin';
@@ -9,6 +9,7 @@ import {ProfilesJunction} from 'components/Profiles';
 import {PluginsJunction} from 'components/PluginsJunction';
 import {OperationsJunction} from 'components/Operations';
 import {ExtensionsJunction} from 'components/Extensions';
+import {Checkbox} from 'components/Checkbox';
 import {AboutJunction} from 'components/About';
 import {Modals} from 'components/Modals';
 import {Tutorial} from 'components/Tutorial';
@@ -126,3 +127,40 @@ export function App() {
 		</Fragment>
 	);
 }
+
+export const AppClosePrompt = observer(function Modals() {
+	const {app, operations} = useStore();
+	const [quitWhenFinished, setQuitWhenFinished] = useState(false);
+	const pendingCount = operations.pending().length;
+	const queuedCount = operations.queued().length;
+	const unfinishedCount = pendingCount + queuedCount;
+
+	useEffect(() => {
+		if (quitWhenFinished && unfinishedCount === 0) app.quit();
+	}, [quitWhenFinished, unfinishedCount]);
+
+	return (
+		<div class="AppClosePrompt">
+			<p class="message">Are you sure you want to quit? There are unfinished operations:</p>
+			<div class="counters">
+				<div class={`queued ${queuedCount > 0 ? '-danger' : '-success'}`}>
+					<code class="value">{queuedCount}</code>
+					<div class="title">queued</div>
+				</div>
+				<div class={`pending ${pendingCount > 0 ? '-danger' : '-success'}`}>
+					<code class="value">{pendingCount}</code>
+					<span class="title">pending</span>
+				</div>
+			</div>
+			<label>
+				<Checkbox
+					id="quit-when-finished-checkbox"
+					checked={quitWhenFinished}
+					onChange={setQuitWhenFinished}
+					disabled={unfinishedCount === 0}
+				/>
+				<span class="title">Quit when finished</span>
+			</label>
+		</div>
+	);
+});

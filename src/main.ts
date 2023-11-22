@@ -116,14 +116,9 @@ if (!app.requestSingleInstanceLock()) {
 
 	// Disable navigation to different files/urls in windows.
 	app.on('web-contents-created', (event, contents) => {
-		contents.on('will-navigate', (event, navigationUrl) => {
-			const currentUrl = contents.getURL();
-
-			// Allow reloads
-			if (currentUrl !== navigationUrl) {
-				devlog(`Preventing window navigation from "${currentUrl}" to "${navigationUrl}".`);
-				event.preventDefault();
-			}
+		contents.on('will-navigate', (event) => {
+			event.preventDefault();
+			devlog(`Preventing window navigation to "${event.url}".`);
 		});
 	});
 }
@@ -221,10 +216,16 @@ async function createMainWindow() {
 
 	// Close to tray
 	mainWindow.on('close', (event: Electron.Event) => {
-		if (!isQuitting && settings.trayIcon && settings.closeToTray) {
-			event.preventDefault();
+		if (isQuitting) return;
+
+		event.preventDefault();
+
+		if (settings.trayIcon && settings.closeToTray) {
 			mainWindow?.hide();
+		} else {
+			mainWindow?.webContents.send('close-intercept');
 		}
+
 		isQuitting = false;
 	});
 
@@ -314,6 +315,10 @@ function getIpcEventBrowserWindow(event: Electron.IpcMainInvokeEvent): BrowserWi
 }
 
 ipcMain.on('exit', () => app.exit());
+ipcMain.on('quit', () => {
+	isQuitting = true;
+	app.quit();
+});
 ipcMain.on('relaunch', (event, link) => {
 	app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
 	app.exit(0);
@@ -432,8 +437,16 @@ ipcMain.on('close-devtools', ({sender}) => sender.closeDevTools());
 ipcMain.on('toggle-devtools', ({sender}) => sender.toggleDevTools());
 ipcMain.on('reload-window', ({sender}) => sender.reloadIgnoringCache());
 ipcMain.on('minimize-window', (event) => getIpcEventBrowserWindow(event).minimize());
-ipcMain.on('focus-window', (event) => getIpcEventBrowserWindow(event).focus());
-ipcMain.on('close-app', () => app.exit(0));
+ipcMain.on('topmost-window', (event) => {
+	if (!settings.alwaysOnTop) {
+		// We can't use `win.moveTop()` because Windows developers in their infinite
+		// wisdom decided it should do nothing if window isn't already focused...
+		const window = getIpcEventBrowserWindow(event);
+		window.setAlwaysOnTop(true);
+		window.setAlwaysOnTop(false);
+	}
+});
+ipcMain.on('reload-window', (event) => getIpcEventBrowserWindow(event).webContents.reloadIgnoringCache());
 
 /**
  * Modal windows with context.
