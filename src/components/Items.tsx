@@ -15,6 +15,8 @@ import {ItemTitle} from './ItemTitle';
 
 export * from './ItemTitle';
 
+const stopPropagation = (event: Event) => event.stopPropagation();
+
 export const Items = observer(function Items({
 	innerRef,
 	items,
@@ -117,6 +119,7 @@ export function Item({
 					draggable
 					onDragStart={prevented(() => ipcRenderer.send('start-drag', item.path))}
 					onClick={() => shell.openPath(item.path)}
+					onMouseDown={stopPropagation}
 					onMouseEnter={handleMouseEnter}
 					onMouseLeave={handleMouseLeave}
 					title={`Open file:\n${item.path}`}
@@ -178,6 +181,7 @@ export function Item({
 					onContextMenu={showContextMenu}
 					onMouseEnter={handleMouseEnter}
 					onMouseLeave={handleMouseLeave}
+					onMouseDown={stopPropagation}
 					draggable
 					onDragStart={prevented(() => ipcRenderer.send('start-drag', item.path))}
 					onClick={() => shell.openPath(item.path)}
