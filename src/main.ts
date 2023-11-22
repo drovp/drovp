@@ -432,6 +432,7 @@ ipcMain.on('close-devtools', ({sender}) => sender.closeDevTools());
 ipcMain.on('toggle-devtools', ({sender}) => sender.toggleDevTools());
 ipcMain.on('reload-window', ({sender}) => sender.reloadIgnoringCache());
 ipcMain.on('minimize-window', (event) => getIpcEventBrowserWindow(event).minimize());
+ipcMain.on('focus-window', (event) => getIpcEventBrowserWindow(event).focus());
 ipcMain.on('close-app', () => app.exit(0));
 
 /**

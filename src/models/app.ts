@@ -101,6 +101,7 @@ export class App {
 	lastDropTime = 0;
 	latest = signal<null | VersionResponse>(null);
 	isCheckingForUpdates = signal(false);
+	windowFocusTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 	/**
 	 * A map of <pluginId, latestAvailableVersion>. We can't keep latest version
@@ -640,9 +641,24 @@ export class App {
 		return [{action: 'replace-contents', from: extractedPath, to: this.binPath}] as Sequence;
 	};
 
+	queueWindowFocus = (time = 1000) => {
+		this.cancelQueueWindowFocus();
+		this.windowFocusTimeoutId = setTimeout(() => ipcRenderer.send('focus-window'), time);
+	};
+
+	cancelQueueWindowFocus = () => {
+		if (this.windowFocusTimeoutId) {
+			clearTimeout(this.windowFocusTimeoutId);
+			this.windowFocusTimeoutId = null;
+		}
+	};
+
 	startDragging = createAction((event: DragEvent) => {
 		const transfer = event.dataTransfer;
 		if (transfer != null) {
+			// Focus window if dragged over for longer than a second
+			this.queueWindowFocus(1000);
+
 			if (transfer.types[0] === 'profile') this.draggingMode('profile');
 			else if (transfer.types[0] === 'Files') this.draggingMode('files');
 			else if (transfer.items.length > 0) this.draggingMode('items');
@@ -652,6 +668,7 @@ export class App {
 	});
 
 	endDragging = createAction(() => {
+		this.cancelQueueWindowFocus();
 		this.draggingMode(null);
 		this.draggingMeta(null);
 
