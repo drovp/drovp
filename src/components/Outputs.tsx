@@ -10,6 +10,12 @@ import {Button} from 'components/Button';
 import {Icon} from 'components/Icon';
 import {OutputsInterface} from 'models/items';
 
+type DragSource = 'spacer' | 'handle' | 'teaser';
+
+function isDragSource(value: any): value is DragSource {
+	return ['spacer', 'handle', 'teaser'].includes(value);
+}
+
 export const Outputs = observer(function Outputs({
 	title,
 	tooltip,
@@ -30,7 +36,7 @@ export const Outputs = observer(function Outputs({
 	toOperationLinks?: boolean;
 }) {
 	const {session, app} = useStore();
-	const [isDragged, setIsDragged] = useState(false);
+	const [draggedBy, setDraggedBy] = useState<DragSource | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const itemsRef = useRef<HTMLDivElement>(null);
 	const [renderFilterBar, setRenderFilterBar] = useState(false);
@@ -46,9 +52,12 @@ export const Outputs = observer(function Outputs({
 	function initiateResize(event: MouseEvent) {
 		const container = containerRef.current;
 		const parentContainer = container?.parentElement;
+		const dragSource = (event.currentTarget as HTMLElement)?.dataset?.dragSource;
 
 		// Ignore double clicks and not primary button
-		if (event.detail === 2 || event.button !== 0 || !container || !parentContainer) return;
+		if (!isDragSource(dragSource) || event.detail === 2 || event.button !== 0 || !container || !parentContainer) {
+			return;
+		}
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -88,10 +97,10 @@ export const Outputs = observer(function Outputs({
 
 			onHeightRatioChange(newHeightRatio);
 			cursorOverlay.remove();
-			setIsDragged(false);
+			setDraggedBy(null);
 		}
 
-		setIsDragged(true);
+		setDraggedBy(dragSource);
 		window.addEventListener('mouseup', handleMouseUp);
 		window.addEventListener('mousemove', handleMouseMove);
 	}
@@ -117,12 +126,13 @@ export const Outputs = observer(function Outputs({
 			: data.all;
 
 	let classNames = 'Outputs';
-	if (isDragged) classNames += ' -dragged';
+	if (draggedBy) classNames += ' -dragged';
+	if (draggedBy === 'handle') classNames += ' -force-show-drag-handle';
 
 	return (
 		<div class={classNames} ref={containerRef} style={`--height: ${heightRatio}`} data-volley-ignore>
 			{!renderItems && !app.draggingMode() && (
-				<div class="tease" onMouseDown={initiateResize} title={tooltip}>
+				<div class="tease" data-drag-source="teaser" onMouseDown={initiateResize} title={tooltip}>
 					<Icon name="chevron-up" /> {title} <Icon name="chevron-up" />
 				</div>
 			)}
@@ -158,13 +168,13 @@ export const Outputs = observer(function Outputs({
 							</SelectOption>
 						</Select>
 
-						<div class="spacer" onMouseDown={initiateResize} />
+						<div class="spacer" data-drag-source="spacer" onMouseDown={initiateResize} />
 
 						<Button class="clear" semitransparent muted variant="danger" onClick={clear}>
 							<Icon name="clear-all" /> Clear
 						</Button>
 
-						<div class="handle" onMouseDown={initiateResize}></div>
+						<div class="handle" data-drag-source="handle" onMouseDown={initiateResize}></div>
 					</div>
 				)}
 

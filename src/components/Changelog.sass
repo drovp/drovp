@@ -29,17 +29,13 @@
 				align-items: center
 
 				> h1
-					flex: 1 1 auto
 					font-weight: bold
 					font-size: 1.6em
 					line-height: 1.2
 
 				> h2
+					margin-left: auto
 					opacity: .5
-
-			> .Icon
-				+size(1.8em)
-				margin-left: auto
 
 		> .body
 			padding: var(--spacing)
@@ -48,3 +44,18 @@
 
 			&:is(.-current > *)
 				background: var(--success-o100)
+
+	> .pagination
+		display: grid
+		font-size: 1.2em
+		grid-template: ". start prev next . ." 2em / 1fr 2.2em 2.2em 2.2em 2.2em 1fr
+
+		> .Button
+			+size(100%)
+
+		> .start
+			grid-area: start
+		> .prev
+			grid-area: prev
+		> .next
+			grid-area: next

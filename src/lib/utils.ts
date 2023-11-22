@@ -411,9 +411,7 @@ export function formatDuration(total: number): string {
 	}
 
 	const seconds = Math.floor(millisecondsLeft / 1000);
-	let secondsString = result
-		? ` ${String(seconds).padStart(2, '0')}`
-		: `${Math.round(seconds)}`;
+	let secondsString = result ? ` ${String(seconds).padStart(2, '0')}` : `${Math.round(seconds)}`;
 	result += `${secondsString}s`;
 
 	if (isNegative) result = `-${result}`;
@@ -538,10 +536,10 @@ export class FetchJsonError extends Error {
 /**
  * Automatically parses and validates response code.
  */
-export async function fetchJson<T extends unknown = unknown>(
+export async function fetchJsonResponse<T extends unknown = unknown>(
 	url: string,
 	init?: RequestInit & {timeout?: number}
-): Promise<T> {
+): Promise<[T, Response]> {
 	const parentSignal = init?.signal;
 	const controller = new AbortController();
 	const timeoutId = setTimeout(() => controller.abort(), init?.timeout || 10000);
@@ -569,7 +567,14 @@ export async function fetchJson<T extends unknown = unknown>(
 		throw new FetchJsonError(`${response.status}: ${body.error}\n${url}`, response.status);
 	}
 
-	return body;
+	return [body, response];
+}
+
+export async function fetchJson<T extends unknown = unknown>(
+	url: string,
+	init?: RequestInit & {timeout?: number}
+): Promise<T> {
+	return (await fetchJsonResponse<T>(url, init))[0];
 }
 
 /**
@@ -1134,7 +1139,7 @@ export function isInsideElement(element: HTMLElement, {x, y}: {x: number; y: num
 }
 
 export function getPointToPointDistance(ax: number, ay: number, bx: number, by: number) {
-	return Math.sqrt((Math.pow(bx-ax,2))+(Math.pow(by-ay,2)));
+	return Math.sqrt(Math.pow(bx - ax, 2) + Math.pow(by - ay, 2));
 }
 
 /**
@@ -1181,16 +1186,24 @@ export interface RepositoryData {
 export async function getChangelog(
 	repository: RepositoryData,
 	{page = 1, perPage = 10} = {}
-): Promise<ChangelogItem[] | null> {
+): Promise<ChangelogResponse | null> {
 	if (repository.provider === 'github') {
-		const releases = await fetchJson<GithubRelease[]>(
+		const [releases, response] = await fetchJsonResponse<GithubRelease[]>(
 			`https://api.github.com/repos/${repository.id}/releases?per_page=${perPage}&page=${page}`,
 			{headers: {accept: 'application/vnd.github.v3+json'}}
 		);
-		return releases.map((release) => ({title: release.name || release.tag_name, ...release}));
+		return {
+			hasNextPage: !!response.headers.get('link')?.includes('rel="next"'),
+			items: releases.map((release) => ({title: release.name || release.tag_name, ...release})),
+		};
 	}
 
 	return null;
+}
+
+export interface ChangelogResponse {
+	hasNextPage: boolean;
+	items: ChangelogItem[];
 }
 
 export interface ChangelogItem {

@@ -312,8 +312,7 @@ export class App {
 
 	retrieveLatestVersionData = async () => {
 		const url = new URL('latest.json', manifest.homepage);
-		const data = await fetchJson<VersionResponse>(url.toString(), {cache: 'no-cache'});
-		return data;
+		return await fetchJson<VersionResponse>(url.toString(), {cache: 'no-cache'});
 	};
 
 	checkForUpdates = async (showErrorToUser = false) => {
