@@ -99,15 +99,22 @@ export function Item({
 			tooltip={item.badge.title || undefined}
 		/>
 	) : null;
-	const toOperationButton = toOperationLinks && showActions ? (
-		<button
-			onClick={operation ? prevented(() => history.push(`/operations/${operation.id}`)) : undefined}
-			disabled={operation == null}
-			title={operation ? 'To operation' : 'Operation was deleted'}
-		>
-			<Icon name="operation" />
-		</button>
-	) : undefined;
+	const toOperationButton =
+		toOperationLinks && showActions ? (
+			<button
+				onClick={
+					operation
+						? prevented(() =>
+								history.push(`/profiles/${operation.profile.id}?section=operations&id=${operation.id}`)
+						  )
+						: undefined
+				}
+				disabled={operation == null}
+				title={operation ? 'To operation' : 'Operation was deleted'}
+			>
+				<Icon name="operation" />
+			</button>
+		) : undefined;
 
 	if (item.kind === 'file') {
 		if (item.exists) {

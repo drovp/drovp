@@ -100,7 +100,8 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 	const [draggingMode, setDraggingMode] = useState<string | null>(null);
 	const isProfileDragged = draggingMode === 'profile';
 	const draggingMeta = isProfileDragged ? app.draggingMeta() : null;
-	const [isResizing, setIsResizing] = useState(false);
+	const [activeResizingHandleId, setActiveResizingHandleId] = useState<string | null>(null);
+	const isResizing = activeResizingHandleId != null;
 	const [profileDropData, setProfileDropData] = useState<ProfileDropData | null>(null);
 	const [showTopScroller, setShowTopScroller] = useState(false);
 	const [showBottomScroller, setShowBottomScroller] = useState(false);
@@ -142,7 +143,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 		const nextStartColumn = Math.round((next?.position().left ?? 1) / columnFraction);
 		const minWidthColumns = 1;
 
-		setIsResizing(true);
+		setActiveResizingHandleId(handle.id);
 
 		function handleMove(event: MouseEvent) {
 			action(() => {
@@ -167,7 +168,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 		}
 
 		function handleUp() {
-			setIsResizing(false);
+			setActiveResizingHandleId(null);
 			document.documentElement.style.cursor = '';
 			handle.classList.remove('-active');
 			window.removeEventListener('mousemove', handleMove);
@@ -336,30 +337,42 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 
 			// Resize handles
 			if (!draggingMode) {
-				helpers.push(
-					<div
-						key={`${r}-${p}-left-handle`}
-						data-volley-ignore
-						class="hResizeHandle -left"
-						style={`
+				const leftId = `${r}-${p}-left-handle`;
+				const rightId = `${r}-${p}-right-handle`;
+
+				if (!activeResizingHandleId || activeResizingHandleId == leftId) {
+					helpers.push(
+						<div
+							key={leftId}
+							id={leftId}
+							data-volley-ignore
+							class="hResizeHandle -left"
+							style={`
 							left:${pos.left * 100}%;
 							top:calc(${itemHeight} * ${r});
 							height:${itemHeight};
 						`}
-						onMouseDown={(event) => initResize(event, profile, 'left', prev, next)}
-					/>,
-					<div
-						key={`${r}-${p}-right-handle`}
-						data-volley-ignore
-						class="hResizeHandle -right"
-						style={`
+							onMouseDown={(event) => initResize(event, profile, 'left', prev, next)}
+						/>
+					);
+				}
+
+				if (!activeResizingHandleId || activeResizingHandleId == rightId) {
+					helpers.push(
+						<div
+							key={rightId}
+							id={rightId}
+							data-volley-ignore
+							class="hResizeHandle -right"
+							style={`
 							left:${(pos.left + pos.width) * 100}%;
 							top:calc(${itemHeight} * ${r});
 							height:${itemHeight};
 						`}
-						onMouseDown={(event) => initResize(event, profile, 'right', prev, next)}
-					/>
-				);
+							onMouseDown={(event) => initResize(event, profile, 'right', prev, next)}
+						/>
+					);
+				}
 			}
 
 			// Actual card
@@ -553,12 +566,8 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 				{cards}
 				{helpers}
 			</Scrollable>
-			{(showTopScroller) && (
-				<div data-direction="top" onDragEnter={initScroll} class="scroller -top" />
-			)}
-			{(showBottomScroller) && (
-				<div data-direction="bottom" onDragEnter={initScroll} class="scroller -bottom" />
-			)}
+			{showTopScroller && <div data-direction="top" onDragEnter={initScroll} class="scroller -top" />}
+			{showBottomScroller && <div data-direction="bottom" onDragEnter={initScroll} class="scroller -bottom" />}
 		</div>
 	);
 });

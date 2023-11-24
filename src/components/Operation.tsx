@@ -88,7 +88,6 @@ const Operation = observer(function Operation({operation, section, onSectionChan
 			data-context-menu-payload={operation.id}
 		>
 
-			<OperationProgress operation={operation} />
 			<header class={headerClassNames}>
 				{title ? (
 					<h1 title={title}>{title}</h1>
@@ -147,6 +146,7 @@ const Operation = observer(function Operation({operation, section, onSectionChan
 					</Button>
 				)}
 			</header>
+			<OperationProgress operation={operation} />
 
 			<Nav style="bar">
 				<NavLink to="io" onClick={onSectionChange} activeMatch={section === 'io'} tooltip="Inputs/Outputs">

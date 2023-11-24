@@ -35,7 +35,7 @@ export function registerContextMenus(store: Store) {
 		const accepts = profile.processor()?.config.accepts;
 
 		if (accepts?.urls && isTextInClipboardUrl) {
-			let urlJuice = clipboardText.replace(/[\w-]+:\/\/(www\.)?/i, '')
+			let urlJuice = clipboardText.replace(/[\w-]+:\/\/(www\.)?/i, '');
 			if (urlJuice.length > 22) urlJuice = urlJuice.slice(0, 20) + '…';
 			items.push({
 				label: `Paste URL: "${urlJuice}"`,
@@ -434,10 +434,10 @@ export function registerContextMenus(store: Store) {
 
 			const inOperation = history.location.path.match(/^\/operations\/.+/) != null;
 			if (!inOperation) {
-				const from = encodeURIComponent(history.location.href);
 				items.push({
 					label: `To Operation`,
-					click: () => history.push(`/operations/${operation.id}?from=${from}`),
+					click: () =>
+						history.push(`/profiles/${operation.profile.id}?section=operations&id=${operation.id}`),
 				});
 			}
 
