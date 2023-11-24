@@ -174,7 +174,9 @@ export const Outputs = observer(function Outputs({
 							<Icon name="clear-all" /> Clear
 						</Button>
 
-						<div class="handle" data-drag-source="handle" onMouseDown={initiateResize}></div>
+						{!app.draggingMode() && (
+							<div class="handle" data-drag-source="handle" onMouseDown={initiateResize}></div>
+						)}
 					</div>
 				)}
 

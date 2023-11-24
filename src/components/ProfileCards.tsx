@@ -4,7 +4,7 @@ import {reaction, action} from 'statin';
 import {observer} from 'statin-preact';
 import {SetOptional} from 'type-fest';
 import {useScrollPosition, useVolley, useElementSize} from 'lib/hooks';
-import {TargetedEvent, clamp, roundDecimals} from 'lib/utils';
+import {TargetedEvent, clamp, roundDecimals, debounce} from 'lib/utils';
 import {Spinner} from 'components/Spinner';
 import {Icon} from 'components/Icon';
 import {Scrollable} from 'components/Scrollable';
@@ -102,6 +102,8 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 	const draggingMeta = isProfileDragged ? app.draggingMeta() : null;
 	const [isResizing, setIsResizing] = useState(false);
 	const [profileDropData, setProfileDropData] = useState<ProfileDropData | null>(null);
+	const [showTopScroller, setShowTopScroller] = useState(false);
+	const [showBottomScroller, setShowBottomScroller] = useState(false);
 
 	// This is necessary to work around https://crbug.com/445641
 	useEffect(
@@ -503,10 +505,60 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 		}
 	}
 
+	// Scrolling when hovering vertical container edges. Can't rely on native one
+	// as it's clunky, takes a while to trigger, and the zones are super small,
+	// especially since they collide with outputs dragging handle.
+	useEffect(() => {
+		const $container = containerRef.current;
+		if (!$container) return;
+
+		const decideScrollers = debounce(() => {
+			setShowTopScroller($container.scrollTop > 0);
+			setShowBottomScroller($container.scrollHeight - $container.scrollTop - $container.clientHeight > 2);
+		});
+
+		$container.addEventListener('scroll', decideScrollers);
+		decideScrollers();
+
+		return () => $container.removeEventListener('scroll', decideScrollers);
+	}, []);
+
+	function initScroll({currentTarget: target}: TargetedEvent<HTMLElement, DragEvent>) {
+		const $container = containerRef.current;
+		if (!$container) return;
+		const deltaPerSecond = target.dataset.direction === 'top' ? -500 : 500;
+		let startTime: number | null = null;
+		const startTop = $container.scrollTop;
+		let afID: number;
+
+		const tick = (time: number) => {
+			afID = requestAnimationFrame(tick);
+			if (!startTime) startTime = time;
+			else $container.scrollTop = startTop + deltaPerSecond * ((time - startTime) / 1000);
+		};
+
+		afID = requestAnimationFrame(tick);
+
+		const handleLeave = () => {
+			if (afID) cancelAnimationFrame(afID);
+			target.removeEventListener('dragleave', handleLeave);
+		};
+
+		target.addEventListener('dragleave', handleLeave);
+	}
+
 	return (
-		<Scrollable class="ProfileCards" innerRef={containerRef}>
-			{cards}
-			{helpers}
-		</Scrollable>
+		<div class="ProfileCards">
+			<Scrollable class="cards" innerRef={containerRef}>
+				{cards}
+				{helpers}
+			</Scrollable>
+			{(showTopScroller) && (
+				<div data-direction="top" onDragEnter={initScroll} class="scroller -top" />
+			)}
+			{(showBottomScroller) && (
+				<div data-direction="bottom" onDragEnter={initScroll} class="scroller -bottom" />
+			)}
+		</div>
 	);
 });
