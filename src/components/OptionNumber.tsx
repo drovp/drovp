@@ -16,7 +16,7 @@ export type OptionNumberProps = RenderableProps<{
 const normalizeInputValue = (value: any) => (!value && value !== 0 ? '' : `${value}`);
 
 export function OptionNumber({id, name, signal, disabled}: OptionNumberProps) {
-	let {min, max, step, steps, nullable} = signal.schema;
+	let {min, max, step, steps, nullable, cols} = signal.schema;
 	const value: number | undefined = steps ? steps.indexOf(signal.value) : signal.value;
 	const [inputValue, setInputValue] = useState<string>(normalizeInputValue(value));
 	const [error, setError] = useState<string | undefined>(undefined);
@@ -94,6 +94,7 @@ export function OptionNumber({id, name, signal, disabled}: OptionNumberProps) {
 			id={id}
 			name={name}
 			type="number"
+			cols={cols}
 			variant={variant}
 			value={inputValue}
 			onChange={handleChange}

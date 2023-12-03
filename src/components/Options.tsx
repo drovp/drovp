@@ -66,7 +66,7 @@ export const Options = observer(function Options({
 		openContextMenu([
 			signal
 				? {
-						label: `Reset option to default`,
+						label: `Reset option to default value`,
 						click: signal.reset,
 						sublabel: 'Or Shift+Click the title',
 				  }
@@ -406,7 +406,7 @@ export function Option({
 	let classNames = `Option -${type}`;
 	if (subtype) classNames += ` -${subtype}`;
 	if (extraClass) classNames += ` ${extraClass}`;
-	if (isChanged) classNames += ` -changed -success`;
+	if (isChanged) classNames += ` -changed -info`;
 	const [showHelpState, setShowHelp] = useState(false);
 	const showDescriptionToggle = description != null && compact;
 	const showHelp = compact ? showHelpState : true;
@@ -424,6 +424,11 @@ export function Option({
 			{title && (
 				<label class="title" for={id} title={title} onClick={handleClick}>
 					<span class="text">{title}</span>
+					{isChanged && (
+						<button title="Reset to default value" onClick={signal.reset}>
+							<Icon name="refresh" />
+						</button>
+					)}
 					{showDescriptionToggle && (
 						<button
 							class={showHelp ? '-active' : undefined}

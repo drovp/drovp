@@ -206,6 +206,7 @@ interface ProfileProps {
 export const Profile = observer(function Profile({profile, focusTitle}: ProfileProps) {
 	const {history} = useStore();
 	const containerRef = useRef<HTMLDivElement>(null);
+	const lastIdRef = useRef<string | null>(null);
 	const titleRef = useRef<HTMLInputElement>(null);
 	const mountId = useMemo(() => uid(), []);
 	const issues = profile.issues();
@@ -214,7 +215,10 @@ export const Profile = observer(function Profile({profile, focusTitle}: ProfileP
 	const instructions = processor?.instructions || processor?.plugin.readme;
 	const section = history.location.searchParams.get('section') || undefined;
 	const id = history.location.searchParams.get('id');
-	const changeSectionTo = (name: string) => history.replace(`?section=${name}`);
+	const navToSection = (name: string) => history.replace(`?section=${name}`);
+	const navToOperation = (id: string) => history.replace(`?section=operations&id=${id}`);
+
+	if (id) lastIdRef.current = id;
 
 	useEffect(() => {
 		const titleElement = titleRef.current;
@@ -286,13 +290,17 @@ export const Profile = observer(function Profile({profile, focusTitle}: ProfileP
 			<Nav style="tabs" class="navigation">
 				<NavLink
 					to="operations"
-					onClick={changeSectionTo}
+					onClick={() => {
+						// Facilitates remembering operation route when navigating between profile tabs
+						if (!lastIdRef.current || (section === 'operations' && id)) navToSection('operations');
+						else if (lastIdRef.current) navToOperation(lastIdRef.current);
+					}}
 					activeMatch={section === 'operations'}
 					tooltip="Operations"
 				>
 					<Icon name="operation" /> Operations
 				</NavLink>
-				<NavLink to="options" onClick={changeSectionTo} activeMatch={section === 'options'} tooltip="Options">
+				<NavLink to="options" onClick={navToSection} activeMatch={section === 'options'} tooltip="Options">
 					<Icon name="cog" /> <NavLinkRelativePart>Options</NavLinkRelativePart>
 				</NavLink>
 				{instructions && (
@@ -307,12 +315,12 @@ export const Profile = observer(function Profile({profile, focusTitle}: ProfileP
 						<NavLinkRelativePart>Instructions</NavLinkRelativePart>
 					</NavLink>
 				)}
-				<NavLink to="export" onClick={changeSectionTo} activeMatch={section === 'export'} tooltip="Export">
+				<NavLink to="export" onClick={navToSection} activeMatch={section === 'export'} tooltip="Export">
 					<Icon name="export" /> {!instructions && <NavLinkRelativePart>Export</NavLinkRelativePart>}
 				</NavLink>
 				<NavLink
 					to="details"
-					onClick={changeSectionTo}
+					onClick={navToSection}
 					activeMatch={section === 'details'}
 					variant={issues.length > 0 ? 'danger' : undefined}
 					tooltip="Profile details"

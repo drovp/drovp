@@ -63,6 +63,7 @@ module.exports = {
 		'--highlight': '#fff4',
 		'--shadow': '#0003',
 		'--top-o100': '#0001',
+		'--bottom-o300': '#fff4',
 
 		'--lighten-900': '#fff',
 		'--lighten-700': '#fffb',
@@ -105,6 +106,7 @@ module.exports = {
 		'--highlight': '#ffffff0f',
 		'--shadow': '#000a',
 		'--top-o100': '#fff1',
+		'--bottom-o300': '#0004',
 
 		'--lighten-900': '#ffffff22',
 		'--lighten-700': '#ffffff15',

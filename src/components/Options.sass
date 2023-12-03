@@ -61,6 +61,7 @@
 		display: flex
 		align-items: center
 		font-weight: bold
+		gap: 2px
 		min-width: 9em
 		text-align: left
 		min-height: var(--input-height)
@@ -69,16 +70,24 @@
 		&:is([data-uimode=compact] *)
 			font-weight: normal
 
+		> .text
+			flex: 1 1 auto
+			min-width: 0
+			+ellipsis()
+
 		> button
-			display: flex
+			flex: 0 0 auto
+			display: none
 			align-items: center
 			justify-content: center
-			margin-left: auto
 			padding: .2em
 			background: var(--grey-o200)
 			border-radius: 999em
 			cursor: help
-			opacity: 0.5
+			opacity: .7
+
+			&:is(:hover > *)
+				display: flex
 
 			&.-active
 				color: var(--grey-z100)
@@ -91,16 +100,11 @@
 				--size: 1em
 
 
-		&:is(.-changed > *)
-			color: var(--success-z600)
+		&:is(.-changed > *) > .text
+			color: var(--info-z600)
 
 			&:is([data-theme=dark] *)
-				color: var(--success-z800)
-
-		> .text
-			flex: 0 1 auto
-			min-width: 0
-			+ellipsis()
+				color: var(--info-z700)
 
 	> .title ~ *
 		order: 1

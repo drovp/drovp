@@ -435,7 +435,10 @@ ipcMain.on('start-drag', async ({sender}, path) => {
 ipcMain.on('open-devtools', ({sender}) => sender.openDevTools());
 ipcMain.on('close-devtools', ({sender}) => sender.closeDevTools());
 ipcMain.on('toggle-devtools', ({sender}) => sender.toggleDevTools());
-ipcMain.on('reload-window', ({sender}) => sender.reloadIgnoringCache());
+ipcMain.on('reload-window', ({sender}) => {
+	console.log('reload-window received');
+	sender.reloadIgnoringCache();
+});
 ipcMain.on('minimize-window', (event) => getIpcEventBrowserWindow(event).minimize());
 ipcMain.on('topmost-window', (event) => {
 	if (!settings.alwaysOnTop) {
@@ -446,7 +449,6 @@ ipcMain.on('topmost-window', (event) => {
 		window.setAlwaysOnTop(false);
 	}
 });
-ipcMain.on('reload-window', (event) => getIpcEventBrowserWindow(event).webContents.reloadIgnoringCache());
 
 /**
  * Modal windows with context.

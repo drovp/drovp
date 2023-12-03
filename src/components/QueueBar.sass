@@ -4,7 +4,7 @@
 	z-index: var(--z-queue-bar)
 	height: calc(var(--input-height) * 1.3)
 	display: flex
-	padding: 2px
+	padding: 2px 0 0
 	gap: 2px
 	align-items: stretch
 	background: var(--grey-z100)
@@ -21,6 +21,13 @@
 		flex: 1 1 auto
 		min-width: 0
 		height: auto
+		border-radius: 3px
+
+		&:first-of-type
+			border-bottom-left-radius: 0
+
+		&:last-of-type
+			border-bottom-right-radius: 0
 
 		&.pause-resume
 			min-width: 25%

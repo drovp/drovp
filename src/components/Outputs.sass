@@ -64,11 +64,14 @@
 					+absolute(_ _ 4px 0)
 					+size(100% 2px)
 					border-radius: 999px
-					background: var(--grey-o200)
+					background: var(--grey)
 					opacity: 0
+					transition: opacity 0 linear
 
 				&:is(:hover, .-force-show-drag-handle *)::after
 					opacity: 1
+					transition-duration: 300ms
+					transition-delay: 100ms
 
 			> .Select
 				--gap: 2px

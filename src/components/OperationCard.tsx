@@ -65,9 +65,9 @@ export const OperationCard = observer(({operation, showProfileTitle}: OperationC
 
 				<div class="meta">
 					{showProfileTitle === true && (
-						<div class="iconValue profile" title={operation.profile.title()}>
+						<div class="iconValue profile" title={`Profile: ${operation.profile.displayTitle()}`}>
 							<Icon name="profile" />
-							{operation.profile.title()}
+							{operation.profile.displayTitle()}
 						</div>
 					)}
 
