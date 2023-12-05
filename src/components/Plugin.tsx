@@ -257,7 +257,7 @@ export const Plugin = observer(function Plugin({data, section, onSectionChange}:
 	const {name, repository} = data;
 	const installed = plugins.byId().get(name);
 	const issues = installed?.issues();
-	section = !installed ? 'readme' : section || 'readme';
+	section = section || 'readme';
 
 	const containerRef = useRef<HTMLDivElement>(null);
 
