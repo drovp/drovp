@@ -1,5 +1,5 @@
 import {ipcRenderer} from 'electron';
-import {h, RenderableProps, VNode} from 'preact';
+import {h, RenderableProps, VNode, JSX} from 'preact';
 import {useRef, Ref} from 'preact/hooks';
 import {DialogFileFilter} from '@drovp/types';
 import {TargetedEvent, countDecimals, clamp} from 'lib/utils';
@@ -64,6 +64,7 @@ export function Input({
 	const valueRef = useRef<string | null>(null);
 	let buttons: VNode[] = [];
 	let htmlType: string = type;
+	let htmlAttrs: JSX.HTMLAttributes<HTMLInputElement> | undefined;
 
 	function handleInput(event: TargetedEvent<HTMLInputElement, Event>) {
 		const value = event.currentTarget.value;
@@ -84,11 +85,12 @@ export function Input({
 				if (
 					(max != null && numberValue > max) ||
 					(min != null && numberValue < min) ||
-					(step != null && numberValue % step !== 0)
+					(step != null && Math.abs((numberValue / step) % 1) > 0.00000001)
 				) {
 					variant = 'danger';
 				}
 			}
+			htmlAttrs = {min, max, step: step ?? 'any'};
 			break;
 		}
 		case 'path': {
@@ -118,11 +120,13 @@ export function Input({
 			);
 			break;
 		}
+		default:
+			htmlAttrs = {minLength: min, maxLength: max, spellcheck};
 	}
 
 	function handleDoubleClick() {
 		// Select all text if it is just one continuous word
-		if (`${value}`.trim().match(/^\w+$/)) inputRef.current?.select()
+		if (`${value}`.trim().match(/^\w+$/)) inputRef.current?.select();
 	}
 
 	let classNames = `Input -${type}`;
@@ -130,10 +134,10 @@ export function Input({
 	if (variant) classNames += ` -${variant}`;
 	if (disabled) classNames += ` -disabled`;
 
-	const inputSize = cols ? cols + 2 : max != null ? `${max}`.length + 2 : false;
+	const inputSize = cols ? cols : max != null ? Math.max(step ? `${step}`.length : 0, `${max}`.length) : false;
 
 	return (
-		<div class={classNames} style={inputSize ? `max-width:${inputSize}ch` : undefined} title={tooltip}>
+		<div class={classNames} style={inputSize ? `--cols:${inputSize}` : undefined} title={tooltip}>
 			<input
 				{...rest}
 				onKeyDown={handleKeyDown}
@@ -143,9 +147,7 @@ export function Input({
 				id={id}
 				name={name}
 				type={htmlType}
-				spellcheck={spellcheck === true}
-				minLength={min}
-				maxLength={max}
+				{...htmlAttrs}
 				disabled={disabled}
 				value={value == null ? '' : value}
 				onDblClick={handleDoubleClick}

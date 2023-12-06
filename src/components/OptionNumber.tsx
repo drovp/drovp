@@ -79,6 +79,9 @@ export function OptionNumber({id, name, signal, disabled}: OptionNumberProps) {
 						variant={variant}
 						type="number"
 						value={inputValue}
+						min={min}
+						max={max}
+						step={step}
 						onChange={handleChange}
 						disabled={disabled}
 						tooltip={error}
@@ -97,6 +100,9 @@ export function OptionNumber({id, name, signal, disabled}: OptionNumberProps) {
 			cols={cols}
 			variant={variant}
 			value={inputValue}
+			min={min}
+			max={max}
+			step={step}
 			onChange={handleChange}
 			disabled={disabled}
 		/>

@@ -109,9 +109,10 @@
 		z-index: calc(var(--z-menu) + 1)
 		background: var(--background)
 		border-radius: var(--border-radius)
+		border: 1px solid var(--grey-z300)
 		height: auto
 		max-height: 60vh
-		box-shadow: 0 2px 10px var(--shadow)
+		+elevate(24)
 
 		> .mover
 			position: absolute

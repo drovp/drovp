@@ -132,6 +132,8 @@ function validateNumber(value: unknown, options?: ValidateNumberOptions): number
 	}
 	if (options?.min != null && number < options.min) throw new Error('Too small.');
 	if (options?.max != null && number > options.max) throw new Error('Too big.');
+	if (options?.step != null && Math.abs((number / options.step) % 1) > 0.00000001)
+		throw new Error(`Not a step of ${options.step}`);
 	return number;
 }
 

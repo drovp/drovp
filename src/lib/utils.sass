@@ -102,7 +102,7 @@ $in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55)
 	padding-right: $offset
 
 =hSpacingScrollable($spacing: var(--spacing), $offset: 2px)
-	margin-left: $spacing
+	padding-left: $spacing
 	+rightSpacingScrollable($spacing, $offset)
 
 =autogrid($minItemWidth: 25em)
@@ -114,6 +114,10 @@ $in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55)
 =selectable()
 	user-select: text
 	cursor: initial
+
+// Adds elevation shadows. Use increments of: 2,4,8,16,24
+=elevate($n: 2)
+	box-shadow: 0 #{0.5 * $n}px #{$n}px rgba(0, 0, 0, var(--f2-shadow-1a)), 0 #{0.5 * $n}px #{$n}px rgba(0, 0, 0, var(--f2-shadow-2a))
 
 =fadein()
 	animation: 300ms fade-in

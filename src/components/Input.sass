@@ -3,7 +3,7 @@
 	display: inline-flex
 	align-items: center
 	+size(20em var(--input-height))
-	max-width: 100%
+	max-width: min(100%, calc(var(--cols, 40) * 1ch + 1.4em))
 	color: var(--variant-z900)
 	vertical-align: middle
 

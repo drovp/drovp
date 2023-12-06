@@ -33,11 +33,11 @@
 		background: var(--bg)
 		border-radius: var(--border-radius)
 		border: 1px solid var(--variant-z300)
-		box-shadow: 0 5px 15px 5px var(--shadow)
+		+elevate(24)
 		will-change: transform, opacity
 
 		&:is([data-theme=light] *)
-			border-color: var(--variant-z600)
+			border-color: var(--variant-z400)
 
 		> .title
 			padding: var(--spacing-double)
