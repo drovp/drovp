@@ -6,7 +6,7 @@ import {Button} from 'components/Button';
 import {Icon, IconName, Help} from 'components/Icon';
 import {useStore} from 'models/store';
 
-export type ClickEvent = TargetedEvent<HTMLButtonElement, MouseEvent>;
+export type ClickEvent = TargetedEvent<HTMLButtonElement, PointerEvent>;
 
 export interface Action {
 	icon?: IconName;

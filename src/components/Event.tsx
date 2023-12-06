@@ -10,7 +10,7 @@ export function Event({event}: {event: EventModel}) {
 	const containerRef = useRef<any>();
 	const strippedMessage = useMemo(() => (message ? stripHtml(message) : message), [message]);
 
-	function handleClose(mouseEvent: MouseEvent) {
+	function handleClose(mouseEvent: PointerEvent) {
 		mouseEvent.preventDefault();
 		mouseEvent.stopPropagation();
 

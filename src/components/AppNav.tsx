@@ -20,7 +20,7 @@ export const AppNav = observer(function AppNav() {
 	const appOrNodeUpdateAvailable = app.updateAvailable() || node.updateAvailable();
 	const renderWindowControls = app.isWindowTitleBarHidden() && process.platform === 'win32';
 
-	function openProfilesContextMenu(event: MouseEvent) {
+	function openProfilesContextMenu(event: PointerEvent) {
 		event.preventDefault();
 		event.stopPropagation();
 		openContextMenu([

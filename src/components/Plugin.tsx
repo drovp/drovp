@@ -124,7 +124,7 @@ export const PluginHeader = observer(function PluginHeader({data, compact}: Plug
 	let classNames = 'PluginHeader';
 	if (compact) classNames += ` -compact`;
 
-	function newProfile(event: MouseEvent) {
+	function newProfile(event: PointerEvent) {
 		const processors = installed?.processors();
 
 		if (!installed || !processors || processors.length === 0) return;

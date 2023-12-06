@@ -121,7 +121,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 	useVolley(containerRef);
 
 	function initResize(
-		event: TargetedEvent<HTMLDivElement, MouseEvent>,
+		event: TargetedEvent<HTMLDivElement, PointerEvent>,
 		profile: Profile,
 		side: 'left' | 'right',
 		prev: Profile | undefined,
@@ -145,7 +145,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 
 		setActiveResizingHandleId(handle.id);
 
-		function handleMove(event: MouseEvent) {
+		function handleMove(event: PointerEvent) {
 			action(() => {
 				if (side === 'right') {
 					const column = clamp(startColumn + minWidthColumns, getColumn(event.x), nextStartColumn);
@@ -171,14 +171,16 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 			setActiveResizingHandleId(null);
 			document.documentElement.style.cursor = '';
 			handle.classList.remove('-active');
-			window.removeEventListener('mousemove', handleMove);
-			window.removeEventListener('mouseup', handleUp);
+			removeEventListener('pointermove', handleMove);
+			removeEventListener('pointerup', handleUp);
+			removeEventListener('pointercancel', handleUp);
 		}
 
 		document.documentElement.style.cursor = 'ew-resize';
 		handle.classList.add('-active');
-		window.addEventListener('mousemove', handleMove);
-		window.addEventListener('mouseup', handleUp);
+		addEventListener('pointermove', handleMove);
+		addEventListener('pointerup', handleUp);
+		addEventListener('pointercancel', handleUp);
 	}
 
 	function handleDragEnter(
@@ -352,7 +354,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 							top:calc(${itemHeight} * ${r});
 							height:${itemHeight};
 						`}
-							onMouseDown={(event) => initResize(event, profile, 'left', prev, next)}
+							onPointerDown={(event) => initResize(event, profile, 'left', prev, next)}
 						/>
 					);
 				}
@@ -369,7 +371,7 @@ export const ProfileCards = observer(function ProfileCards({category}: {category
 							top:calc(${itemHeight} * ${r});
 							height:${itemHeight};
 						`}
-							onMouseDown={(event) => initResize(event, profile, 'right', prev, next)}
+							onPointerDown={(event) => initResize(event, profile, 'right', prev, next)}
 						/>
 					);
 				}

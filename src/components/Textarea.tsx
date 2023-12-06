@@ -23,7 +23,7 @@ export interface TextareaProps {
 	 */
 	autoResize?: boolean;
 	onChange?: (value: string) => void;
-	onClick?: (event: TargetedEvent<HTMLTextAreaElement, MouseEvent>) => void;
+	onClick?: (event: TargetedEvent<HTMLTextAreaElement, PointerEvent>) => void;
 	onKeyDown?: (event: TargetedEvent<HTMLTextAreaElement, KeyboardEvent>) => void;
 	disabled?: boolean;
 	readonly?: boolean;
@@ -68,7 +68,7 @@ export function Textarea({
 		}
 	}
 
-	function initResize(event: TargetedEvent<HTMLDivElement, MouseEvent>) {
+	function initResize(event: TargetedEvent<HTMLDivElement, PointerEvent>) {
 		const textarea = textareaRef.current;
 
 		if (!textarea) return;
@@ -76,17 +76,19 @@ export function Textarea({
 		const initHeight = textarea.getBoundingClientRect().height;
 		const initY = event.clientY;
 
-		function move(event: MouseEvent) {
+		function move(event: PointerEvent) {
 			setMinHeight(Math.max(0, initHeight + event.clientY - initY));
 		}
 
 		function cancel() {
-			window.removeEventListener('mousemove', move);
-			window.removeEventListener('mouseup', cancel);
+			removeEventListener('pointermove', move);
+			removeEventListener('pointerup', cancel);
+			removeEventListener('pointercancel', cancel);
 		}
 
-		window.addEventListener('mousemove', move);
-		window.addEventListener('mouseup', cancel);
+		addEventListener('pointermove', move);
+		addEventListener('pointerup', cancel);
+		addEventListener('pointercancel', cancel);
 	}
 
 	/**
@@ -131,7 +133,7 @@ export function Textarea({
 
 	function handleDoubleClick() {
 		// Select all text if it is just one continuous word
-		if (`${value}`.trim().match(/^\w+$/)) textareaRef.current?.select()
+		if (`${value}`.trim().match(/^\w+$/)) textareaRef.current?.select();
 	}
 
 	let classNames = `Textarea`;
@@ -161,7 +163,7 @@ export function Textarea({
 				value={value}
 				onDblClick={handleDoubleClick}
 			/>
-			{resizable && <div class="resize-handle" onMouseDown={initResize} />}
+			{resizable && <div class="resize-handle" onPointerDown={initResize} />}
 		</div>
 	);
 }

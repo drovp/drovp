@@ -50,7 +50,7 @@ function Toast({
 	const onCloseRef = useRef(onClose);
 	onCloseRef.current = onClose;
 
-	function handleAction(event: TargetedEvent<HTMLButtonElement, MouseEvent>) {
+	function handleAction(event: TargetedEvent<HTMLButtonElement, PointerEvent>) {
 		action?.action(event);
 		onClose();
 	}

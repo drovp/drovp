@@ -152,7 +152,7 @@ export const ProfileWrapper = observer(function ProfileWrapper({
 					: undefined
 			}
 			draggable={draggable}
-			onMouseDown={draggable ? (event) => event.stopPropagation() : undefined}
+			onPointerDown={draggable ? (event) => event.stopPropagation() : undefined}
 			onDragStart={profile.handleDragStart}
 			onDragEnter={profile.handleDragEnter}
 			onDragLeave={profile.handleDragLeave}

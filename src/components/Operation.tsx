@@ -87,7 +87,6 @@ const Operation = observer(function Operation({operation, section, onSectionChan
 			data-context-menu="operation"
 			data-context-menu-payload={operation.id}
 		>
-
 			<header class={headerClassNames}>
 				{title ? (
 					<h1 title={title}>{title}</h1>
@@ -247,7 +246,7 @@ const InputsOutputs = observer(function InputsOutputs({operation}: {operation: O
 	const inputs = operation.inputs;
 	const outputs = operation.outputs();
 
-	function initResize(event: MouseEvent) {
+	function initResize(event: PointerEvent) {
 		const container = containerRef.current;
 		const inputs = container?.children[0];
 		if (!container || !inputs) return;
@@ -258,19 +257,21 @@ const InputsOutputs = observer(function InputsOutputs({operation}: {operation: O
 		const containerHeight = container.getBoundingClientRect().height;
 		const initSize = inputs.getBoundingClientRect().height;
 		const initPos = event.y;
-		const handleMove = (event: MouseEvent) => {
+		const handleMove = (event: PointerEvent) => {
 			updateSize(`${Math.round(clamp(30, initSize + event.y - initPos, containerHeight * 0.9))}px`);
 		};
 		const updateSize = rafThrottle((size: string) => container.style.setProperty('--max-inputs-height', `${size}`));
 		const handleUp = () => {
 			document.documentElement.style.cursor = initialCursor;
-			removeEventListener('mousemove', handleMove);
-			removeEventListener('mouseup', handleUp);
+			removeEventListener('pointermove', handleMove);
+			removeEventListener('pointerup', handleUp);
+			removeEventListener('pointercancel', handleUp);
 		};
 
 		document.documentElement.style.cursor = 'ns-resize';
-		addEventListener('mousemove', handleMove);
-		addEventListener('mouseup', handleUp);
+		addEventListener('pointermove', handleMove);
+		addEventListener('pointerup', handleUp);
+		addEventListener('pointercancel', handleUp);
 	}
 
 	return (
@@ -280,7 +281,7 @@ const InputsOutputs = observer(function InputsOutputs({operation}: {operation: O
 			) : (
 				<div class="inputs placeholder">No inputs</div>
 			)}
-			<div class="divider" onMouseDown={initResize} title="Drag to expand">
+			<div class="divider" onPointerDown={initResize} title="Drag to expand">
 				<div class="count -inputs">
 					<span class="value">{inputs.length}</span>
 					in

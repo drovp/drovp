@@ -27,7 +27,7 @@ export type ButtonPropsHref = RenderableProps<
 		innerRef?: Ref<HTMLAnchorElement | null>;
 		href: string;
 		onClick?: undefined;
-		onMouseDown?: (event: TargetedEvent<HTMLAnchorElement, MouseEvent>) => void;
+		onMouseDown?: (event: TargetedEvent<HTMLAnchorElement, PointerEvent>) => void;
 	}
 >;
 
@@ -35,8 +35,8 @@ export type ButtonPropsClick = RenderableProps<
 	ButtonBaseProps & {
 		innerRef?: Ref<HTMLButtonElement | null>;
 		href?: undefined;
-		onClick?: (event: TargetedEvent<HTMLButtonElement, MouseEvent>) => void;
-		onMouseDown?: (event: TargetedEvent<HTMLButtonElement, MouseEvent>) => void;
+		onClick?: (event: TargetedEvent<HTMLButtonElement, PointerEvent>) => void;
+		onMouseDown?: (event: TargetedEvent<HTMLButtonElement, PointerEvent>) => void;
 	}
 >;
 
@@ -94,7 +94,7 @@ export function Button({
 		}
 	}
 
-	function handleClick(event: MouseEvent) {
+	function handleClick(event: PointerEvent) {
 		if (href && disabled) {
 			event.preventDefault();
 			event.stopPropagation();

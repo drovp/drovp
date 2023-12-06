@@ -184,7 +184,7 @@ export class App {
 				event.preventDefault();
 			}
 		});
-		addEventListener('mousedown', this.endDragging);
+		addEventListener('pointerdown', this.endDragging);
 		addEventListener('wheel', this.endDragging);
 
 		// Keep track of OS theme, doing this in CSS with @media requires

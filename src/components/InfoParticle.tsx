@@ -12,12 +12,12 @@ const wait = (duration: number) => new Promise((resolve) => setTimeout(resolve, 
 export async function infoParticle(contents: ComponentChildren, options?: InfoParticleOptions): Promise<void>;
 export async function infoParticle(
 	contents: ComponentChildren,
-	target: HTMLElement | MouseEvent,
+	target: HTMLElement | PointerEvent,
 	options?: InfoParticleOptions
 ): Promise<void>;
 export async function infoParticle(
 	contents: ComponentChildren,
-	target?: HTMLElement | MouseEvent | InfoParticleOptions,
+	target?: HTMLElement | PointerEvent | InfoParticleOptions,
 	options: InfoParticleOptions = {}
 ): Promise<void> {
 	let left = window.innerWidth / 2;
@@ -27,7 +27,7 @@ export async function infoParticle(
 		const rect = target.getBoundingClientRect();
 		left = Math.round(rect.left + rect.width / 2);
 		top = Math.round(rect.top + rect.height / 2);
-	} else if (isOfType<MouseEvent>(target, target != null && typeof (target as any)?.clientY === 'number')) {
+	} else if (isOfType<PointerEvent>(target, target != null && typeof (target as any)?.clientY === 'number')) {
 		left = target.clientX;
 		top = target.clientY;
 	} else {
@@ -65,7 +65,7 @@ export async function infoParticle(
 }
 
 export function createCopyParticle(text: string) {
-	return (event: TargetedEvent<HTMLElement, MouseEvent>) => {
+	return (event: TargetedEvent<HTMLElement, PointerEvent>) => {
 		clipboard.writeText(text);
 		infoParticle('COPIED', event.currentTarget);
 	};

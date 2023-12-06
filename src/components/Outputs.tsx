@@ -49,7 +49,7 @@ export const Outputs = observer(function Outputs({
 		setRenderItems(containerHeight > 60);
 	}
 
-	function initiateResize(event: MouseEvent) {
+	function initiateResize(event: PointerEvent) {
 		const container = containerRef.current;
 		const parentContainer = container?.parentElement;
 		const dragSource = (event.currentTarget as HTMLElement)?.dataset?.dragSource;
@@ -73,7 +73,7 @@ export const Outputs = observer(function Outputs({
 		let newHeightRatio = heightRatio;
 		const update = rafThrottle(() => container.style.setProperty('--height', `${newHeightRatio}`));
 
-		function handleMouseMove(event: MouseEvent) {
+		function handleMove(event: PointerEvent) {
 			const deltaY = initialY - event.clientY;
 			const newHeight = initialHeight + deltaY;
 			newHeightRatio = clamp(0, newHeight / maxHeight, maxHeightRatio);
@@ -85,9 +85,10 @@ export const Outputs = observer(function Outputs({
 			update();
 		}
 
-		function handleMouseUp() {
-			window.removeEventListener('mouseup', handleMouseUp);
-			window.removeEventListener('mousemove', handleMouseMove);
+		function handleUp() {
+			removeEventListener('pointerup', handleUp);
+			removeEventListener('pointercancel', handleUp);
+			removeEventListener('pointermove', handleMove);
 
 			// If final height is too small to reveal anything, just force it to 0
 			if (maxHeight * newHeightRatio <= controlBarHeight * 0.8) {
@@ -101,8 +102,9 @@ export const Outputs = observer(function Outputs({
 		}
 
 		setDraggedBy(dragSource);
-		window.addEventListener('mouseup', handleMouseUp);
-		window.addEventListener('mousemove', handleMouseMove);
+		addEventListener('pointerup', handleUp);
+		addEventListener('pointercancel', handleUp);
+		addEventListener('pointermove', handleMove);
 	}
 
 	async function clear() {
@@ -132,7 +134,7 @@ export const Outputs = observer(function Outputs({
 	return (
 		<div class={classNames} ref={containerRef} style={`--height: ${heightRatio}`} data-volley-ignore>
 			{!renderItems && !app.draggingMode() && (
-				<div class="tease" data-drag-source="teaser" onMouseDown={initiateResize} title={tooltip}>
+				<div class="tease" data-drag-source="teaser" onPointerDown={initiateResize} title={tooltip}>
 					<Icon name="chevron-up" /> {title} <Icon name="chevron-up" />
 				</div>
 			)}
@@ -168,14 +170,14 @@ export const Outputs = observer(function Outputs({
 							</SelectOption>
 						</Select>
 
-						<div class="spacer" data-drag-source="spacer" onMouseDown={initiateResize} />
+						<div class="spacer" data-drag-source="spacer" onPointerDown={initiateResize} />
 
 						<Button class="clear" semitransparent muted variant="danger" onClick={clear}>
 							<Icon name="clear-all" /> Clear
 						</Button>
 
 						{!app.draggingMode() && (
-							<div class="handle" data-drag-source="handle" onMouseDown={initiateResize}></div>
+							<div class="handle" data-drag-source="handle" onPointerDown={initiateResize}></div>
 						)}
 					</div>
 				)}

@@ -102,7 +102,7 @@ export function Tabs({
 		};
 	}, [isDragging, showList]);
 
-	function handleMouseDown(event: TargetedEvent<HTMLElement, MouseEvent>) {
+	function handlePointerDown(event: TargetedEvent<HTMLElement, PointerEvent>) {
 		if (event.button !== 0 || !onMove) return;
 		let dragContext = getDragContext(event.target);
 		if (!dragContext) return;
@@ -192,7 +192,7 @@ export function Tabs({
 			}
 		});
 
-		const handleMove = (event: MouseEvent) => {
+		const handleMove = (event: PointerEvent) => {
 			cursor.x = event.x - containerRect.left + scroll.left;
 			cursor.y = event.y - containerRect.top + scroll.top;
 			cursor.pos = isVertical ? cursor.y : cursor.x;
@@ -206,7 +206,7 @@ export function Tabs({
 			updateStyles();
 		};
 
-		const handleUp = (event: MouseEvent) => {
+		const handleUp = (event: PointerEvent) => {
 			container.classList.remove('-dragging');
 			for (const element of tabElements) {
 				if (element === draggedElement) element.classList.remove('-dragged');
@@ -214,8 +214,9 @@ export function Tabs({
 			}
 
 			setIsInternalDragging(false);
-			window.removeEventListener('mousemove', handleMove);
-			window.removeEventListener('mouseup', handleUp);
+			removeEventListener('pointermove', handleMove);
+			removeEventListener('pointerup', handleUp);
+			removeEventListener('pointercancel', handleUp);
 			container.removeEventListener('scroll', handleScroll);
 
 			// Handle click action
@@ -239,8 +240,9 @@ export function Tabs({
 			if (onMove && draggedIndex !== targetIndex) onMove(draggedIndex, targetIndex);
 		};
 
-		window.addEventListener('mousemove', handleMove);
-		window.addEventListener('mouseup', handleUp);
+		addEventListener('pointermove', handleMove);
+		addEventListener('pointerup', handleUp);
+		addEventListener('pointercancel', handleUp);
 		container.addEventListener('scroll', handleScroll);
 	}
 
@@ -367,7 +369,13 @@ export function Tabs({
 	return (
 		<div class={classNames} onContextMenu={handleContextMenu}>
 			<div class="tabs">
-				<Scrollable direction="horizontal" class="buttons" innerRef={tabsRef} onMouseDown={handleMouseDown}>
+				<Scrollable
+					direction="horizontal"
+					class="buttons"
+					innerRef={tabsRef}
+					onPointerDown={handlePointerDown}
+					onTouchStart={prevented()}
+				>
 					{tabs.map((tab, index) => (
 						<button
 							key={tab.id}
@@ -425,7 +433,7 @@ export function Tabs({
 					anchorRef={listAnchorRef}
 					scrollerRef={contextScrollerRef}
 					tabs={tabs}
-					handleMouseDown={handleMouseDown}
+					handlePointerDown={handlePointerDown}
 					handleContextMenu={handleContextMenu}
 					activeId={activeId}
 					onDelete={onDelete}
@@ -448,7 +456,7 @@ function List({
 	listRef,
 	anchorRef,
 	scrollerRef,
-	handleMouseDown,
+	handlePointerDown,
 	handleContextMenu,
 	activeId,
 	onDelete,
@@ -463,7 +471,7 @@ function List({
 	anchorRef: Ref<HTMLButtonElement | null>;
 	scrollerRef: MutableRef<Scroller | null>;
 	tabs: Tab[];
-	handleMouseDown: (event: TargetedEvent<HTMLElement, MouseEvent>) => void;
+	handlePointerDown: (event: TargetedEvent<HTMLElement, PointerEvent>) => void;
 	handleContextMenu: (event: TargetedEvent<HTMLElement, MouseEvent>) => void;
 	activeId: string;
 	onDelete?: (id: string) => void;
@@ -493,7 +501,8 @@ function List({
 						class="buttons"
 						innerRef={listRef}
 						data-drag-direction="vertical"
-						onMouseDown={handleMouseDown}
+						onPointerDown={handlePointerDown}
+						onTouchStart={prevented()}
 						onContextMenu={handleContextMenu}
 					>
 						{tabs.map((tab, index) => (
@@ -510,7 +519,8 @@ function List({
 								{onDelete && allowDelete && (
 									<button
 										class="delete"
-										onMouseDown={prevented()}
+										onPointerDown={prevented()}
+										onTouchStart={prevented()}
 										onClick={prevented(() => onDelete(tab.id))}
 										title="Delete tab"
 									>

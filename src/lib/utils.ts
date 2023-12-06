@@ -25,7 +25,7 @@ export type TargetedEvent<Target extends EventTarget = EventTarget, TypedEvent e
 /**
  * Naive quick type guard. Casts `value` to `T` when `condition` is `true`.
  * ```ts
- * isOfType<MouseEvent>(event, 'clientX' in event)
+ * isOfType<PointerEvent>(event, 'clientX' in event)
  * ```
  */
 export function isOfType<T>(value: any, condition: boolean): value is T {

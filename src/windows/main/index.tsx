@@ -405,7 +405,7 @@ Error: Only 0 arguments allowed, but 1 was passed.
 	);
 
 	// Window dragging
-	addEventListener('mousedown', function (event) {
+	addEventListener('pointerdown', function (event) {
 		const {target} = event;
 		if (
 			!store.app.isWindowTitleBarHidden() ||
@@ -432,7 +432,7 @@ Error: Only 0 arguments allowed, but 1 was passed.
 			}
 		});
 
-		function handleMove(event: MouseEvent) {
+		function handleMove(event: PointerEvent) {
 			if (!initialized) {
 				distance += getPointToPointDistance(0, 0, event.movementX, event.movementY);
 				if (distance > 6) {
@@ -450,13 +450,15 @@ Error: Only 0 arguments allowed, but 1 was passed.
 		}
 
 		function handleUp() {
-			removeEventListener('mouseup', handleUp);
-			removeEventListener('mousemove', handleMove);
+			removeEventListener('pointerup', handleUp);
+			removeEventListener('pointercancel', handleUp);
+			removeEventListener('pointermove', handleMove);
 			setTimeout(() => $overlay?.remove(), 100);
 		}
 
-		addEventListener('mousemove', handleMove);
-		addEventListener('mouseup', handleUp);
+		addEventListener('pointermove', handleMove);
+		addEventListener('pointerup', handleUp);
+		addEventListener('pointercancel', handleUp);
 	});
 
 	// Expose store

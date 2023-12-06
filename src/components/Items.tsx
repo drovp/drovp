@@ -65,8 +65,8 @@ export function Item({
 	const operation = 'operation' in item ? item.operation : null;
 	const plugin = operation?.profile.plugin();
 	const [showActions, setShowActions] = useState(false);
-	const handleMouseEnter = () => setShowActions(true);
-	const handleMouseLeave = () => setShowActions(false);
+	const handleEnter = () => setShowActions(true);
+	const handleLeave = () => setShowActions(false);
 
 	function showContextMenu(event: MouseEvent) {
 		event.preventDefault();
@@ -126,9 +126,9 @@ export function Item({
 					draggable
 					onDragStart={prevented(() => ipcRenderer.send('start-drag', item.path))}
 					onClick={() => shell.openPath(item.path)}
-					onMouseDown={stopPropagation}
-					onMouseEnter={handleMouseEnter}
-					onMouseLeave={handleMouseLeave}
+					onPointerDown={stopPropagation}
+					onPointerEnter={handleEnter}
+					onPointerLeave={handleLeave}
 					title={`Open file:\n${item.path}`}
 				>
 					<div class="content">
@@ -160,8 +160,8 @@ export function Item({
 				<article
 					class={classNames}
 					onContextMenu={showContextMenu}
-					onMouseEnter={handleMouseEnter}
-					onMouseLeave={handleMouseLeave}
+					onPointerEnter={handleEnter}
+					onPointerLeave={handleLeave}
 					title={`Missing file:\n${item.path}`}
 				>
 					<div class="content">
@@ -186,9 +186,9 @@ export function Item({
 				<button
 					class={classNames}
 					onContextMenu={showContextMenu}
-					onMouseEnter={handleMouseEnter}
-					onMouseLeave={handleMouseLeave}
-					onMouseDown={stopPropagation}
+					onPointerEnter={handleEnter}
+					onPointerLeave={handleLeave}
+					onPointerDown={stopPropagation}
 					draggable
 					onDragStart={prevented(() => ipcRenderer.send('start-drag', item.path))}
 					onClick={() => shell.openPath(item.path)}
@@ -212,8 +212,8 @@ export function Item({
 				<article
 					class={classNames}
 					onContextMenu={showContextMenu}
-					onMouseEnter={handleMouseEnter}
-					onMouseLeave={handleMouseLeave}
+					onPointerEnter={handleEnter}
+					onPointerLeave={handleLeave}
 					title={`Missing folder:\n${item.path}`}
 				>
 					<div class="content">
@@ -238,8 +238,8 @@ export function Item({
 				class={classNames}
 				draggable
 				onDragStart={(event: DragEvent) => event.dataTransfer!.setData('text/plain', item.url)}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
+				onPointerEnter={handleEnter}
+				onPointerLeave={handleLeave}
 				onClick={() => shell.openExternal(item.url)}
 				onContextMenu={showContextMenu}
 				title={`Open URL:\n${item.url}`}
@@ -272,8 +272,8 @@ export function Item({
 				class={classNames}
 				draggable
 				onDragStart={(event: DragEvent) => event.dataTransfer?.setData('text/plain', item.contents)}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
+				onPointerEnter={handleEnter}
+				onPointerLeave={handleLeave}
 				onClick={() =>
 					modals.alert({
 						title: 'String item',
@@ -313,8 +313,8 @@ export function Item({
 			<article
 				class={classNames}
 				onContextMenu={showContextMenu}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
+				onPointerEnter={handleEnter}
+				onPointerLeave={handleLeave}
 				title="Binary blob"
 			>
 				<div class="content">
@@ -384,8 +384,8 @@ export function Item({
 			<button
 				class={classNames}
 				onContextMenu={showContextMenu}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
+				onPointerEnter={handleEnter}
+				onPointerLeave={handleLeave}
 				title={isError ? 'Error' : 'Warning'}
 				onClick={showModal}
 			>
@@ -413,8 +413,8 @@ export function Item({
 		<button
 			class={classNames}
 			onContextMenu={showContextMenu}
-			onMouseEnter={handleMouseEnter}
-			onMouseLeave={handleMouseLeave}
+			onPointerEnter={handleEnter}
+			onPointerLeave={handleLeave}
 			onClick={showModal}
 		>
 			<div class="content">
