@@ -1,6 +1,11 @@
 type Variant = 'accent' | 'success' | 'info' | 'warning' | 'danger';
 type ProcessPriority = 'LOW' | 'BELOW_NORMAL' | 'NORMAL' | 'ABOVE_NORMAL' | 'HIGH' | 'HIGHEST';
 
+interface SignalLike<T extends unknown> {
+	(): T;
+	(v: T): void;
+}
+
 /**
  * Node module manifest.
  */

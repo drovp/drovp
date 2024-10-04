@@ -1,5 +1,5 @@
-import {h, RenderableProps, JSX} from 'preact';
-import {useEffect, useRef, Ref} from 'preact/hooks';
+import {h, RenderableProps, RefObject, JSX} from 'preact';
+import {useEffect, useRef} from 'preact/hooks';
 import {observeElementSize} from 'lib/elementSize';
 
 export type ScrollableProps = Omit<
@@ -9,7 +9,7 @@ export type ScrollableProps = Omit<
 			auto?: boolean;
 			direction?: 'horizontal' | 'vertical';
 			style?: string;
-			innerRef?: Ref<HTMLDivElement | null>;
+			innerRef?: RefObject<HTMLDivElement>;
 			dangerouslySetInnerHTML?: {__html: string};
 		}>,
 	'ref'

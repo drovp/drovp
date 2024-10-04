@@ -8,7 +8,8 @@ import {
 } from 'lib/utils';
 import {SLIDE_IN} from 'config/animations';
 import {registerDraggingListener} from 'lib/draggingListener';
-import {useCallback, useState, useEffect, useLayoutEffect, useRef, Ref, Inputs} from 'preact/hooks';
+import {RefObject} from 'preact';
+import {useCallback, useState, useEffect, useLayoutEffect, useRef, Inputs} from 'preact/hooks';
 import {observeElementSize} from 'lib/elementSize';
 
 /**
@@ -35,7 +36,7 @@ export function useForceUpdate() {
 export function useEventListener(
 	name: string,
 	callback: (...args: any) => void,
-	ref: Ref<HTMLElement | Window | null> = {current: window},
+	ref: RefObject<HTMLElement | Window> = {current: window},
 	options?: AddEventListenerOptions
 ) {
 	useEffect(() => {
@@ -82,7 +83,7 @@ export function useAbortableEffect(
  * Remembers element's scroll position, and recovers it next time the element is
  * created.
  */
-export function useScrollPosition(id: string, ref: Ref<HTMLElement | null>) {
+export function useScrollPosition(id: string, ref: RefObject<HTMLElement>) {
 	const cacheId = `${id}.scrollPosition`;
 	let [scrollPosition, setScrollPosition] = useCache<number>(cacheId, 0);
 
@@ -108,7 +109,7 @@ export function useScrollPosition(id: string, ref: Ref<HTMLElement | null>) {
  * alt        - 0.1
  * ctrl+alt   - 0.01
  */
-export function useNumberInputShortcuts(inputRef: Ref<HTMLInputElement | null>) {
+export function useNumberInputShortcuts(inputRef: RefObject<HTMLInputElement>) {
 	function handleKeyDown(event: TargetedEvent<HTMLInputElement, KeyboardEvent>) {
 		if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
 
@@ -147,7 +148,7 @@ export function useNumberInputShortcuts(inputRef: Ref<HTMLInputElement | null>) 
  * Observers container and animates visible children added later.
  */
 export function useVolley(
-	containerRef: Ref<HTMLElement | null>,
+	containerRef: RefObject<HTMLElement>,
 	{duration, maxDelay, perpetual}: {duration?: number; maxDelay?: number; perpetual?: boolean} = {}
 ) {
 	useLayoutEffect(() => {
@@ -210,7 +211,7 @@ export function useVolley(
  * const [width, height] = useElementSize(containerRef, 'content-box');
  * ```
  */
-export function useElementSize(ref: Ref<HTMLElement | null>, box: 'border-box' | 'padding-box' = 'border-box') {
+export function useElementSize(ref: RefObject<HTMLElement>, box: 'border-box' | 'padding-box' = 'border-box') {
 	const [sizes, setSizes] = useState<[number, number] | [null, null]>([null, null]);
 
 	useLayoutEffect(() => {
@@ -307,7 +308,7 @@ export function useCachedState<T>(key: unknown, defaultValue: T): [T, (value: T)
  * Until there is a dedicated CSS selector, or a new alternative event to
  * dragLeave, don't event question it, you're just wasting time.
  */
-export function useIsDraggedOver(ref: Ref<HTMLElement | null>) {
+export function useIsDraggedOver(ref: RefObject<HTMLElement>) {
 	const [isDraggedOver, setIsDraggedOver] = useState(false);
 
 	useEffect(() => {

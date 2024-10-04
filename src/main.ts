@@ -567,12 +567,12 @@ ipcMain.on('topmost-window', (event) => {
 				new MenuItem({type: 'separator'}),
 				new MenuItem({
 					label: 'Inspect element',
-					click: (_, browserWindow) => browserWindow?.webContents.inspectElement(x, y),
+					click: () => window.webContents.inspectElement(x, y),
 				}),
 				new MenuItem({
 					label: 'Toggle devtools',
 					accelerator: 'CmdOrCtrl+Shift+I',
-					click: (_, browserWindow) => browserWindow?.webContents.toggleDevTools(),
+					click: () => window.webContents.toggleDevTools(),
 				})
 			);
 		}

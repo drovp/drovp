@@ -1,6 +1,6 @@
 import {ipcRenderer} from 'electron';
-import {h, RenderableProps, VNode, JSX} from 'preact';
-import {useRef, Ref} from 'preact/hooks';
+import {h, RenderableProps, RefObject, VNode, JSX} from 'preact';
+import {useRef} from 'preact/hooks';
 import {DialogFileFilter} from '@drovp/types';
 import {TargetedEvent, countDecimals, clamp} from 'lib/utils';
 import {Icon} from 'components/Icon';
@@ -32,7 +32,7 @@ export type StringProps = RenderableProps<{
 	onClick?: (event: TargetedEvent<HTMLInputElement>) => void;
 	disabled?: boolean;
 	readonly?: boolean;
-	innerRef?: Ref<HTMLInputElement | null>;
+	innerRef?: RefObject<HTMLInputElement>;
 	formatSelection?: (newValue: string, oldValue: string) => string;
 }>;
 

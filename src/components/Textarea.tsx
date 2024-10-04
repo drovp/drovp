@@ -1,5 +1,5 @@
-import {h} from 'preact';
-import {useRef, Ref, useState} from 'preact/hooks';
+import {h, RefObject} from 'preact';
+import {useRef, useState} from 'preact/hooks';
 import {insertAtCursor, TargetedEvent} from 'lib/utils';
 
 export interface TextareaProps {
@@ -27,7 +27,7 @@ export interface TextareaProps {
 	onKeyDown?: (event: TargetedEvent<HTMLTextAreaElement, KeyboardEvent>) => void;
 	disabled?: boolean;
 	readonly?: boolean;
-	innerRef?: Ref<HTMLTextAreaElement | null>;
+	innerRef?: RefObject<HTMLTextAreaElement>;
 }
 
 export function Textarea({
@@ -42,7 +42,7 @@ export function Textarea({
 	focusIndicator = true,
 	min,
 	max,
-	rows,
+	rows = 3,
 	autoResize = true,
 	indentationString = '\t',
 	transparent,
@@ -72,6 +72,8 @@ export function Textarea({
 		const textarea = textareaRef.current;
 
 		if (!textarea) return;
+		event.preventDefault();
+		event.stopPropagation();
 
 		const initHeight = textarea.getBoundingClientRect().height;
 		const initY = event.clientY;
@@ -80,55 +82,10 @@ export function Textarea({
 			setMinHeight(Math.max(0, initHeight + event.clientY - initY));
 		}
 
-		function cancel() {
-			removeEventListener('pointermove', move);
-			removeEventListener('pointerup', cancel);
-			removeEventListener('pointercancel', cancel);
-		}
-
-		addEventListener('pointermove', move);
-		addEventListener('pointerup', cancel);
-		addEventListener('pointercancel', cancel);
-	}
-
-	/**
-	 * Calculates content height
-	 */
-	function handleFocus() {
-		const textarea = textareaRef.current;
-		if (!textarea || !autoResize) return;
-
-		const mockArea = document.createElement('textarea');
-		const computedStyle = getComputedStyle(textarea);
-		Array.from(computedStyle).forEach((key) =>
-			mockArea.style.setProperty(key, computedStyle.getPropertyValue(key), computedStyle.getPropertyPriority(key))
-		);
-		Object.assign(mockArea.style, {
-			width: `${textarea.offsetWidth}px`,
-			height: '0',
-			overflow: 'hidden',
-			position: 'fixed',
-			right: '200vw',
-		});
-		document.body.appendChild(mockArea);
-
-		const handleInput = () => {
-			const container = containerRef.current;
-			if (container) {
-				mockArea.value = textarea.value;
-				container.style.setProperty('--content-height', `${mockArea.scrollHeight + 2}px`);
-			}
-		};
-
-		const handleBlur = () => {
-			textarea.removeEventListener('input', handleInput);
-			textarea.removeEventListener('blur', handleBlur);
-			mockArea.remove();
-		};
-
-		textarea.addEventListener('input', handleInput);
-		textarea.addEventListener('blur', handleBlur);
-		handleInput();
+		const abort = new AbortController();
+		addEventListener('pointermove', move, {signal: abort.signal});
+		addEventListener('pointerup', () => abort.abort(), {signal: abort.signal});
+		addEventListener('pointercancel', () => abort.abort(), {signal: abort.signal});
 	}
 
 	function handleDoubleClick() {
@@ -154,7 +111,7 @@ export function Textarea({
 				maxLength={max}
 				spellcheck={spellcheck === true}
 				onInput={handleInput}
-				onFocus={handleFocus}
+				// onFocus={handleFocus}
 				disabled={disabled}
 				onKeyDown={(event) => {
 					handleKeyDown(event);

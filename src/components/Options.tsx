@@ -1,5 +1,5 @@
-import {h, RenderableProps, VNode} from 'preact';
-import {useState, useMemo, useRef, Ref, useEffect} from 'preact/hooks';
+import {h, RenderableProps, VNode, RefObject} from 'preact';
+import {useState, useMemo, useRef, useEffect} from 'preact/hooks';
 import {computed, action} from 'statin';
 import {observer} from 'statin-preact';
 import {eem, isOfType, uid, propPath} from 'lib/utils';
@@ -37,7 +37,7 @@ interface OptionsProps {
 	namespace?: string; // Namespace ID's for inputs so they don't collide
 	options: AnyOptionsSignals;
 	schema: I.OptionsSchema<any>;
-	innerRef?: Ref<HTMLDivElement | null>;
+	innerRef?: RefObject<HTMLDivElement>;
 	menuItems?: ContextMenuItem[];
 }
 
@@ -68,7 +68,7 @@ export const Options = observer(function Options({
 				? {
 						label: `Reset option to default value`,
 						click: signal.reset,
-						sublabel: 'Or Shift+Click the title',
+						sublabel: 'Or double click the title',
 				  }
 				: false,
 			{label: 'Reset all to default', click: () => resetOptions(options)},
@@ -411,18 +411,16 @@ export function Option({
 	const showDescriptionToggle = description != null && compact;
 	const showHelp = compact ? showHelpState : true;
 
-	function handleClick(event: MouseEvent) {
-		if (event.shiftKey) {
-			event.preventDefault();
-			event.stopPropagation();
-			signal.reset?.();
-		}
+	function handleDblClick(event: MouseEvent) {
+		event.preventDefault();
+		event.stopPropagation();
+		signal.reset?.();
 	}
 
 	return (
 		<div class={classNames} onContextMenu={onContextMenu}>
 			{title && (
-				<label class="title" for={id} title={title} onClick={handleClick}>
+				<label class="title" for={id} title={title} onDblClick={handleDblClick}>
 					<span class="text">{title}</span>
 					{isChanged && (
 						<button title="Reset to default value" onClick={signal.reset}>

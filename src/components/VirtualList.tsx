@@ -1,5 +1,5 @@
-import {h, RenderableProps, VNode} from 'preact';
-import {Ref, useState, useRef, useLayoutEffect} from 'preact/hooks';
+import {h, RenderableProps, RefObject, VNode} from 'preact';
+import {useState, useRef, useLayoutEffect} from 'preact/hooks';
 import {throttle, debounce} from 'lib/utils';
 import {useCache, CACHE_IGNORE_KEY} from 'lib/hooks';
 import {observeElementSize} from 'lib/elementSize';
@@ -11,7 +11,7 @@ export type VirtualListProps<T extends unknown> = RenderableProps<{
 	class?: string;
 	style?: string | {[key: string]: string};
 	direction?: 'horizontal' | 'vertical';
-	innerRef?: Ref<HTMLDivElement | null>;
+	innerRef?: RefObject<HTMLDivElement>;
 	items: T[];
 	reversed?: boolean;
 	/** Define to remember and restore scroll position. */

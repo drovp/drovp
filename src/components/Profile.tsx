@@ -1,5 +1,5 @@
-import {h, RenderableProps} from 'preact';
-import {useRef, useState, useEffect, useMemo, Ref} from 'preact/hooks';
+import {h, RenderableProps, RefObject} from 'preact';
+import {useRef, useState, useEffect, useMemo} from 'preact/hooks';
 import {action} from 'statin';
 import {observer} from 'statin-preact';
 import {useEventListener, useVolley, useScrollPosition} from 'lib/hooks';
@@ -58,7 +58,7 @@ export const ProfileRoute = observer(function ProfileRoute({match, history, loca
 });
 
 type ProfileWrapperProps = RenderableProps<{
-	innerRef?: Ref<HTMLDivElement | null>;
+	innerRef?: RefObject<HTMLDivElement>;
 	class?: string;
 	profile: ProfileModel;
 	draggable?: boolean;
@@ -245,20 +245,16 @@ export const Profile = observer(function Profile({profile, focusTitle}: ProfileP
 	return (
 		<ProfileWrapper innerRef={containerRef} class="Profile" profile={profile} hideProgress={issues.length > 0}>
 			<header>
-				<div
+				<input
 					class="title-editable"
-					data-value={profile.title() || profile.displayTitle()} // Allows grid based horizontal resizing in CSS
-				>
-					<input
-						ref={titleRef}
-						type="text"
-						size={1}
-						placeholder={profile.displayTitle()}
-						value={profile.title()}
-						onInput={(event) => action(() => profile.title(event.currentTarget.value))}
-						title="Click to edit"
-					/>
-				</div>
+					ref={titleRef}
+					type="text"
+					size={1}
+					placeholder={profile.displayTitle()}
+					value={profile.title()}
+					onInput={(event) => action(() => profile.title(event.currentTarget.value))}
+					title="Click to edit"
+				/>
 				{profile.isAdding() && (
 					<div class="adding" title="Adding (serializing) dropped items">
 						<Spinner /> <span class="count">{profile.added()}</span>

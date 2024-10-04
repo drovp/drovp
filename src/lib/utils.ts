@@ -2,7 +2,7 @@ import manifest from 'manifest';
 import Path from 'path';
 import FS from 'fs';
 import os from 'os';
-import {reaction, action, Signal, Disposer} from 'statin';
+import {reaction, action, Disposer} from 'statin';
 import {SLIDE_OUT} from 'config/animations';
 import {deletePath} from 'lib/fs';
 import http from 'http';
@@ -835,8 +835,8 @@ export function exec(command: string, {onStdout, onStderr, maxBufferSize, ...exe
  * Sets up updates checking interval.
  */
 export function createUpdatesChecker(
-	intervalSignal: Signal<number>,
-	lastTimeSignal: Signal<number>,
+	intervalSignal: SignalLike<number>,
+	lastTimeSignal: SignalLike<number>,
 	checker: () => any
 ): Disposer {
 	let updateIntervalId: NodeJS.Timeout | null = null;

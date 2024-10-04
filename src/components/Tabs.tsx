@@ -1,5 +1,5 @@
-import {h, render} from 'preact';
-import {useState, useRef, Ref, MutableRef, useEffect, useMemo} from 'preact/hooks';
+import {h, RefObject, render} from 'preact';
+import {useState, useRef, MutableRef, useEffect, useMemo} from 'preact/hooks';
 import {TargetedEvent, getBoundingRect, prevented, rafThrottle, isInsideElement} from 'lib/utils';
 import {makeScroller, Scroller} from 'element-scroller';
 import {useDraggingState} from 'lib/hooks';
@@ -467,8 +467,8 @@ function List({
 	onClose,
 	spacing = 2,
 }: {
-	listRef: Ref<HTMLDivElement | null>;
-	anchorRef: Ref<HTMLButtonElement | null>;
+	listRef: RefObject<HTMLDivElement>;
+	anchorRef: RefObject<HTMLButtonElement>;
 	scrollerRef: MutableRef<Scroller | null>;
 	tabs: Tab[];
 	handlePointerDown: (event: TargetedEvent<HTMLElement, PointerEvent>) => void;

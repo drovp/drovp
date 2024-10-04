@@ -1,5 +1,5 @@
-import {h, RenderableProps} from 'preact';
-import {useEffect, useRef, Ref} from 'preact/hooks';
+import {h, RenderableProps, RefObject} from 'preact';
+import {useEffect, useRef} from 'preact/hooks';
 import {observer} from 'statin-preact';
 import {reaction} from 'statin';
 import {throttle} from 'lib/utils';
@@ -12,7 +12,7 @@ export type LogsProps = RenderableProps<{
 	syncBottom?: boolean;
 	class?: string;
 	variant?: Variant;
-	innerRef?: Ref<HTMLDivElement | null>;
+	innerRef?: RefObject<HTMLDivElement>;
 }>;
 
 export const Logs = observer(function Log({

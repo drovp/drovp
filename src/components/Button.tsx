@@ -1,6 +1,5 @@
-import {h, RenderableProps, VNode} from 'preact';
+import {h, RenderableProps, RefObject, VNode} from 'preact';
 import {TargetedEvent} from 'lib/utils';
-import {Ref} from 'preact/hooks';
 import {Spinner} from 'components/Spinner';
 
 interface ButtonBaseProps {
@@ -24,7 +23,7 @@ interface ButtonBaseProps {
 
 export type ButtonPropsHref = RenderableProps<
 	ButtonBaseProps & {
-		innerRef?: Ref<HTMLAnchorElement | null>;
+		innerRef?: RefObject<HTMLAnchorElement>;
 		href: string;
 		onClick?: undefined;
 		onMouseDown?: (event: TargetedEvent<HTMLAnchorElement, PointerEvent>) => void;
@@ -33,7 +32,7 @@ export type ButtonPropsHref = RenderableProps<
 
 export type ButtonPropsClick = RenderableProps<
 	ButtonBaseProps & {
-		innerRef?: Ref<HTMLButtonElement | null>;
+		innerRef?: RefObject<HTMLButtonElement>;
 		href?: undefined;
 		onClick?: (event: TargetedEvent<HTMLButtonElement, PointerEvent>) => void;
 		onMouseDown?: (event: TargetedEvent<HTMLButtonElement, PointerEvent>) => void;

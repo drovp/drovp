@@ -17,7 +17,7 @@ export function Markdown({class: className, contents}: MarkdownProps) {
 			if (cached != null) return cached;
 
 			const {toHTML, sanitize} = loadDynamicModule('marked');
-			const result = sanitize(toHTML(contents, {breaks: true})) || '';
+			const result = sanitize(toHTML(contents, {breaks: true}) as string) || '';
 
 			cache.set(contents, result);
 

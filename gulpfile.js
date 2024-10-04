@@ -4,7 +4,7 @@ const OS = require('os');
 const FSP = require('fs').promises;
 const {promisify} = require('util');
 const manifest = require('./package.json');
-const {src, dest, series, parallel, watch: gulpWatch} = require('gulp');
+const gulp = require('gulp');
 const exec = promisify(CP.exec);
 const esbuild = require('esbuild');
 
@@ -156,11 +156,11 @@ function styles() {
 	postCssPlugins.push(require('postcss-declarations')(require(PATHS.themesFile)));
 	if (ENV.NODE_ENV === 'production') postCssPlugins.push(require('cssnano')({preset: 'default'}));
 
-	return src('src/windows/*/*.sass', {base: 'src'})
+	return gulp.src('src/windows/*/*.sass', {base: 'src'})
 		.pipe(sassGlob())
 		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(postcss(postCssPlugins))
-		.pipe(dest(PATHS.build));
+		.pipe(gulp.dest(PATHS.build));
 }
 
 function cleanBuild() {
@@ -173,7 +173,7 @@ function cleanOut() {
 
 function assets() {
 	const editJson = require('gulp-json-editor');
-	return src('package.json')
+	return gulp.src('package.json')
 		.pipe(
 			editJson({
 				date: new Date().toISOString(),
@@ -183,8 +183,8 @@ function assets() {
 				config: undefined,
 			})
 		)
-		.pipe(src(PATHS.assets, {base: 'src'}))
-		.pipe(dest(PATHS.build));
+		.pipe(gulp.src(PATHS.assets, {base: 'src', encoding: false}))
+		.pipe(gulp.dest(PATHS.build));
 }
 
 async function watch() {
@@ -218,17 +218,17 @@ async function watch() {
 	}
 
 	// Styles
-	gulpWatch([PATHS.styles, PATHS.themesFile], styles);
+	gulp.watch([PATHS.styles, PATHS.themesFile], styles);
 
 	// Assets
 	// @ts-ignore
-	const assetsWatcher = gulpWatch(PATHS.assets, {events: ['add', 'change']}, assets);
+	const assetsWatcher = gulp.watch(PATHS.assets, {events: ['add', 'change']}, assets);
 	assetsWatcher.on('unlink', (path) => {
 		require('del')(String(path).replace(/^src/, PATHS.build));
 	});
 
 	// Scripts
-	gulpWatch(PATHS.scripts, scripts);
+	gulp.watch(PATHS.scripts, scripts);
 
 	// Start the app
 	let app;
@@ -491,7 +491,7 @@ async function check() {
 	}
 }
 
-const build = series(cleanBuild, parallel(assets, styles, scripts));
+const build = gulp.series(cleanBuild, gulp.parallel(assets, styles, scripts));
 
 exports.clean = cleanBuild;
 exports.scripts = scripts;
@@ -502,7 +502,7 @@ exports.build = build;
 exports.check = check;
 exports.binaries = binaries;
 exports.package = package;
-exports.default = series(build, cleanOut, packageDev, watch);
+exports.default = gulp.series(build, cleanOut, packageDev, watch);
 
 /**
  * Helpers.
@@ -517,7 +517,7 @@ exports.default = series(build, cleanOut, packageDev, watch);
  */
 function runTask(task) {
 	return new Promise((resolve, reject) => {
-		series(task)((error, result) => {
+		gulp.series(task)((error, result) => {
 			if (error) reject(error);
 			else resolve(result);
 		});

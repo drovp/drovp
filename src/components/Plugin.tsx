@@ -1,7 +1,7 @@
 import {shell} from 'electron';
 import manifest from 'manifest';
-import {h, RenderableProps} from 'preact';
-import {useState, useEffect, useRef, Ref, useMemo} from 'preact/hooks';
+import {h, RefObject, RenderableProps} from 'preact';
+import {useState, useEffect, useRef, useMemo} from 'preact/hooks';
 import {observer} from 'statin-preact';
 import {useVolley, useCachedState} from 'lib/hooks';
 import {registry, PluginRegistryMeta} from 'lib/registry';
@@ -352,7 +352,7 @@ export const PluginDependents = observer(function PluginDependents({
 }: {
 	class?: string;
 	plugin: PluginModel;
-	innerRef?: Ref<HTMLDivElement | null>;
+	innerRef?: RefObject<HTMLDivElement>;
 	// When one of the cards is clicked, causing a navigation.
 	// Useful when this is used in a modal.
 	onNav?: () => void;

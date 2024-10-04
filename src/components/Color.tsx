@@ -1,7 +1,7 @@
-import {h} from 'preact';
+import {h, RefObject} from 'preact';
 import {useMemo} from 'preact/hooks';
 import {TargetedEvent, throttle} from 'lib/utils';
-import {useRef, Ref} from 'preact/hooks';
+import {useRef} from 'preact/hooks';
 import {Input} from './Input';
 
 export interface ColorProps {
@@ -12,7 +12,7 @@ export interface ColorProps {
 	onChange?: (value: string) => void;
 	variant?: Variant;
 	disabled?: boolean;
-	innerRef?: Ref<HTMLInputElement>;
+	innerRef?: RefObject<HTMLInputElement>;
 	formatSelection?: (newValue: string, oldValue: string) => string;
 }
 

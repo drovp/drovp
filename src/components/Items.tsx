@@ -1,7 +1,7 @@
 import Path from 'path';
 import {shell, clipboard, ipcRenderer} from 'electron';
-import {h} from 'preact';
-import {Ref, useState} from 'preact/hooks';
+import {h, RefObject} from 'preact';
+import {useState} from 'preact/hooks';
 import {observer} from 'statin-preact';
 import {formatSize, prevented, reportIssue} from 'lib/utils';
 import {ContextMenus} from 'lib/contextMenus';
@@ -27,7 +27,7 @@ export const Items = observer(function Items({
 	toOperationLinks,
 }: {
 	items: (() => (ItemModel | RawItemModel)[]) | (ItemModel | RawItemModel)[];
-	innerRef?: Ref<HTMLDivElement | null>;
+	innerRef?: RefObject<HTMLDivElement>;
 	class?: string;
 	style?: string | {[key: string]: string};
 	reversed?: boolean;
