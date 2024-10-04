@@ -105,10 +105,11 @@
 		+size(100vw 100vh)
 
 	> .list
+		--list-padding: var(--spacing-third)
 		position: absolute
 		z-index: calc(var(--z-menu) + 1)
 		background: var(--background)
-		border-radius: var(--border-radius)
+		border-radius: calc(var(--border-radius) + var(--list-padding))
 		border: 1px solid var(--grey-z300)
 		height: auto
 		max-height: 60vh
@@ -129,8 +130,8 @@
 
 		> .buttons
 			--scrollbar-size: 3px
-			padding: var(--spacing-third)
-			padding-right: subScrollbar(var(--spacing-third))
+			padding: var(--list-padding)
+			padding-right: subScrollbar(var(--list-padding))
 			height: auto
 			min-width: 10em
 			max-height: 60vh

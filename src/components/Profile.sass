@@ -72,40 +72,32 @@
 			margin-right: auto
 			place-content: center
 			font-size: 1.2em
-			height: var(--input-height)
+			height: 1.5em
 			font-weight: bold
 
-			&::before,
-			> input
-				width: auto
-				height: 100%
-				min-width: 4em
-				grid-area: 1 / 1
-				font: inherit
-				padding: 0.25em
-				margin: 0
-				padding: 0 .2em 0 0
-				resize: none
-				background: none
-				appearance: none
-				border: none
-				text-align: left
-				white-space: no-wrap
+			width: auto
+			field-sizing: content
+			min-width: 4em
+			grid-area: 1 / 1
+			padding: 0.25em
+			margin: 0 auto 0 0
+			padding: 0 .2em 0 0
+			resize: none
+			background: none
+			appearance: none
+			border: none
+			text-align: left
+			white-space: nowrap
 
-			&::before
-				content: attr(data-value) ' '
-				visibility: hidden
+			--outline-offset: 0.2em
+			border-radius: var(--border-radius)
 
-			> input
-				--outline-offset: 0.2em
-				border-radius: var(--border-radius)
+			&:focus
+				background: var(--darken)
+				box-shadow: 0 0 0 var(--outline-offset) var(--darken)
 
-				&:focus
-					background: var(--darken)
-					box-shadow: 0 0 0 var(--outline-offset) var(--darken)
-
-				&::placeholder
-					font-weight: normal
+			&::placeholder
+				font-weight: normal
 
 		> .placeholder
 			font-weight: normal
@@ -363,7 +355,7 @@
 .ProfileExport
 	display: flex
 	flex-direction: column
-	gap: var(--spacing)
+	gap: var(--spacing-quarter)
 
 	> *
 		flex: 0 0 auto
@@ -373,6 +365,8 @@
 		flex-wrap: wrap
 		align-items: center
 		gap: var(--spacing-half) var(--spacing)
+		background: var(--variant-o100)
+		padding: var(--spacing)
 
 		> label
 			min-width: 33%

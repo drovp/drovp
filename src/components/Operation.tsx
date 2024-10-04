@@ -88,6 +88,16 @@ const Operation = observer(function Operation({operation, section, onSectionChan
 			data-context-menu-payload={operation.id}
 		>
 			<header class={headerClassNames}>
+				<Button
+					class="back"
+					semitransparent
+					variant="info"
+					muted
+					onClick={() => history.push(`/profiles/${operation.profile.id}?section=operations`)}
+					tooltip="To operations"
+				>
+					<Icon name="arrow-left" />
+				</Button>
 				{title ? (
 					<h1 title={title}>{title}</h1>
 				) : (

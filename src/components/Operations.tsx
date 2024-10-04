@@ -27,7 +27,9 @@ export function OperationsJunction(props: RouteProps) {
 		if (!profile || !store.profiles.byId.value.has(profile.id)) {
 			return <Vacant title={`Operation "${id}" profile has been deleted.`} />;
 		}
-		return <Redirect to={`/profiles/${profile.id}?section=operation&id=${id}`} />;
+		const operationsSection = props.location.searchParams.get('section');
+		const operationsSectionParam = operationsSection ? `&operationSection=${operationsSection}` : '';
+		return <Redirect to={`/profiles/${profile.id}?section=operations&id=${id}${operationsSectionParam}`} />;
 	}
 
 	return <OperationsRoute {...props} />;

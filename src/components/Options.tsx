@@ -2,7 +2,7 @@ import {h, RenderableProps, VNode, RefObject} from 'preact';
 import {useState, useMemo, useRef, useEffect} from 'preact/hooks';
 import {computed, action} from 'statin';
 import {observer} from 'statin-preact';
-import {eem, isOfType, uid, propPath} from 'lib/utils';
+import {eem, isOfType, uid, propPath, isTextInputElement} from 'lib/utils';
 import {openContextMenu, ContextMenuItem} from 'lib/contextMenus';
 import {
 	AnyOptionSignal,
@@ -61,8 +61,11 @@ export const Options = observer(function Options({
 	const elements: VNode[] = [];
 
 	function openOptionsMenu(event: MouseEvent, signal?: AnyOptionSignal) {
+		if (isTextInputElement(event.target)) return;
+
 		event.preventDefault();
 		event.stopPropagation();
+
 		openContextMenu([
 			signal
 				? {

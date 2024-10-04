@@ -18,6 +18,7 @@ import {Alert} from 'components/Alert';
 import {Instructions} from 'components/Instructions';
 import {ProcessorCard} from 'components/ProcessorCard';
 import {DependencyCard} from 'components/DependencyCard';
+import {ProcessorDescription} from 'components/Processor';
 import {PluginCard} from 'components/PluginCards';
 import {OperationsSection} from 'components/Operations';
 import {OperationSubRoute} from 'components/Operation';
@@ -213,12 +214,12 @@ export const Profile = observer(function Profile({profile, focusTitle}: ProfileP
 	const hasPending = profile.hasPendingOperations();
 	const processor = profile.processor();
 	const instructions = processor?.instructions || processor?.plugin.readme;
-	const section = history.location.searchParams.get('section') || undefined;
+	const section = history.location.searchParams.get('section') || 'operations';
 	const id = history.location.searchParams.get('id');
 	const navToSection = (name: string) => history.replace(`?section=${name}`);
 	const navToOperation = (id: string) => history.replace(`?section=operations&id=${id}`);
 
-	if (id) lastIdRef.current = id;
+	if (section === 'operations') lastIdRef.current = id;
 
 	useEffect(() => {
 		const titleElement = titleRef.current;
@@ -594,7 +595,7 @@ const ProfileExport = observer(function ProfileExport({profile}: {profile: Profi
 
 	return (
 		<Scrollable class="ProfileExport">
-			<Alert icon="help">
+			<Alert variant="info" icon="info">
 				Sharing codes below allows other people to clone this profile for themselves. They can enter it into
 				Profile importer, or in case you're sharing a link, just click it.
 			</Alert>
@@ -700,6 +701,13 @@ export const ProfileDetails = observer(function ProfileDetails({
 			</div>
 
 			<ModifiersInfo profile={profile} />
+
+			{processor && (
+				<div class="processorDescription">
+					<TitleBar>Description</TitleBar>
+					<ProcessorDescription processor={processor} />
+				</div>
+			)}
 
 			<div class="processor">
 				<TitleBar variant="accent">Processor</TitleBar>
