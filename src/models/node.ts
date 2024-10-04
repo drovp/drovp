@@ -117,11 +117,22 @@ export class Node {
 	};
 
 	install = async (subStage?: Staging) => {
+		if (this.store.staging.isStaging() || this.store.operations.pending().length > 0) {
+			this.store.modals.create({
+				variant: 'danger',
+				title: 'Staging or operations in progress',
+				message: `Wait for current staging or operations to finish before updating.`,
+				actions: ['ok'],
+			});
+			return;
+		}
+
 		const staging =
 			subStage || this.store.staging.start({title: 'Installing node.js', target: 'node', action: 'install'});
 		const backupDir = `${this.directory}_BACKUP`;
 
 		try {
+			this.store.worker.killAllThreads();
 			const {version} = await this.getLatest();
 			const {base: archiveBase, file: archiveName} = getDistArchiveName(version);
 			const archiveUrl = `${NODE_BASE_URL}${version}/${archiveName}`;

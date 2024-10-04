@@ -359,7 +359,11 @@ export default class Worker {
 
 	destroy = () => {
 		if (this.cleanupID) clearInterval(this.cleanupID);
-		for (let [, threads] of this.threadsByProcessor.entries()) {
+		this.killAllThreads();
+	};
+
+	killAllThreads = () => {
+		for (let threads of this.threadsByProcessor.values()) {
 			threads.forEach((thread) => thread.destroy());
 		}
 		this.threadsByProcessor.clear();
