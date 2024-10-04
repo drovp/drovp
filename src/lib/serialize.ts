@@ -4,7 +4,7 @@
  */
 import Path from 'path';
 import {Buffer} from 'buffer';
-import {clipboard} from 'electron';
+import {clipboard, webUtils} from 'electron';
 import FS, {promises as FSP} from 'fs';
 import appManifest from 'manifest';
 import {PLUGIN_KEYWORD, DEPENDENCY_KEYWORD} from 'config/constants';
@@ -49,7 +49,8 @@ export interface SerializationError {
 /**
  * A VERY lax URL match
  */
-const isUrl = (input: string) => /^[a-z-]+:\/\/[^\n]+$/.exec(input) !== null;
+const isUrl = (input: string) =>
+	!input.toLowerCase().startsWith('file:') && /^[a-z-]+:\/\/[^\n]+$/.exec(input) !== null;
 
 /**
  * Checks if string is a valid ID that can be used for a processor/dependency/etc.
@@ -373,10 +374,14 @@ export async function dataTransferItem(
 	 * File.
 	 */
 	if (itemKind === 'file') {
-		const fileItem = item.getAsFile() as File;
+		const fileItem = item.getAsFile();
+
+		if (!fileItem) return null;
+
+		const path = webUtils.getPathForFile(fileItem);
 
 		// Is blob
-		if (!fileItem.path && fileItem.type && fileItem.size > 0) {
+		if (!path && fileItem.type && fileItem.size > 0) {
 			return {
 				id: uid(),
 				created: Date.now(),
@@ -387,23 +392,23 @@ export async function dataTransferItem(
 		}
 
 		// Filter out non files after this point
-		if (!fileItem.path) return null;
+		if (!path) return null;
 
 		// Is potentially a directory (man this API SUCKS!)
 		if (!fileItem.type && fileItem.size % 4096 == 0) {
-			return file(fileItem.path);
+			return file(path);
 		}
 
 		// This should be a normal file now (have I mentioned how much this API SUCKS?!)
-		const extensionType = getExtensionType(fileItem.path);
+		const extensionType = getExtensionType(path);
 		return {
 			id: uid(),
 			created: Date.now(),
 			kind: 'file',
-			path: fileItem.path,
+			path: path,
 			size: fileItem.size,
 			exists: true,
-			type: extensionType || Path.basename(fileItem.path),
+			type: extensionType || Path.basename(path),
 		};
 	}
 
@@ -447,6 +452,10 @@ export function addUrlItemsFromStrings(items: Item[]): Item[] {
 	return items;
 }
 
+function itemIsFileOrDirectory(item: Item) {
+	return item.kind === 'file' || item.kind === 'directory';
+}
+
 /**
  * Serializes items from DataTransfer.
  */
@@ -457,7 +466,15 @@ export async function dataTransfer(drop?: DataTransfer | null): Promise<Item[]> 
 
 	// Serialize `dataTransfer.items`
 	for (const item of drop.items) promises.push(dataTransferItem(item));
-	const items: Item[] = (await Promise.all(promises)).filter(createInvalidItemFilter());
+
+	let items: Item[] = (await Promise.all(promises)).filter(createInvalidItemFilter());
+
+	// If items contain a file, drop everything that isn't a file. It's impossible to
+	// drop mixed content like files and URLs, so let's not have noise in drop data.
+	const hasFile = items.find(itemIsFileOrDirectory) != null;
+	if (hasFile) {
+		items = items.filter(itemIsFileOrDirectory);
+	}
 
 	return addUrlItemsFromStrings(items);
 }
