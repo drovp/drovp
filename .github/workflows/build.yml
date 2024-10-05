@@ -1,9 +1,12 @@
-name: Build/release
+name: Build
 
 on:
-  push:
-    tags:
-      - '*'
+  # push:
+  #   tags:
+  #     - '*'
+  # release:
+  #   types: [created]
+  workflow_dispatch:
 
 jobs:
   build-mac:
