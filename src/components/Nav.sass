@@ -110,9 +110,6 @@
 		border: var(--border-size) solid transparent
 		border-radius: var(--border-radius)
 
-		&:not(.-active):hover
-			background: var(--variant-o300)
-
 		&.-active
 			font-weight: bold
 			border-color: var(--variant)
@@ -128,7 +125,7 @@
 				--tag-background: var(--variant-z100)
 
 		// Discrete border between buttons
-		&:not(:first-child, .-active + *, .NavSpacer + *, :hover, :hover + *)::before
+		&:not(:first-child, .-active + *, .NavSpacer + *)::before
 			content: ''
 			+absolute(50% _ _ calc(var(--border-size, 0px) * -1))
 			width: 1px
@@ -156,11 +153,6 @@
 			transform: translateX(-50%)
 			transition: all 100ms linear
 
-		&:not(.-active):hover
-			color: var(--variant-z900)
-			--border-opacity: .5
-			--underline-width: 50%
-
 		&.-active
 			color: var(--variant-z900)
 			font-weight: bold
@@ -179,10 +171,6 @@
 			height: calc(100% - var(--tabs-size) - 2px)
 			color: var(--variant-z700)
 			background: var(--variant-o200)
-
-			&:hover
-				color: var(--variant-z900)
-				background: var(--variant-o300)
 
 			> *
 				position: relative

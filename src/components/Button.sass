@@ -19,6 +19,7 @@
 	border: 1px solid transparent
 	border-radius: var(--border-radius)
 	transition: color 33ms linear, background-color 33ms linear, border-color 33ms linear
+	cursor: default
 
 	// Base color
 	&.-muted:not(:hover)
@@ -30,7 +31,7 @@
 		--variant-z900: var(--grey-z900)
 		--variant-o200: var(--grey-o200)
 
-	&:not(.-disabled):is(:hover, .-active),
+	&:not(.-disabled):is(.-active),
 	&.-selected.-selected
 		color: var(--variant-fg)
 		background-color: var(--variant)
@@ -58,23 +59,14 @@
 		--tag-color: var(--bg)
 		--tag-background: var(--variant-z700)
 
-		&:not(.-disabled):hover
-			color: var(--variant-fg)
-			background-color: var(--variant)
-			--tag-color: var(--variant)
-			--tag-background: var(--variant-fg)
-
 	&.-transparent
 		color: var(--variant-z700)
 		background-color: transparent
 		--tag-color: var(--bg)
 		--tag-background: var(--variant-z700)
 
-		&:not(.-disabled):hover
-			color: var(--variant-fg)
-			background-color: var(--variant)
-			--tag-color: var(--variant)
-			--tag-background: var(--variant-fg)
+		&:hover
+			color: var(--variant-z800)
 
 	&.-outline
 		color: var(--variant-z700)
@@ -82,11 +74,6 @@
 		border-color: var(--variant)
 		--tag-color: var(--bg)
 		--tag-background: var(--variant-z700)
-
-		&:not(.-disabled):hover
-			color: var(--variant-fg)
-			--tag-color: var(--variant)
-			--tag-background: var(--variant-fg)
 
 		&.-semitransparent
 			border-color: var(--background-semi)

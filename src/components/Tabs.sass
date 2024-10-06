@@ -67,7 +67,7 @@
 			padding: 0
 			+size(var(--height))
 
-			&:not(:hover, .-active)
+			&:not(.-active)
 				background: var(--grey-z200)
 				color: var(--muted)
 				opacity: .7
@@ -85,10 +85,6 @@
 	background: var(--grey-z250)
 	border-radius: var(--border-radius)
 	outline-offset: -2px
-
-	&:hover:not(.-dragged, .-active)
-		color: var(--grey-z1000)
-		background: var(--grey-z300)
 
 	&.-active
 		color: var(--grey-z100)
@@ -151,7 +147,7 @@
 					max-width: 40vw
 					+ellipsis()
 
-				&:not(:hover, .-active)
+				&:not(.-active)
 					background: var(--grey-z200)
 
 				& + *
@@ -175,6 +171,6 @@
 					&:not(:hover)
 						opacity: .5
 
-			> .add:not(:hover)
+			> .add
 				border: 1px dashed var(--grey)
 				opacity: .3

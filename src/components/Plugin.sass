@@ -72,25 +72,27 @@
 			display: flex
 			margin-top: var(--spacing-half)
 			flex-wrap: wrap
-			gap: .5em
+			gap: .8em
 			font-size: .9em
 
 			> .link
 				display: flex
 				align-items: center
 				max-width: 15em
-				padding: .2em var(--spacing-quarter)
+				padding: 0
 				font-family: var(--font-code)
+				font-style: italic
+				background: transparent
 				color: var(--fg)
-				background: var(--darken)
 				border-radius: var(--border-radius)
 				transition: all 33ms linear
 				text-decoration: none
+				cursor: default
+				opacity: .7
 				+ellipsis()
 
 				&:hover
-					color: var(--grey-z100)
-					background: var(--grey-z700)
+					opacity: 1
 
 				> .Icon
 					margin-right: .3em
@@ -101,12 +103,6 @@
 					> .Icon
 						color: var(--npm)
 						+size(1.6em)
-
-					&:hover
-						color: #fff
-						background: var(--npm)
-						> .Icon
-							color: #fff
 
 	> .actions
 		width: 8rem

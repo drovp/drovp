@@ -35,7 +35,6 @@ export function Progress({
 	if (transparent) classNames += ' -transparent';
 	if (indeterminate) classNames += ' -indeterminate';
 	if (paused) classNames += ' -paused';
-	if (onClick) classNames += ' -hoverable';
 
 	// So that background doesn't peak through rounded corners
 	if (completed > 0) classNames += ' -round-more-left';

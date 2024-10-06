@@ -4,7 +4,7 @@ import {action} from 'statin';
 import {observer} from 'statin-preact';
 import {useEventListener, useVolley, useScrollPosition} from 'lib/hooks';
 import {TargetedEvent, isTextInputElement, uid} from 'lib/utils';
-import {Icon} from 'components/Icon';
+import {Icon, Help} from 'components/Icon';
 import {RouteProps, Redirect} from 'poutr';
 import {Vacant} from 'components/Vacant';
 import {Spinner} from 'components/Spinner';
@@ -114,7 +114,6 @@ export const ProfileWrapper = observer(function ProfileWrapper({
 	if (className) classNames += ` ${className}`;
 	if (profile.isDragged()) classNames += ' -dragged';
 	else if (draggingMode && (isProfileReady || isProfileDragged)) classNames += ' -drop-well';
-	else if (onClick) classNames += ' -hoverable';
 
 	if (dependenciesLoading) classNames += ' -is-loading';
 	else if (isStaging) classNames += ' -is-staging';
@@ -295,7 +294,7 @@ export const Profile = observer(function Profile({profile, focusTitle}: ProfileP
 					activeMatch={section === 'operations'}
 					tooltip="Operations"
 				>
-					<Icon name="operation" /> Operations
+					<Icon name={section === 'operations' && id ? 'arrow-left' : 'operation'} /> Operations
 				</NavLink>
 				<NavLink to="options" onClick={navToSection} activeMatch={section === 'options'} tooltip="Options">
 					<Icon name="cog" /> <NavLinkRelativePart>Options</NavLinkRelativePart>
@@ -596,8 +595,7 @@ const ProfileExport = observer(function ProfileExport({profile}: {profile: Profi
 	return (
 		<Scrollable class="ProfileExport">
 			<Alert variant="info" icon="info">
-				Sharing codes below allows other people to clone this profile for themselves. They can enter it into
-				Profile importer, or in case you're sharing a link, just click it.
+				Sharing codes below allows other people to clone this profile.
 			</Alert>
 
 			<div class="entry">
@@ -607,13 +605,7 @@ const ProfileExport = observer(function ProfileExport({profile}: {profile: Profi
 					checked={settings.compactImportCodes()}
 					onChange={(checked) => settings.compactImportCodes(checked)}
 				/>
-				<p>
-					<em>
-						Only include options that differ from defaults. Creates a considerably smaller import code, but
-						has a small potential for creating profiles that don't exactly match the original (when plugin
-						changed its defaults without bumping major version).
-					</em>
-				</p>
+				<Help tooltip="Only include options that differ from defaults. Creates a considerably smaller import code, but has a small potential for creating profiles that don't exactly match the original (when plugin changed its defaults without bumping major version)." />
 			</div>
 
 			<div class="entry">

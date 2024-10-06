@@ -34,7 +34,7 @@
 		transition: all 66ms linear
 		overflow: hidden
 
-		&:not(.-multi *, .-transparent *, :first-child, .-selected, .-selected + *, :hover, :hover + *)::before
+		&:not(.-multi *, .-transparent *, :first-child, .-selected, .-selected + *)::before
 			content: ''
 			+absolute(30% _ _ 0)
 			+size(1px 40%)
@@ -51,10 +51,6 @@
 				+absolute(0 _ _ 0)
 				+size(100%)
 				+disabledStripes()
-
-		&:not(:disabled, .-selected):hover
-			--text: var(--variant-z800)
-			background: var(--variant-o300)
 
 		&:not(.-multi > *).-selected
 			--text: var(--variant-z100)

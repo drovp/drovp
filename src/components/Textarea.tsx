@@ -98,6 +98,7 @@ export function Textarea({
 	if (variant) classNames += ` -${variant}`;
 	if (transparent) classNames += ' -transparent';
 	if (focusIndicator) classNames += ' -focus-indicator';
+	if (autoResize) classNames += ' -auto-resize';
 
 	return (
 		<div ref={containerRef} class={classNames} style={`--rows:${rows};--min-height:${minHeight}px`}>
