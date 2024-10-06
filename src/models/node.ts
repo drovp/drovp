@@ -254,6 +254,11 @@ export class Node {
 
 		options.onStdout?.(Buffer.from(`Running npm with args: ${spawnArgs.join(' ')}`));
 
+		// Breaks on windows without this
+		if (['.cmd', '.bat'].includes(Path.extname(this.npmPath).toLowerCase())) {
+			options.shell = true;
+		}
+
 		return spawn(this.npmPath, spawnArgs, options);
 	};
 }
